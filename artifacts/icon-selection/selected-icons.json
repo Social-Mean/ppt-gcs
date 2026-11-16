@@ -1,0 +1,14 @@
+﻿[
+    {
+        "Command":  "AspectRatio",
+        "ImageMso":  "PowerPointPageSetup",
+        "OfficeLabel":  "幻灯片大小",
+        "Loaded":  true
+    },
+    {
+        "Command":  "CentersCoincident",
+        "ImageMso":  "ThemeEffectsGallery",
+        "OfficeLabel":  "效果​​",
+        "Loaded":  true
+    }
+]

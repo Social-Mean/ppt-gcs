@@ -31,9 +31,15 @@ internal static class ConstraintGridRenderer
         var images=new Dictionary<string,Image>();
         try
         {
-            foreach(string kind in new[]{"SameX","SameWidth","AspectRatio","EqualHorizontalGap"})
-                images.Add(OfficeIconProvider.ImageMso(kind),Image.FromFile(Path.Combine(arguments[0],
-                    "artifacts/ui-refinement/icons-before/"+kind+"-16-straight.png")));
+            // Bind historical captures to their actual Office resource IDs.
+            // A constraint may now use a different glyph than when captured.
+            var samples=new Dictionary<string,string> {
+                {"ObjectsAlignLeftSmart","SameX"}, {"TableColumnsDistribute","SameWidth"},
+                {"AlignDistributeHorizontally","EqualHorizontalGap"}
+            };
+            foreach(var sample in samples)
+                images.Add(sample.Key,Image.FromFile(Path.Combine(arguments[0],
+                    "artifacts/ui-refinement/icons-before/"+sample.Value+"-16-straight.png")));
             foreach(int width in new[]{380,250}) Render(width,arguments[1],images);
         }
         finally {foreach(var image in images.Values)image.Dispose();}

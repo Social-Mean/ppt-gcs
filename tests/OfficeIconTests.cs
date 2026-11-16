@@ -96,7 +96,7 @@ public sealed class FakeIconCommandBars : IDisposable
             handle=CreateDIBSection(IntPtr.Zero,ref header,0,out pixels,IntPtr.Zero,0);
             if(handle==IntPtr.Zero)throw new InvalidOperationException("Test DIB creation failed");
             // Exact straight BGRA values observed in the installed Office
-            // AspectRatio 16 px artwork, plus white RGB under zero alpha.
+            // Former TableLockAspectRatio 16 px artwork, plus white RGB under zero alpha.
             var data=new byte[24*24*4];
             for(int i=0;i<data.Length;i+=4){data[i]=255;data[i+1]=255;data[i+2]=255;}
             if(!TransparentOnly)
