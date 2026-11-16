@@ -1,0 +1,11 @@
+bin/
+**/bin/
+**/obj/
+artifacts/*.log
+!artifacts/owned-drag.log
+!artifacts/native-polling-failure.log
+!artifacts/hook-preflight-failure.log
+artifacts/checker-pending.json
+*.user
+.packages/
+~$*

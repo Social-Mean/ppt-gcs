@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "tolerancePt": 0.01,
+  "drags": [
+    {
+      "driver": "CC12628B-1AB4-4DA5-8068-9CD012738FAE",
+      "frames": 23,
+      "mouseDownFrames": 23
+    },
+    {
+      "driver": "7B38CB0A-21F3-4DC7-B649-34448285311B",
+      "frames": 25,
+      "mouseDownFrames": 25
+    }
+  ],
+  "checks": [
+    "bidirectional live frames",
+    "follower horizontal position",
+    "two undo steps",
+    "two redo steps",
+    "geometry and constraints after process restart"
+  ],
+  "artifacts": "D:\\code\\ppt-gcs\\artifacts",
+  "checkedUtc": "2026-11-16T02:43:02.832168+00:00"
+}

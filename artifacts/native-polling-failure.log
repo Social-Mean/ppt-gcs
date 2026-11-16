@@ -1,0 +1,36 @@
+2026-11-16T02:18:31.6579650Z connected PowerPoint=16.0
+2026-11-16T02:18:54.8017816Z demo-created slide=256
+2026-11-16T02:18:54.8462882Z document-loaded constraints=1 key=演示文稿1/256
+2026-11-16T02:19:49.9935388Z mouse-down 
+2026-11-16T02:19:51.5655781Z mouse-up samples=0
+2026-11-16T02:19:59.0014790Z mouse-down 
+2026-11-16T02:19:59.0945545Z mouse-up samples=0
+2026-11-16T02:19:59.8449450Z mouse-down 
+2026-11-16T02:20:04.1886519Z mouse-up samples=0
+2026-11-16T02:20:05.3781770Z mouse-down 
+2026-11-16T02:20:05.4690262Z mouse-up samples=0
+2026-11-16T02:20:05.8489572Z mouse-down 
+2026-11-16T02:20:06.6602805Z mouse-up samples=0
+2026-11-16T02:20:06.6602805Z geometry down=False a=133.352 b=180.000 selected=2 cursor=1178,652 suppress=False
+2026-11-16T02:20:06.6662604Z solved down=False driver=A a=133.352 b=133.352
+2026-11-16T02:20:07.9411424Z geometry down=False a=133.352 b=180.000 selected=2 cursor=1179,654 suppress=True
+2026-11-16T02:20:09.0679854Z mouse-down 
+2026-11-16T02:20:09.1612920Z mouse-up samples=0
+2026-11-16T02:20:10.7198270Z mouse-down 
+2026-11-16T02:20:11.7508120Z mouse-up samples=0
+2026-11-16T02:20:11.7508120Z geometry down=False a=133.352 b=114.592 selected=3 cursor=1765,610 suppress=False
+2026-11-16T02:20:11.7557955Z solved down=False driver=B a=114.592 b=114.592
+2026-11-16T02:20:12.8174106Z mouse-down 
+2026-11-16T02:20:12.9079116Z mouse-up samples=0
+2026-11-16T02:20:13.4128019Z geometry down=False a=133.352 b=114.592 selected=2 cursor=1145,593 suppress=True
+2026-11-16T02:20:14.3169822Z mouse-down 
+2026-11-16T02:20:14.4069898Z mouse-up samples=0
+2026-11-16T02:20:14.9162595Z mouse-down 
+2026-11-16T02:20:15.0325210Z mouse-up samples=0
+2026-11-16T02:20:15.5391082Z mouse-down 
+2026-11-16T02:20:15.9142216Z mouse-up samples=0
+2026-11-16T02:20:15.9152183Z geometry down=False a=194.704 b=114.592 selected=2 cursor=1255,797 suppress=False
+2026-11-16T02:20:15.9152183Z solved down=False driver=A a=194.704 b=194.704
+2026-11-16T02:20:18.8978876Z mouse-down 
+2026-11-16T02:20:18.9810339Z mouse-up samples=0
+2026-11-16T02:24:30.0517304Z document-loaded constraints=1 key=D:\code\ppt-gcs\artifacts\native-polling-failure.pptx/256

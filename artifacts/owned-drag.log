@@ -1,0 +1,125 @@
+2026-11-16T02:18:31.6579650Z connected PowerPoint=16.0
+2026-11-16T02:18:54.8017816Z demo-created slide=256
+2026-11-16T02:18:54.8462882Z document-loaded constraints=1 key=演示文稿1/256
+2026-11-16T02:19:49.9935388Z mouse-down 
+2026-11-16T02:19:51.5655781Z mouse-up samples=0
+2026-11-16T02:19:59.0014790Z mouse-down 
+2026-11-16T02:19:59.0945545Z mouse-up samples=0
+2026-11-16T02:19:59.8449450Z mouse-down 
+2026-11-16T02:20:04.1886519Z mouse-up samples=0
+2026-11-16T02:20:05.3781770Z mouse-down 
+2026-11-16T02:20:05.4690262Z mouse-up samples=0
+2026-11-16T02:20:05.8489572Z mouse-down 
+2026-11-16T02:20:06.6602805Z mouse-up samples=0
+2026-11-16T02:20:06.6602805Z geometry down=False a=133.352 b=180.000 selected=2 cursor=1178,652 suppress=False
+2026-11-16T02:20:06.6662604Z solved down=False driver=A a=133.352 b=133.352
+2026-11-16T02:20:07.9411424Z geometry down=False a=133.352 b=180.000 selected=2 cursor=1179,654 suppress=True
+2026-11-16T02:20:09.0679854Z mouse-down 
+2026-11-16T02:20:09.1612920Z mouse-up samples=0
+2026-11-16T02:20:10.7198270Z mouse-down 
+2026-11-16T02:20:11.7508120Z mouse-up samples=0
+2026-11-16T02:20:11.7508120Z geometry down=False a=133.352 b=114.592 selected=3 cursor=1765,610 suppress=False
+2026-11-16T02:20:11.7557955Z solved down=False driver=B a=114.592 b=114.592
+2026-11-16T02:20:12.8174106Z mouse-down 
+2026-11-16T02:20:12.9079116Z mouse-up samples=0
+2026-11-16T02:20:13.4128019Z geometry down=False a=133.352 b=114.592 selected=2 cursor=1145,593 suppress=True
+2026-11-16T02:20:14.3169822Z mouse-down 
+2026-11-16T02:20:14.4069898Z mouse-up samples=0
+2026-11-16T02:20:14.9162595Z mouse-down 
+2026-11-16T02:20:15.0325210Z mouse-up samples=0
+2026-11-16T02:20:15.5391082Z mouse-down 
+2026-11-16T02:20:15.9142216Z mouse-up samples=0
+2026-11-16T02:20:15.9152183Z geometry down=False a=194.704 b=114.592 selected=2 cursor=1255,797 suppress=False
+2026-11-16T02:20:15.9152183Z solved down=False driver=A a=194.704 b=194.704
+2026-11-16T02:20:18.8978876Z mouse-down 
+2026-11-16T02:20:18.9810339Z mouse-up samples=0
+2026-11-16T02:24:30.0517304Z document-loaded constraints=1 key=D:\code\ppt-gcs\artifacts\native-polling-failure.pptx/256
+2026-11-16T02:24:52.9458612Z disconnected 
+2026-11-16T02:24:52.9478445Z disconnected 
+2026-11-16T02:25:45.5885368Z drag-hook-installed thread=8704
+2026-11-16T02:25:45.6011850Z connected PowerPoint=16.0
+2026-11-16T02:25:53.0242529Z demo-created slide=256
+2026-11-16T02:25:53.0653400Z document-loaded constraints=1 key=演示文稿1/256
+2026-11-16T02:26:50.4194771Z drag-hook-error MissingMemberException: 调用 HWND 时出错。
+2026-11-16T02:26:53.3295061Z observed a=111.097 b=180.000
+2026-11-16T02:27:02.6957281Z drag-hook-error MissingMemberException: 调用 HWND 时出错。
+2026-11-16T02:27:06.2042176Z observed a=111.097 b=166.097
+2026-11-16T02:28:41.9075446Z document-loaded constraints=1 key=D:\code\ppt-gcs\artifacts\hook-preflight-failure.pptx/256
+2026-11-16T02:28:56.4835055Z drag-hook-removed thread=8704
+2026-11-16T02:28:56.4835055Z disconnected 
+2026-11-16T02:28:56.4855743Z disconnected 
+2026-11-16T02:30:26.8909699Z drag-hook-installed thread=46588
+2026-11-16T02:30:26.9049224Z connected PowerPoint=16.0
+2026-11-16T02:30:37.1640698Z demo-created slide=256
+2026-11-16T02:30:37.1936419Z document-loaded constraints=1 key=演示文稿1/256
+2026-11-16T02:30:55.0563939Z document-loaded constraints=1 key=D:\code\ppt-gcs\artifacts\two-rectangles.pptx/256
+2026-11-16T02:31:23.2969314Z drag-hook-removed thread=46588
+2026-11-16T02:31:23.2979270Z disconnected 
+2026-11-16T02:31:23.2999167Z disconnected 
+2026-11-16T02:31:31.3240328Z drag-hook-installed thread=39972
+2026-11-16T02:31:31.3361686Z connected PowerPoint=16.0
+2026-11-16T02:31:37.8816311Z document-loaded constraints=1 key=D:\code\ppt-gcs\artifacts\two-rectangles.pptx/256
+2026-11-16T02:40:53.8141856Z drag-start driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE slide=256 left=180.000 a=180.000 b=180.000 cursor=1450,889 scale=1.2900,1.2900
+2026-11-16T02:40:53.9937349Z drag-frame frame=1 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=180.000 a=179.225 b=179.225 followerLeft=580.000 cursor=1450,888
+2026-11-16T02:40:54.0013420Z drag-frame frame=2 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=179.225 a=177.674 b=177.674 followerLeft=580.000 cursor=1449,886
+2026-11-16T02:40:54.0334490Z drag-frame frame=3 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=178.450 a=173.023 b=173.023 followerLeft=580.000 cursor=1448,880
+2026-11-16T02:40:54.0639827Z drag-frame frame=4 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=169.147 b=169.147 followerLeft=580.000 cursor=1446,875
+2026-11-16T02:40:54.1061234Z drag-frame frame=5 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=162.171 b=162.171 followerLeft=580.000 cursor=1446,866
+2026-11-16T02:40:54.1266465Z drag-frame frame=6 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=159.070 b=159.070 followerLeft=580.000 cursor=1446,862
+2026-11-16T02:40:54.1571184Z drag-frame frame=7 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=155.969 b=155.969 followerLeft=580.000 cursor=1446,858
+2026-11-16T02:40:54.1935398Z drag-frame frame=8 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=151.318 b=151.318 followerLeft=580.000 cursor=1446,852
+2026-11-16T02:40:54.2289594Z drag-frame frame=9 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=145.116 b=145.116 followerLeft=580.000 cursor=1446,844
+2026-11-16T02:40:54.2513254Z drag-frame frame=10 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=142.016 b=142.016 followerLeft=580.000 cursor=1446,840
+2026-11-16T02:40:54.2825040Z drag-frame frame=11 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=138.915 b=138.915 followerLeft=580.000 cursor=1446,836
+2026-11-16T02:40:54.3136669Z drag-frame frame=12 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=176.899 a=138.140 b=138.140 followerLeft=580.000 cursor=1446,835
+2026-11-16T02:40:54.3557912Z drag-frame frame=13 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=135.814 b=135.814 followerLeft=580.000 cursor=1447,832
+2026-11-16T02:40:54.3762380Z drag-frame frame=14 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=134.264 b=134.264 followerLeft=580.000 cursor=1447,830
+2026-11-16T02:40:54.4076260Z drag-frame frame=15 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=131.938 b=131.938 followerLeft=580.000 cursor=1447,827
+2026-11-16T02:40:54.4387365Z drag-frame frame=16 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=130.388 b=130.388 followerLeft=580.000 cursor=1447,825
+2026-11-16T02:40:54.4796928Z drag-frame frame=17 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=127.287 b=127.287 followerLeft=580.000 cursor=1447,821
+2026-11-16T02:40:54.5019895Z drag-frame frame=18 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=126.512 b=126.512 followerLeft=580.000 cursor=1447,820
+2026-11-16T02:40:54.5332182Z drag-frame frame=19 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=123.411 b=123.411 followerLeft=580.000 cursor=1447,816
+2026-11-16T02:40:54.5638886Z drag-frame frame=20 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=177.674 a=120.310 b=120.310 followerLeft=580.000 cursor=1447,812
+2026-11-16T02:40:54.5945265Z drag-frame frame=21 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=178.450 a=115.659 b=115.659 followerLeft=580.000 cursor=1448,806
+2026-11-16T02:40:54.6261439Z drag-frame frame=22 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=178.450 a=114.884 b=114.884 followerLeft=580.000 cursor=1448,805
+2026-11-16T02:40:54.6898959Z drag-frame frame=23 mouseDown=True driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE left=178.450 a=114.109 b=114.109 followerLeft=580.000 cursor=1448,804
+2026-11-16T02:40:55.0524339Z drag-end reason=mouse-up cancelled=False frames=23 driver=CC12628B-1AB4-4DA5-8068-9CD012738FAE leftBefore=180.000 leftAfter=178.450 aBefore=180.000 aAfter=114.109 bBefore=180.000 bAfter=114.109
+2026-11-16T02:40:55.0777907Z observed a=114.109 b=114.109
+2026-11-16T02:40:56.4424656Z drag-start driver=7B38CB0A-21F3-4DC7-B649-34448285311B slide=256 left=580.000 a=114.109 b=114.109 cursor=1819,799 scale=1.2900,1.2900
+2026-11-16T02:40:57.4701867Z drag-frame frame=1 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=579.225 a=114.884 b=114.884 followerLeft=178.450 cursor=1818,800
+2026-11-16T02:40:57.5169428Z drag-frame frame=2 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=578.450 a=117.984 b=117.984 followerLeft=178.450 cursor=1817,804
+2026-11-16T02:40:57.5317940Z drag-frame frame=3 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=578.450 a=119.535 b=119.535 followerLeft=178.450 cursor=1817,806
+2026-11-16T02:40:57.5645727Z drag-frame frame=4 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=577.674 a=122.636 b=122.636 followerLeft=178.450 cursor=1816,810
+2026-11-16T02:40:57.5986290Z drag-frame frame=5 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=576.899 a=126.512 b=126.512 followerLeft=178.450 cursor=1815,815
+2026-11-16T02:40:57.6261625Z drag-frame frame=6 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=576.124 a=128.837 b=128.837 followerLeft=178.450 cursor=1814,818
+2026-11-16T02:40:57.6581998Z drag-frame frame=7 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=575.349 a=131.938 b=131.938 followerLeft=178.450 cursor=1813,822
+2026-11-16T02:40:57.6887649Z drag-frame frame=8 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=574.574 a=136.589 b=136.589 followerLeft=178.450 cursor=1812,828
+2026-11-16T02:40:57.7298006Z drag-frame frame=9 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=573.798 a=142.016 b=142.016 followerLeft=178.450 cursor=1811,835
+2026-11-16T02:40:57.7502367Z drag-frame frame=10 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=573.798 a=145.116 b=145.116 followerLeft=178.450 cursor=1811,839
+2026-11-16T02:40:57.7827826Z drag-frame frame=11 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=573.798 a=146.667 b=146.667 followerLeft=178.450 cursor=1811,841
+2026-11-16T02:40:57.8164324Z drag-frame frame=12 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=573.023 a=150.543 b=150.543 followerLeft=178.450 cursor=1810,846
+2026-11-16T02:40:57.8448938Z drag-frame frame=13 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=572.248 a=153.643 b=153.643 followerLeft=178.450 cursor=1809,850
+2026-11-16T02:40:57.8769107Z drag-frame frame=14 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=572.248 a=156.744 b=156.744 followerLeft=178.450 cursor=1809,854
+2026-11-16T02:40:57.9086596Z drag-frame frame=15 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=571.473 a=162.946 b=162.946 followerLeft=178.450 cursor=1808,862
+2026-11-16T02:40:57.9382303Z drag-frame frame=16 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=571.473 a=167.597 b=167.597 followerLeft=178.450 cursor=1808,868
+2026-11-16T02:40:57.9791000Z drag-frame frame=17 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=571.473 a=171.473 b=171.473 followerLeft=178.450 cursor=1808,873
+2026-11-16T02:40:58.0036687Z drag-frame frame=18 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=570.698 a=175.349 b=175.349 followerLeft=178.450 cursor=1807,878
+2026-11-16T02:40:58.0331774Z drag-frame frame=19 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=570.698 a=180.000 b=180.000 followerLeft=178.450 cursor=1807,884
+2026-11-16T02:40:58.0651807Z drag-frame frame=20 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=570.698 a=183.876 b=183.876 followerLeft=178.450 cursor=1807,889
+2026-11-16T02:40:58.0957722Z drag-frame frame=21 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=569.923 a=192.403 b=192.403 followerLeft=178.450 cursor=1806,900
+2026-11-16T02:40:58.1263352Z drag-frame frame=22 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=568.372 a=197.054 b=197.054 followerLeft=178.450 cursor=1804,906
+2026-11-16T02:40:58.1579375Z drag-frame frame=23 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=568.372 a=198.605 b=198.605 followerLeft=178.450 cursor=1804,908
+2026-11-16T02:40:58.1992989Z drag-frame frame=24 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=568.372 a=203.256 b=203.256 followerLeft=178.450 cursor=1804,914
+2026-11-16T02:40:58.2208535Z drag-frame frame=25 mouseDown=True driver=7B38CB0A-21F3-4DC7-B649-34448285311B left=567.597 a=203.256 b=203.256 followerLeft=178.450 cursor=1803,914
+2026-11-16T02:40:58.4473462Z drag-end reason=mouse-up cancelled=False frames=25 driver=7B38CB0A-21F3-4DC7-B649-34448285311B leftBefore=580.000 leftAfter=567.597 aBefore=114.109 aAfter=203.256 bBefore=114.109 bAfter=203.256
+2026-11-16T02:40:58.4723932Z observed a=203.256 b=203.256
+2026-11-16T02:41:33.3945586Z observed a=114.109 b=114.109
+2026-11-16T02:41:45.7981174Z observed a=180.000 b=180.000
+2026-11-16T02:41:59.1431503Z observed a=114.109 b=114.109
+2026-11-16T02:42:16.9852939Z observed a=203.256 b=203.256
+2026-11-16T02:42:27.7979796Z drag-hook-removed thread=39972
+2026-11-16T02:42:27.7979796Z disconnected 
+2026-11-16T02:42:27.8004956Z disconnected 
+2026-11-16T02:42:54.2944872Z drag-hook-installed thread=49872
+2026-11-16T02:42:54.3087874Z connected PowerPoint=16.0
+2026-11-16T02:43:01.7126119Z document-loaded constraints=1 key=D:\code\ppt-gcs\artifacts\two-rectangles.pptx/256

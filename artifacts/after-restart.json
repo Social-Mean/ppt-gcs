@@ -1,0 +1,32 @@
+﻿{
+    "Utc":  "2026-11-16T02:43:01.9459804Z",
+    "ProcessId":  [
+                      12572
+                  ],
+    "PowerPointVersion":  "16.0",
+    "File":  "D:\\code\\ppt-gcs\\artifacts\\two-rectangles.pptx",
+    "SlideId":  256,
+    "Shapes":  [
+                   {
+                       "Name":  "GCS_Rectangle_A",
+                       "Id":  2,
+                       "Tag":  "CC12628B-1AB4-4DA5-8068-9CD012738FAE",
+                       "Left":  178.4496,
+                       "Top":  203.255829,
+                       "Width":  200,
+                       "Height":  110
+                   },
+                   {
+                       "Name":  "GCS_Rectangle_B",
+                       "Id":  3,
+                       "Tag":  "7B38CB0A-21F3-4DC7-B649-34448285311B",
+                       "Left":  567.5969,
+                       "Top":  203.255829,
+                       "Width":  200,
+                       "Height":  110
+                   }
+               ],
+    "ConstraintXml":  [
+                          "\u003cconstraints xmlns=\"urn:ppt-gcs:v1\"\u003e\u003csameTop id=\"90E791A7-33E9-47C7-A18D-5C9B16DD193F\" slideId=\"256\" shapeA=\"CC12628B-1AB4-4DA5-8068-9CD012738FAE\" shapeB=\"7B38CB0A-21F3-4DC7-B649-34448285311B\"/\u003e\u003c/constraints\u003e"
+                      ]
+}

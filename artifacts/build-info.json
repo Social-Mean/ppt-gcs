@@ -1,0 +1,35 @@
+{
+  "Version": "0.1.0",
+  "PowerPointBuild": "16.0.17932.21056",
+  "Architecture": "x64",
+  "Files": [
+    {
+      "File": "bin\\PptGcs.AddIn.dll",
+      "Sha256": "22A77BE609DD3DAD1B2A726D9ECF42BBD572EA2915A1E5D1380CF0207F93E5E4"
+    },
+    {
+      "File": "bin\\PptGcs.Core.dll",
+      "Sha256": "EEA77B11A11A627F5DD7099E1C5CB9BFB01A6E21E118E365EB9E6E7C78308D4D"
+    },
+    {
+      "File": "src\\PptGcs.AddIn\\Connect.cs",
+      "Sha256": "AA4D4C1A6D3F6E3B163A0008CEBC4C0F2DF3EFBE4A58FE478869A6769C6BD1B4"
+    },
+    {
+      "File": "src\\PptGcs.AddIn\\ConstrainedDragController.cs",
+      "Sha256": "A10E79117061CAAE6114F50EF290FBA57BE53A3150266FE2A4758E9775851EA5"
+    },
+    {
+      "File": "src\\PptGcs.Core\\ConstraintDocument.cs",
+      "Sha256": "0A0EF685119D28014D50796B76B51A24AE840A08EA5D25A3CE3E398D191D5A68"
+    },
+    {
+      "File": "src\\PptGcs.Core\\SameTopSolver.cs",
+      "Sha256": "D76D076C4A8860E2CBF6B1A6568C725580090DAF6328A99CC68103CE413E6648"
+    },
+    {
+      "File": "artifacts\\two-rectangles.pptx",
+      "Sha256": "E361764C2189D8FFB2499CEE8649A39A9569EF28DC6B9DCAF30E708AEBA3B83D"
+    }
+  ]
+}

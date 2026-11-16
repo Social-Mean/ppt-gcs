@@ -1,0 +1,32 @@
+﻿{
+    "Utc":  "2026-11-16T02:24:30.0826284Z",
+    "ProcessId":  [
+                      48380
+                  ],
+    "PowerPointVersion":  "16.0",
+    "File":  "D:\\code\\ppt-gcs\\artifacts\\native-polling-failure.pptx",
+    "SlideId":  256,
+    "Shapes":  [
+                   {
+                       "Name":  "GCS_Rectangle_A",
+                       "Id":  2,
+                       "Tag":  "0ee37b79-7356-473c-9646-fc3ee7aa23fe",
+                       "Left":  185.070389,
+                       "Top":  194.704254,
+                       "Width":  200,
+                       "Height":  110
+                   },
+                   {
+                       "Name":  "GCS_Rectangle_B",
+                       "Id":  3,
+                       "Tag":  "b14f0bdd-49df-439d-a3f4-652359c14806",
+                       "Left":  574.9296,
+                       "Top":  194.704254,
+                       "Width":  200,
+                       "Height":  110
+                   }
+               ],
+    "ConstraintXml":  [
+                          "\u003cconstraints xmlns=\"urn:ppt-gcs:v1\"\u003e\u003csameTop id=\"55CD51E4-471A-433E-85D5-343239E7AD6C\" slideId=\"256\" shapeA=\"0EE37B79-7356-473C-9646-FC3EE7AA23FE\" shapeB=\"B14F0BDD-49DF-439D-A3F4-652359C14806\"/\u003e\u003c/constraints\u003e"
+                      ]
+}
