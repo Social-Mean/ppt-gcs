@@ -42,7 +42,7 @@ namespace PptGcs.AddIn
             NormalizeCurrent();
             LayoutContext context=ReadCurrent();
             var ids=new HashSet<string>(SelectedShapes(context.Window).Select(PowerPointLayout.ReadId).Where(id=>id!=null));
-            if(ids.Count==0) throw new InvalidOperationException("请选择有约束的矩形。");
+            if(ids.Count==0) throw new InvalidOperationException("请选择有约束的对象。");
             var next=new ConstraintDocument(context.Document.Constraints.Where(r=>r.SlideId!=context.SlideId || !r.ShapeIds.Any(ids.Contains)));
             if(next.ToXml()==context.Document.ToXml()) return;
             Commit(PlanChange(context,next));
@@ -64,10 +64,12 @@ namespace PptGcs.AddIn
         private EditPlan PlanAdd(ConstraintKind kind,double? value,double? second)
         {
             LayoutContext context=ReadCurrent();
+            if((bool)((dynamic)context.Window).Selection.HasChildShapeRange)
+                throw new InvalidOperationException("请先退出组合内部编辑，并选中组合整体建立约束。");
             var selected=SelectedShapes(context.Window);
             int minimum=LayoutConstraint.GetMinimumShapeCount(kind), maximum=LayoutConstraint.GetMaximumShapeCount(kind);
             if(selected.Count<minimum || (maximum>0 && selected.Count>maximum))
-                throw new InvalidOperationException(maximum==minimum ? "此约束需要选中 "+minimum+" 个矩形。" : "请选中至少 "+minimum+" 个矩形。");
+                throw new InvalidOperationException(maximum==minimum ? "此约束需要选中 "+minimum+" 个对象。" : "请选中至少 "+minimum+" 个对象。");
             foreach(object shape in selected) PowerPointLayout.ValidateShape(shape);
             if(ConstraintCatalog.IsHorizontalGap(kind)) selected=selected.OrderBy(s=>(double)((dynamic)s).Left).ToList();
             if(ConstraintCatalog.IsVerticalGap(kind)) selected=selected.OrderBy(s=>(double)((dynamic)s).Top).ToList();
@@ -179,7 +181,7 @@ namespace PptGcs.AddIn
                 object shape=(object)slide.Shapes[i];
                 string id=PowerPointLayout.ReadId(shape);
                 if(id==null || !IsSupported(shape)) continue;
-                if(context.Shapes.ContainsKey(id)) throw new InvalidOperationException("矩形编号重复，无法确定约束对象。");
+                if(context.Shapes.ContainsKey(id)) throw new InvalidOperationException("对象编号重复，无法确定约束对象。");
                 context.Shapes.Add(id,shape); context.Geometry.Add(PowerPointLayout.Geometry(shape,id));
             }
             return context;
@@ -201,6 +203,7 @@ namespace PptGcs.AddIn
                 dynamic shape=slide.Shapes[i]; string id=PowerPointLayout.ReadId((object)shape);
                 string uiKey=UiKey(context.SlideId,(int)shape.Id);
                 model.Objects.Add(new ConstraintPaneObject {Id=uiKey,Name=(string)shape.Name,Selected=selectedNative.Contains((int)shape.Id),
+                    UnsupportedReason=ShapeCapabilities.UnsupportedReason((object)shape),
                     RelationCount=id==null?0:relations.Count(r=>r.ShapeIds.Contains(id))});
                 if(id!=null) {names[id]=(string)shape.Name;uiKeys[id]=uiKey;}
             }
@@ -242,11 +245,12 @@ namespace PptGcs.AddIn
             dynamic selection=((dynamic)windowObject).Selection;
             var result=new List<object>();
             if((int)selection.Type!=2 && (int)selection.Type!=3) return result;
+            if((bool)selection.HasChildShapeRange) return result;
             for(int i=1;i<=(int)selection.ShapeRange.Count;i++) result.Add((object)selection.ShapeRange[i]);
             return result;
         }
         private static bool IsSupported(object shape)
-        { dynamic item=shape;return (int)item.Type==1 && (int)item.AutoShapeType==1 && Math.Abs((double)item.Rotation)<0.01; }
+        { return ShapeCapabilities.IsSupported(shape); }
         private static ConstraintKind ParseKind(string value)
         {
             ConstraintKind kind;

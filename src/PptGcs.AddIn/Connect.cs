@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -22,6 +22,7 @@ namespace PptGcs.AddIn
         private ShapeIdentityManager identities;
         private ConstraintCommands commands;
         private RadialMenuController radial;
+        private OfficeIconProvider officeIcons;
         private ICTPFactory paneFactory;
         private readonly Dictionary<long,PaneInstance> panes = new Dictionary<long,PaneInstance>();
         private bool selectingFromPane;
@@ -46,12 +47,13 @@ namespace PptGcs.AddIn
             app = application;
             ((dynamic)addIn).Object = this;
             identities = new ShapeIdentityManager();
+            officeIcons = new OfficeIconProvider(application, (id,error)=>Log("office-icon-error",json.Serialize(new { imageMso=id,error })));
             commands = new ConstraintCommands(application, NormalizeIdentities, Log);
             controller = new ConstrainedDragController(application, Log, NormalizeActiveIdentities);
             radial = new RadialMenuController(commands.BuildModel,commands.Preview,
                 kind=>ExecuteShared(()=>commands.Add(kind,null,null)),
                 more=> {var pane=EnsurePane();pane.Pane.Visible=true;if(more)pane.Control.ShowEditor();},
-                ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log);
+                ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
             controller.AlternateMouseInput=radial.HandleMouse;
             controller.AlternateKeyboardInput=radial.HandleKeyboard;
             controller.AlternateInputActive=()=>radial!=null && radial.IsOpen;
@@ -65,7 +67,7 @@ namespace PptGcs.AddIn
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.3.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = "0.4.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -85,6 +87,7 @@ namespace PptGcs.AddIn
             if(radial!=null){radial.Dispose();radial=null;}
             foreach(var pane in panes.Values) pane.Dispose();
             panes.Clear(); paneFactory = null;
+            if(officeIcons!=null){officeIcons.Dispose();officeIcons=null;}
             if (app != null)
             {
                 if (selectionChanged != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2001, selectionChanged);
@@ -100,19 +103,19 @@ namespace PptGcs.AddIn
             return @"<customUI xmlns=""http://schemas.microsoft.com/office/2009/07/customui""><ribbon><tabs>
 <tab id=""PptGcsTab"" label=""PPT GCS"">
 <group id=""Alignment"" label=""位置约束"">
-<button id=""SameX"" label=""同 X（左边对齐）"" onAction=""LinkSameX""/>
-<button id=""SameY"" label=""同 Y（顶部对齐）"" onAction=""LinkSameY""/>
+<button id=""SameX"" imageMso=""ObjectsAlignLeftSmart"" label=""同 X（左边对齐）"" onAction=""LinkSameX""/>
+<button id=""SameY"" imageMso=""ObjectsAlignTopSmart"" label=""同 Y（顶部对齐）"" onAction=""LinkSameY""/>
 </group><group id=""Dimensions"" label=""尺寸约束"">
-<button id=""SameWidth"" label=""同宽"" onAction=""LinkSameWidth""/>
-<button id=""SameHeight"" label=""同高"" onAction=""LinkSameHeight""/>
+<button id=""SameWidth"" imageMso=""TableColumnsDistribute"" label=""同宽"" onAction=""LinkSameWidth""/>
+<button id=""SameHeight"" imageMso=""TableRowsDistribute"" label=""同高"" onAction=""LinkSameHeight""/>
 </group><group id=""Spacing"" label=""等间距（至少三个）"">
-<button id=""EqualHorizontalGap"" label=""水平等间距"" onAction=""LinkHorizontalGap""/>
-<button id=""EqualVerticalGap"" label=""垂直等间距"" onAction=""LinkVerticalGap""/>
+<button id=""EqualHorizontalGap"" imageMso=""AlignDistributeHorizontally"" label=""水平等间距"" onAction=""LinkHorizontalGap""/>
+<button id=""EqualVerticalGap"" imageMso=""AlignDistributeVertically"" label=""垂直等间距"" onAction=""LinkVerticalGap""/>
 </group><group id=""Manage"" label=""管理"">
-<button id=""Remove"" label=""移除选中对象的约束"" onAction=""UnlinkSelected""/>
-<button id=""Demo"" label=""新建六组演示"" onAction=""CreateDemo""/>
-<button id=""ConstraintsPane"" label=""对象与约束"" onAction=""ShowConstraintPane""/>
-<button id=""Status"" label=""状态"" onAction=""ShowStatus""/>
+<button id=""Remove"" imageMso=""Clear"" label=""移除选中对象的约束"" onAction=""UnlinkSelected""/>
+<button id=""Demo"" imageMso=""SlideNew"" label=""新建六组演示"" onAction=""CreateDemo""/>
+<button id=""ConstraintsPane"" imageMso=""SelectionPane"" label=""对象与约束"" onAction=""ShowConstraintPane""/>
+<button id=""Status"" imageMso=""FileProperties"" label=""状态"" onAction=""ShowStatus""/>
 </group></tab></tabs></ribbon></customUI>";
         }
         public void LinkSameX(object control) { LinkSelection(ConstraintKind.SameX); }
@@ -232,13 +235,14 @@ namespace PptGcs.AddIn
             return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.3.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v0.4.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 
         public string GetConstraintXml() { return PowerPointLayout.ReadDocument((object)app.ActivePresentation).ToXml(); }
         public string GetPaneState() { return json.Serialize(commands.BuildModel()); }
         public string GetRadialState() { return radial.GetState(); }
+        public string GetOfficeIconDiagnostics() { return json.Serialize(officeIcons.Diagnostics()); }
         public string AddConstraintCommand(string kind,string parameters)
         {
             string id=null;var values=ReadParameters(parameters);
@@ -279,6 +283,7 @@ namespace PptGcs.AddIn
             {
                 CustomTaskPane pane=paneFactory.CreateCTP("PptGcs.ConstraintPaneHost","对象与约束",(object)window);
                 var ui=new ConstraintPaneControl();
+                ui.SetIcons(officeIcons.Get);
                 instance=new PaneInstance {Pane=pane,Control=ui,Window=(object)window,Presentation=(object)window.Presentation};
                 ui.Bind(new ConstraintPaneActions {
                     Add=(kind,value,second)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Add(kind,value,second))),

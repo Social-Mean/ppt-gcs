@@ -16,7 +16,7 @@ $projectPath = Join-Path $projectRoot 'src\PptGcs.AddIn\PptGcs.AddIn.csproj'
 & $msbuildPath $projectPath /restore /m /nologo /verbosity:minimal "/p:Configuration=$Configuration" "/p:OutDir=$outputDirectory\" "/p:RestorePackagesPath=$packageDirectory"
 if ($LASTEXITCODE -ne 0) { throw "Build failed with exit code $LASTEXITCODE." }
 
-foreach ($testName in @('CoreTests', 'IdentityTests', 'NativeConstraintStoreTests', 'PaneTests', 'RadialTests')) {
+foreach ($testName in @('CoreTests', 'IdentityTests', 'NativeConstraintStoreTests', 'PaneTests', 'RadialTests', 'ShapeSupportTests', 'OfficeIconTests')) {
     $testPath = Join-Path $projectRoot "tests\$testName.cs"
     $referenceDirectory = Join-Path $packageDirectory 'microsoft.netframework.referenceassemblies.net48\1.0.3\build\.NETFramework\v4.8'
     $referenceNames = @('mscorlib', 'System', 'System.Core', 'System.Xml', 'System.Xml.Linq', 'System.Drawing', 'System.Windows.Forms', 'System.Web.Extensions')

@@ -1,0 +1,943 @@
+﻿{
+    "Utc":  "2026-11-16T08:37:39.2564259Z",
+    "ProcessId":  [
+                      50604
+                  ],
+    "State":  {
+                  "PresentationTags":  [
+                                           {
+                                               "Name":  "PPTGCS_CONSTRAINTS",
+                                               "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2237373744333431452D313232362D343641392D383934312D3943364446453736333735362220736C69646549643D2232353622206B696E643D2253616D6559223E3C73686170652069643D2244353232314637342D443034422D344332422D424244312D31424241343735364246314422202F3E3C73686170652069643D2236414645383239452D354544452D344642302D394541382D30363533423246363432433222202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2246354232423937342D443745312D343342392D414533442D4136453337304542443731382220736C69646549643D2232353622206B696E643D2253616D655769647468223E3C73686170652069643D2244353232314637342D443034422D344332422D424244312D31424241343735364246314422202F3E3C73686170652069643D2236414645383239452D354544452D344642302D394541382D30363533423246363432433222202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_DOCUMENT",
+                                               "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_TEST",
+                                               "Value":  "V3"
+                                           }
+                                       ],
+                  "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"777D341E-1226-46A9-8941-9C6DFE763756\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"F5B2B974-D7E1-43B9-AE3D-A6E370EBD718\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                  "Slides":  [
+                                 {
+                                     "Id":  256,
+                                     "Name":  "Ellipse",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Ellipse_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  100,
+                                                        "Top":  223.604645,
+                                                        "Width":  198.604645,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/256/2"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Ellipse_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  223.604645,
+                                                        "Width":  198.604645,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/256/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  257,
+                                     "Name":  "RoundedRectangle",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_RoundedRectangle_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  5,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_RoundedRectangle_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  258,
+                                     "Name":  "Triangle",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Triangle_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  7,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Triangle_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  259,
+                                     "Name":  "Diamond",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Diamond_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  4,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Diamond_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  260,
+                                     "Name":  "RightArrow",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_RightArrow_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  33,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_RightArrow_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  261,
+                                     "Name":  "TextBox",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_TextBox_A",
+                                                        "Type":  17,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  50.8922043,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "Text box sizing test",
+                                                                     "AutoSize":  1,
+                                                                     "AutoSize2":  1
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_TextBox_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  262,
+                                     "Name":  "Picture",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Picture_A",
+                                                        "Type":  13,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_Picture_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  263,
+                                     "Name":  "LinkedPicture",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_LinkedPicture_A",
+                                                        "Type":  11,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_LinkedPicture_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  264,
+                                     "Name":  "Graphic",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Graphic_A",
+                                                        "Type":  28,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_Graphic_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  265,
+                                     "Name":  "Freeform",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Freeform_A",
+                                                        "Type":  5,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150.000076,
+                                                        "Height":  100.000076,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Freeform_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  266,
+                                     "Name":  "Group",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_Group_A",
+                                                        "Type":  6,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  180,
+                                                        "Height":  80,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+                                                                         {
+                                                                             "NativeId":  2,
+                                                                             "Name":  "Case_Group_A_ellipse",
+                                                                             "Type":  1,
+                                                                             "AutoShapeType":  9,
+                                                                             "Left":  100,
+                                                                             "Top":  120,
+                                                                             "Width":  80,
+                                                                             "Height":  80,
+                                                                             "Rotation":  0,
+                                                                             "LockAspectRatio":  0,
+                                                                             "Tags":  [
+
+                                                                                      ],
+                                                                             "Text":  {
+                                                                                          "Text":  "",
+                                                                                          "AutoSize":  0,
+                                                                                          "AutoSize2":  0
+                                                                                      },
+                                                                             "Children":  [
+
+                                                                                          ]
+                                                                         },
+                                                                         {
+                                                                             "NativeId":  3,
+                                                                             "Name":  "Case_Group_A_text",
+                                                                             "Type":  17,
+                                                                             "AutoShapeType":  null,
+                                                                             "Left":  190,
+                                                                             "Top":  145,
+                                                                             "Width":  90,
+                                                                             "Height":  50.8922043,
+                                                                             "Rotation":  0,
+                                                                             "LockAspectRatio":  0,
+                                                                             "Tags":  [
+
+                                                                                      ],
+                                                                             "Text":  {
+                                                                                          "Text":  "Grouped text",
+                                                                                          "AutoSize":  1,
+                                                                                          "AutoSize2":  1
+                                                                                      },
+                                                                             "Children":  [
+
+                                                                                          ]
+                                                                         }
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  5,
+                                                        "Name":  "Case_Group_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  267,
+                                     "Name":  "Unsupported",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Unsupported_Peer",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  1,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  120,
+                                                        "Height":  80,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Unsupported_Rotated",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  400,
+                                                        "Top":  120,
+                                                        "Width":  130,
+                                                        "Height":  90,
+                                                        "Rotation":  20,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Unsupported_Line",
+                                                        "Type":  9,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  350,
+                                                        "Width":  400,
+                                                        "Height":  0,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  5,
+                                                        "Name":  "Unsupported_Table",
+                                                        "Type":  19,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  600,
+                                                        "Top":  300,
+                                                        "Width":  180,
+                                                        "Height":  120,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 }
+                             ],
+                  "Snapshot":  {
+                                   "presentation":  "D:\\code\\ppt-gcs\\artifacts\\shape-support\\run-20261116T083737058\\shapes.pptx",
+                                   "storage":  "presentation-tags",
+                                   "constraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"777D341E-1226-46A9-8941-9C6DFE763756\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"F5B2B974-D7E1-43B9-AE3D-A6E370EBD718\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                                   "slides":  [
+                                                  {
+                                                      "slideId":  256,
+                                                      "name":  "Ellipse",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D",
+                                                                           "Name":  "Case_Ellipse_A",
+                                                                           "Left":  100,
+                                                                           "Top":  223.60464477539063,
+                                                                           "Width":  198.60464477539063,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2",
+                                                                           "Name":  "Case_Ellipse_B",
+                                                                           "Left":  500,
+                                                                           "Top":  223.60464477539063,
+                                                                           "Width":  198.60464477539063,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "777D341E-1226-46A9-8941-9C6DFE763756",
+                                                                              "SlideId":  256,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D",
+                                                                                               "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "F5B2B974-D7E1-43B9-AE3D-A6E370EBD718",
+                                                                              "SlideId":  256,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D",
+                                                                                               "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  257,
+                                                      "name":  "RoundedRectangle",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  258,
+                                                      "name":  "Triangle",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  259,
+                                                      "name":  "Diamond",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  260,
+                                                      "name":  "RightArrow",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  261,
+                                                      "name":  "TextBox",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  262,
+                                                      "name":  "Picture",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  263,
+                                                      "name":  "LinkedPicture",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  264,
+                                                      "name":  "Graphic",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  265,
+                                                      "name":  "Freeform",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  266,
+                                                      "name":  "Group",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  267,
+                                                      "name":  "Unsupported",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  }
+                                              ]
+                               }
+              }
+}

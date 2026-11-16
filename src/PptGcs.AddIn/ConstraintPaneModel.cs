@@ -19,6 +19,7 @@ namespace PptGcs.AddIn
         public string Name { get; set; }
         public bool Selected { get; set; }
         public int RelationCount { get; set; }
+        public string UnsupportedReason { get; set; }
     }
 
     public sealed class ConstraintPaneRelation

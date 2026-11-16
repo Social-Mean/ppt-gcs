@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
@@ -29,6 +29,8 @@ namespace PptGcs.AddIn
         private readonly NumericUpDown secondBox = new NumericUpDown();
         private readonly Button applyButton = new Button();
         private readonly ToolTip tips = new ToolTip();
+        private readonly ImageList relationImages = new ImageList { ColorDepth=ColorDepth.Depth32Bit };
+        private readonly Dictionary<string,Image> iconImages = new Dictionary<string,Image>();
         private ConstraintPaneActions actions;
         private ConstraintPaneModel model = new ConstraintPaneModel();
         private bool rendering;
@@ -86,7 +88,8 @@ namespace PptGcs.AddIn
 
             content.Controls.Add(SectionLabel("约束 · 点击可定位参与对象"));
             ConfigureList(relations, false, 186, "对象之间的约束");
-            relations.Columns.Add("关系", 100);
+            relations.Columns.Add("关系", 116);
+            relations.SmallImageList=relationImages;
             relations.Columns.Add("参与对象", 142);
             relations.Columns.Add("状态", 60);
             relations.SelectedIndexChanged += RelationSelected;
@@ -114,6 +117,24 @@ namespace PptGcs.AddIn
             content.Controls.Add(messageLabel);
             Resize += (sender, args) => ResizeColumns();
             RefreshLists();
+        }
+
+        // Called once when the Office pane is created, never from a paint event.
+        public void SetIcons(Func<string,int,Image> getIcon)
+        {
+            if(getIcon==null)throw new ArgumentNullException("getIcon");
+            int size=Math.Max(16,Math.Min(128,(int)Math.Round(16*DeviceDpi/96d)));
+            relationImages.Images.Clear();iconImages.Clear();
+            relationImages.ImageSize=new Size(size,size);
+            foreach(string kind in OfficeIconProvider.Commands)
+            {
+                Image image=getIcon(kind,size);
+                if(image==null)continue;
+                iconImages.Add(kind,image);
+                relationImages.Images.Add(kind,image);
+            }
+            optionBox.ItemHeight=Math.Max(Font.Height+4,size+4);
+            listSignature=null;RefreshLists();optionBox.Invalidate();
         }
 
         public void Bind(ConstraintPaneActions callbacks)
@@ -181,6 +202,8 @@ namespace PptGcs.AddIn
             fields.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             fields.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             optionBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            optionBox.DrawMode=DrawMode.OwnerDrawFixed;
+            optionBox.DrawItem+=DrawOption;
             optionBox.Dock = DockStyle.Fill;
             optionBox.AccessibleName = "约束类型";
             optionBox.SelectedIndexChanged += (sender, args) => { if (!rendering) LoadEditorValues(null); };
@@ -209,7 +232,7 @@ namespace PptGcs.AddIn
             bool filtered = scopeBox.SelectedIndex == 1;
             var shownObjects = model.Objects.Where(item => !filtered || item.Selected).ToList();
             var shownRelations = model.Relations.Where(item => !filtered || item.MemberIds.Any(selected.Contains)).ToList();
-            string signature = scopeBox.SelectedIndex + "|" + String.Join(";", shownObjects.Select(item => item.Id + ":" + item.Name + ":" + item.RelationCount + ":" + item.Selected)) + "|" +
+            string signature = scopeBox.SelectedIndex + "|" + String.Join(";", shownObjects.Select(item => item.Id + ":" + item.Name + ":" + item.RelationCount + ":" + item.Selected + ":" + item.UnsupportedReason)) + "|" +
                 String.Join(";", shownRelations.Select(item => item.Id + ":" + RelationTitle(item) + ":" + String.Join("、", item.MemberNames) + ":" + item.Enabled + ":" + item.Status));
             if (signature != listSignature)
             {
@@ -221,13 +244,15 @@ namespace PptGcs.AddIn
                     foreach (var item in shownObjects)
                     {
                         var row = new ListViewItem(item.Name ?? item.Id) { Tag = item, Selected = item.Selected };
+                        row.ToolTipText = item.UnsupportedReason ?? item.Name;
+                        if (item.UnsupportedReason != null) row.ForeColor = SystemColors.GrayText;
                         row.SubItems.Add(item.RelationCount.ToString(CultureInfo.InvariantCulture));
                         objects.Items.Add(row);
                     }
                     foreach (var item in shownRelations)
                     {
                         string members = String.Join(" → ", item.MemberNames);
-                        var row = new ListViewItem(RelationTitle(item)) { Tag = item, Selected = item.Id == selectedRelationId };
+                        var row = new ListViewItem(RelationTitle(item)) { Tag = item, Selected = item.Id == selectedRelationId, ImageKey=item.Kind };
                         row.SubItems.Add(members);
                         row.SubItems.Add(item.Enabled ? (item.Status ?? "已满足") : "已停用");
                         row.ToolTipText = RelationTitle(item) + Environment.NewLine + members + Environment.NewLine + (item.Status ?? String.Empty);
@@ -304,6 +329,24 @@ namespace PptGcs.AddIn
             if (valueBox.Visible) valueBox.Focus();
         }
 
+        private void DrawOption(object sender,DrawItemEventArgs args)
+        {
+            args.DrawBackground();
+            if(args.Index<0 || args.Index>=optionBox.Items.Count)return;
+            var option=(ConstraintPaneOption)optionBox.Items[args.Index];
+            Image image;
+            Rectangle text=args.Bounds;
+            text.X+=3;text.Width-=6;
+            if(iconImages.TryGetValue(option.Kind,out image))
+            {
+                args.Graphics.DrawImageUnscaled(image,text.X,text.Y+(text.Height-image.Height)/2);
+                text.X+=image.Width+5;text.Width-=image.Width+5;
+            }
+            TextRenderer.DrawText(args.Graphics,option.Label,args.Font,text,args.ForeColor,
+                TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
+            args.DrawFocusRectangle();
+        }
+
         private void PopulateOptions(string kind)
         {
             rendering = true;
@@ -343,12 +386,14 @@ namespace PptGcs.AddIn
         {
             var option = EditorOption();
             int count = model.Objects.Count(item => item.Selected);
-            bool eligible = option != null && count >= option.MinimumMembers && (option.MaximumMembers <= 0 || count <= option.MaximumMembers);
+            string unsupported = model.Objects.Where(item => item.Selected).Select(item => item.UnsupportedReason).FirstOrDefault(reason => reason != null);
+            bool eligible = unsupported == null && option != null && count >= option.MinimumMembers && (option.MaximumMembers <= 0 || count <= option.MaximumMembers);
             if (option == null) editorHint.Text = "请先选择约束类型。";
             else
             {
                 string required = option.MaximumMembers == option.MinimumMembers ? option.MinimumMembers.ToString() : "至少 " + option.MinimumMembers;
                 editorHint.Text = (option.Description ?? String.Empty) + (editingId == null ? Environment.NewLine + "需要 " + required + " 个对象，当前已选 " + count + " 个。" : String.Empty);
+                if (editingId == null && unsupported != null) editorHint.Text = unsupported;
             }
             applyButton.Enabled = actions != null && option != null && (editingId != null || eligible);
         }
@@ -445,6 +490,7 @@ namespace PptGcs.AddIn
                 selectionQueued = false;
                 actions = null;
                 tips.Dispose();
+                relations.SmallImageList=null;relationImages.Dispose();iconImages.Clear();
                 if (pageLabel.Font != Font) pageLabel.Font.Dispose();
             }
             base.Dispose(disposing);

@@ -1,0 +1,1307 @@
+﻿{
+    "Utc":  "2026-11-16T08:38:00.2052538Z",
+    "ProcessId":  [
+                      50604
+                  ],
+    "State":  {
+                  "PresentationTags":  [
+                                           {
+                                               "Name":  "PPTGCS_CONSTRAINTS",
+                                               "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2237373744333431452D313232362D343641392D383934312D3943364446453736333735362220736C69646549643D2232353622206B696E643D2253616D6559223E3C73686170652069643D2244353232314637342D443034422D344332422D424244312D31424241343735364246314422202F3E3C73686170652069643D2236414645383239452D354544452D344642302D394541382D30363533423246363432433222202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2246354232423937342D443745312D343342392D414533442D4136453337304542443731382220736C69646549643D2232353622206B696E643D2253616D655769647468223E3C73686170652069643D2244353232314637342D443034422D344332422D424244312D31424241343735364246314422202F3E3C73686170652069643D2236414645383239452D354544452D344642302D394541382D30363533423246363432433222202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2232324445364644412D323443362D343439412D424135412D3443344643454434463338452220736C69646549643D2232353722206B696E643D2253616D6559223E3C73686170652069643D2233343934353034312D333942322D343343452D383533322D35304432303531364638463722202F3E3C73686170652069643D2237333138343633462D354639462D343734392D423241392D43333439383945383442413222202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2242453343353742432D343733312D343735362D394243382D3641333045313045423335322220736C69646549643D2232353722206B696E643D2253616D655769647468223E3C73686170652069643D2233343934353034312D333942322D343343452D383533322D35304432303531364638463722202F3E3C73686170652069643D2237333138343633462D354639462D343734392D423241392D43333439383945383442413222202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2242443931314639332D433634372D343438412D423644332D4334453337383531324337382220736C69646549643D2232353822206B696E643D2253616D6559223E3C73686170652069643D2237354635394445382D444334392D343942462D424239392D45433230363541303945353022202F3E3C73686170652069643D2230423035333137422D343437382D344342432D394236322D42423945444335303244314122202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2242324442443141442D423838392D343035422D384243302D3244423539313138434542452220736C69646549643D2232353822206B696E643D2253616D655769647468223E3C73686170652069643D2237354635394445382D444334392D343942462D424239392D45433230363541303945353022202F3E3C73686170652069643D2230423035333137422D343437382D344342432D394236322D42423945444335303244314122202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2230383933323236352D344232342D344439352D423543382D4436453941433745343838382220736C69646549643D2232353922206B696E643D2253616D6559223E3C73686170652069643D2230333841333937342D323534362D343845392D413732322D37453137313733353232394222202F3E3C73686170652069643D2242354437393745312D394538302D343231412D424339442D36443037464532394343334322202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2238373643413541422D313746372D343936432D423446462D3245443646303233463732442220736C69646549643D2232353922206B696E643D2253616D655769647468223E3C73686170652069643D2230333841333937342D323534362D343845392D413732322D37453137313733353232394222202F3E3C73686170652069643D2242354437393745312D394538302D343231412D424339442D36443037464532394343334322202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2235463339363243432D383230452D343330392D423345452D4644393038393243363534362220736C69646549643D2232363022206B696E643D2253616D6559223E3C73686170652069643D2230353744323631442D373230352D344332352D384535432D33423438353845413341304322202F3E3C73686170652069643D2245464143304242442D394143372D343034462D393834412D44373737364146334645313322202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2230394545354335332D344145342D343339392D414242332D3637343739463141314332372220736C69646549643D2232363022206B696E643D2253616D655769647468223E3C73686170652069643D2230353744323631442D373230352D344332352D384535432D33423438353845413341304322202F3E3C73686170652069643D2245464143304242442D394143372D343034462D393834412D44373737364146334645313322202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2232443543354132362D334531462D344245422D413233312D4335353730384333304446412220736C69646549643D2232363122206B696E643D2253616D6559223E3C73686170652069643D2238444341453538382D434437382D343732342D413542302D46354545453942423444353522202F3E3C73686170652069643D2244444643343131392D433341302D343836432D383238462D33313436434433364439463022202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2237314336413432382D384643352D343331452D394541432D3837314239343639424344342220736C69646549643D2232363122206B696E643D2253616D655769647468223E3C73686170652069643D2238444341453538382D434437382D343732342D413542302D46354545453942423444353522202F3E3C73686170652069643D2244444643343131392D433341302D343836432D383238462D33313436434433364439463022202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2241454237454531372D453136432D343246392D413143452D3439383939373136313239382220736C69646549643D2232363222206B696E643D2253616D6559223E3C73686170652069643D2234443635414432462D413336362D344531382D394341332D44344535374645353141424522202F3E3C73686170652069643D2234364142343342352D393432342D344336302D393946312D32454345463735313841364322202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2232424245454434382D443141372D343036462D394139442D4438374235373138303046372220736C69646549643D2232363222206B696E643D2253616D655769647468223E3C73686170652069643D2234443635414432462D413336362D344531382D394341332D44344535374645353141424522202F3E3C73686170652069643D2234364142343342352D393432342D344336302D393946312D32454345463735313841364322202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2244303042334132442D303431412D344142302D413239432D4239463230413446324139452220736C69646549643D2232363322206B696E643D2253616D6559223E3C73686170652069643D2244453731413145462D344536312D343937432D393931442D38383830443936324133333722202F3E3C73686170652069643D2236383037374233322D334533382D343941362D384532302D35384531453538344142443122202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2233333735323444382D343144422D343133362D394544352D3143433038333143393133462220736C69646549643D2232363322206B696E643D2253616D655769647468223E3C73686170652069643D2244453731413145462D344536312D343937432D393931442D38383830443936324133333722202F3E3C73686170652069643D2236383037374233322D334533382D343941362D384532302D35384531453538344142443122202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_DOCUMENT",
+                                               "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_TEST",
+                                               "Value":  "V3"
+                                           }
+                                       ],
+                  "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"777D341E-1226-46A9-8941-9C6DFE763756\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"F5B2B974-D7E1-43B9-AE3D-A6E370EBD718\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"22DE6FDA-24C6-449A-BA5A-4C4FCED4F38E\" slideId=\"257\" kind=\"SameY\"\u003e\u003cshape id=\"34945041-39B2-43CE-8532-50D20516F8F7\" /\u003e\u003cshape id=\"7318463F-5F9F-4749-B2A9-C34989E84BA2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"BE3C57BC-4731-4756-9BC8-6A30E10EB352\" slideId=\"257\" kind=\"SameWidth\"\u003e\u003cshape id=\"34945041-39B2-43CE-8532-50D20516F8F7\" /\u003e\u003cshape id=\"7318463F-5F9F-4749-B2A9-C34989E84BA2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"BD911F93-C647-448A-B6D3-C4E378512C78\" slideId=\"258\" kind=\"SameY\"\u003e\u003cshape id=\"75F59DE8-DC49-49BF-BB99-EC2065A09E50\" /\u003e\u003cshape id=\"0B05317B-4478-4CBC-9B62-BB9EDC502D1A\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"B2DBD1AD-B889-405B-8BC0-2DB59118CEBE\" slideId=\"258\" kind=\"SameWidth\"\u003e\u003cshape id=\"75F59DE8-DC49-49BF-BB99-EC2065A09E50\" /\u003e\u003cshape id=\"0B05317B-4478-4CBC-9B62-BB9EDC502D1A\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"08932265-4B24-4D95-B5C8-D6E9AC7E4888\" slideId=\"259\" kind=\"SameY\"\u003e\u003cshape id=\"038A3974-2546-48E9-A722-7E171735229B\" /\u003e\u003cshape id=\"B5D797E1-9E80-421A-BC9D-6D07FE29CC3C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"876CA5AB-17F7-496C-B4FF-2ED6F023F72D\" slideId=\"259\" kind=\"SameWidth\"\u003e\u003cshape id=\"038A3974-2546-48E9-A722-7E171735229B\" /\u003e\u003cshape id=\"B5D797E1-9E80-421A-BC9D-6D07FE29CC3C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"5F3962CC-820E-4309-B3EE-FD90892C6546\" slideId=\"260\" kind=\"SameY\"\u003e\u003cshape id=\"057D261D-7205-4C25-8E5C-3B4858EA3A0C\" /\u003e\u003cshape id=\"EFAC0BBD-9AC7-404F-984A-D7776AF3FE13\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"09EE5C53-4AE4-4399-ABB3-67479F1A1C27\" slideId=\"260\" kind=\"SameWidth\"\u003e\u003cshape id=\"057D261D-7205-4C25-8E5C-3B4858EA3A0C\" /\u003e\u003cshape id=\"EFAC0BBD-9AC7-404F-984A-D7776AF3FE13\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"2D5C5A26-3E1F-4BEB-A231-C55708C30DFA\" slideId=\"261\" kind=\"SameY\"\u003e\u003cshape id=\"8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55\" /\u003e\u003cshape id=\"DDFC4119-C3A0-486C-828F-3146CD36D9F0\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"71C6A428-8FC5-431E-9EAC-871B9469BCD4\" slideId=\"261\" kind=\"SameWidth\"\u003e\u003cshape id=\"8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55\" /\u003e\u003cshape id=\"DDFC4119-C3A0-486C-828F-3146CD36D9F0\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"AEB7EE17-E16C-42F9-A1CE-498997161298\" slideId=\"262\" kind=\"SameY\"\u003e\u003cshape id=\"4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE\" /\u003e\u003cshape id=\"46AB43B5-9424-4C60-99F1-2ECEF7518A6C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"2BBEED48-D1A7-406F-9A9D-D87B571800F7\" slideId=\"262\" kind=\"SameWidth\"\u003e\u003cshape id=\"4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE\" /\u003e\u003cshape id=\"46AB43B5-9424-4C60-99F1-2ECEF7518A6C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"D00B3A2D-041A-4AB0-A29C-B9F20A4F2A9E\" slideId=\"263\" kind=\"SameY\"\u003e\u003cshape id=\"DE71A1EF-4E61-497C-991D-8880D962A337\" /\u003e\u003cshape id=\"68077B32-3E38-49A6-8E20-58E1E584ABD1\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"337524D8-41DB-4136-9ED5-1CC0831C913F\" slideId=\"263\" kind=\"SameWidth\"\u003e\u003cshape id=\"DE71A1EF-4E61-497C-991D-8880D962A337\" /\u003e\u003cshape id=\"68077B32-3E38-49A6-8E20-58E1E584ABD1\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                  "Slides":  [
+                                 {
+                                     "Id":  256,
+                                     "Name":  "Ellipse",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Ellipse_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/256/2"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Ellipse_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/256/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  257,
+                                     "Name":  "RoundedRectangle",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_RoundedRectangle_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  5,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "34945041-39B2-43CE-8532-50D20516F8F7"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/257/2"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_RoundedRectangle_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "7318463F-5F9F-4749-B2A9-C34989E84BA2"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/257/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  258,
+                                     "Name":  "Triangle",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Triangle_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  7,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "75F59DE8-DC49-49BF-BB99-EC2065A09E50"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/258/2"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Triangle_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "0B05317B-4478-4CBC-9B62-BB9EDC502D1A"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/258/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  259,
+                                     "Name":  "Diamond",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Diamond_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  4,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "038A3974-2546-48E9-A722-7E171735229B"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/259/2"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Diamond_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "B5D797E1-9E80-421A-BC9D-6D07FE29CC3C"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/259/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  260,
+                                     "Name":  "RightArrow",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_RightArrow_A",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  33,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "057D261D-7205-4C25-8E5C-3B4858EA3A0C"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/260/2"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_RightArrow_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "EFAC0BBD-9AC7-404F-984A-D7776AF3FE13"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/260/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  261,
+                                     "Name":  "TextBox",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_TextBox_A",
+                                                        "Type":  17,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  50.8922043,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/261/2"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "Text box sizing test",
+                                                                     "AutoSize":  1,
+                                                                     "AutoSize2":  1
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_TextBox_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "DDFC4119-C3A0-486C-828F-3146CD36D9F0"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/261/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  262,
+                                     "Name":  "Picture",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Picture_A",
+                                                        "Type":  13,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/262/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_Picture_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  180,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "46AB43B5-9424-4C60-99F1-2ECEF7518A6C"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/262/4"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  263,
+                                     "Name":  "LinkedPicture",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_LinkedPicture_A",
+                                                        "Type":  11,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  198.604645,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "DE71A1EF-4E61-497C-991D-8880D962A337"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/263/3"
+                                                                     }
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_LinkedPicture_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  205,
+                                                        "Width":  198.604645,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "68077B32-3E38-49A6-8E20-58E1E584ABD1"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "6E5C4FC5-6669-46C8-A197-EAF2C1BC9DD8/263/4"
+                                                                     }
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  264,
+                                     "Name":  "Graphic",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Graphic_A",
+                                                        "Type":  28,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_Graphic_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  265,
+                                     "Name":  "Freeform",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Freeform_A",
+                                                        "Type":  5,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  150.000076,
+                                                        "Height":  100.000076,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Freeform_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  266,
+                                     "Name":  "Group",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_Group_A",
+                                                        "Type":  6,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  180,
+                                                        "Height":  80,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+                                                                         {
+                                                                             "NativeId":  2,
+                                                                             "Name":  "Case_Group_A_ellipse",
+                                                                             "Type":  1,
+                                                                             "AutoShapeType":  9,
+                                                                             "Left":  100,
+                                                                             "Top":  120,
+                                                                             "Width":  80,
+                                                                             "Height":  80,
+                                                                             "Rotation":  0,
+                                                                             "LockAspectRatio":  0,
+                                                                             "Tags":  [
+
+                                                                                      ],
+                                                                             "Text":  {
+                                                                                          "Text":  "",
+                                                                                          "AutoSize":  0,
+                                                                                          "AutoSize2":  0
+                                                                                      },
+                                                                             "Children":  [
+
+                                                                                          ]
+                                                                         },
+                                                                         {
+                                                                             "NativeId":  3,
+                                                                             "Name":  "Case_Group_A_text",
+                                                                             "Type":  17,
+                                                                             "AutoShapeType":  null,
+                                                                             "Left":  190,
+                                                                             "Top":  145,
+                                                                             "Width":  90,
+                                                                             "Height":  50.8922043,
+                                                                             "Rotation":  0,
+                                                                             "LockAspectRatio":  0,
+                                                                             "Tags":  [
+
+                                                                                      ],
+                                                                             "Text":  {
+                                                                                          "Text":  "Grouped text",
+                                                                                          "AutoSize":  1,
+                                                                                          "AutoSize2":  1
+                                                                                      },
+                                                                             "Children":  [
+
+                                                                                          ]
+                                                                         }
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  5,
+                                                        "Name":  "Case_Group_B",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  500,
+                                                        "Top":  290,
+                                                        "Width":  210,
+                                                        "Height":  100,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  267,
+                                     "Name":  "Unsupported",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Unsupported_Peer",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  1,
+                                                        "Left":  100,
+                                                        "Top":  120,
+                                                        "Width":  120,
+                                                        "Height":  80,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Unsupported_Rotated",
+                                                        "Type":  1,
+                                                        "AutoShapeType":  9,
+                                                        "Left":  400,
+                                                        "Top":  120,
+                                                        "Width":  130,
+                                                        "Height":  90,
+                                                        "Rotation":  20,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  {
+                                                                     "Text":  "",
+                                                                     "AutoSize":  0,
+                                                                     "AutoSize2":  0
+                                                                 },
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Unsupported_Line",
+                                                        "Type":  9,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  100,
+                                                        "Top":  350,
+                                                        "Width":  400,
+                                                        "Height":  0,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    },
+                                                    {
+                                                        "NativeId":  5,
+                                                        "Name":  "Unsupported_Table",
+                                                        "Type":  19,
+                                                        "AutoShapeType":  null,
+                                                        "Left":  600,
+                                                        "Top":  300,
+                                                        "Width":  180,
+                                                        "Height":  120,
+                                                        "Rotation":  0,
+                                                        "LockAspectRatio":  0,
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Text":  null,
+                                                        "Children":  [
+
+                                                                     ]
+                                                    }
+                                                ]
+                                 }
+                             ],
+                  "Snapshot":  {
+                                   "presentation":  "D:\\code\\ppt-gcs\\artifacts\\shape-support\\run-20261116T083737058\\shapes.pptx",
+                                   "storage":  "presentation-tags",
+                                   "constraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"777D341E-1226-46A9-8941-9C6DFE763756\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"F5B2B974-D7E1-43B9-AE3D-A6E370EBD718\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D\" /\u003e\u003cshape id=\"6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"22DE6FDA-24C6-449A-BA5A-4C4FCED4F38E\" slideId=\"257\" kind=\"SameY\"\u003e\u003cshape id=\"34945041-39B2-43CE-8532-50D20516F8F7\" /\u003e\u003cshape id=\"7318463F-5F9F-4749-B2A9-C34989E84BA2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"BE3C57BC-4731-4756-9BC8-6A30E10EB352\" slideId=\"257\" kind=\"SameWidth\"\u003e\u003cshape id=\"34945041-39B2-43CE-8532-50D20516F8F7\" /\u003e\u003cshape id=\"7318463F-5F9F-4749-B2A9-C34989E84BA2\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"BD911F93-C647-448A-B6D3-C4E378512C78\" slideId=\"258\" kind=\"SameY\"\u003e\u003cshape id=\"75F59DE8-DC49-49BF-BB99-EC2065A09E50\" /\u003e\u003cshape id=\"0B05317B-4478-4CBC-9B62-BB9EDC502D1A\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"B2DBD1AD-B889-405B-8BC0-2DB59118CEBE\" slideId=\"258\" kind=\"SameWidth\"\u003e\u003cshape id=\"75F59DE8-DC49-49BF-BB99-EC2065A09E50\" /\u003e\u003cshape id=\"0B05317B-4478-4CBC-9B62-BB9EDC502D1A\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"08932265-4B24-4D95-B5C8-D6E9AC7E4888\" slideId=\"259\" kind=\"SameY\"\u003e\u003cshape id=\"038A3974-2546-48E9-A722-7E171735229B\" /\u003e\u003cshape id=\"B5D797E1-9E80-421A-BC9D-6D07FE29CC3C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"876CA5AB-17F7-496C-B4FF-2ED6F023F72D\" slideId=\"259\" kind=\"SameWidth\"\u003e\u003cshape id=\"038A3974-2546-48E9-A722-7E171735229B\" /\u003e\u003cshape id=\"B5D797E1-9E80-421A-BC9D-6D07FE29CC3C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"5F3962CC-820E-4309-B3EE-FD90892C6546\" slideId=\"260\" kind=\"SameY\"\u003e\u003cshape id=\"057D261D-7205-4C25-8E5C-3B4858EA3A0C\" /\u003e\u003cshape id=\"EFAC0BBD-9AC7-404F-984A-D7776AF3FE13\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"09EE5C53-4AE4-4399-ABB3-67479F1A1C27\" slideId=\"260\" kind=\"SameWidth\"\u003e\u003cshape id=\"057D261D-7205-4C25-8E5C-3B4858EA3A0C\" /\u003e\u003cshape id=\"EFAC0BBD-9AC7-404F-984A-D7776AF3FE13\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"2D5C5A26-3E1F-4BEB-A231-C55708C30DFA\" slideId=\"261\" kind=\"SameY\"\u003e\u003cshape id=\"8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55\" /\u003e\u003cshape id=\"DDFC4119-C3A0-486C-828F-3146CD36D9F0\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"71C6A428-8FC5-431E-9EAC-871B9469BCD4\" slideId=\"261\" kind=\"SameWidth\"\u003e\u003cshape id=\"8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55\" /\u003e\u003cshape id=\"DDFC4119-C3A0-486C-828F-3146CD36D9F0\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"AEB7EE17-E16C-42F9-A1CE-498997161298\" slideId=\"262\" kind=\"SameY\"\u003e\u003cshape id=\"4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE\" /\u003e\u003cshape id=\"46AB43B5-9424-4C60-99F1-2ECEF7518A6C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"2BBEED48-D1A7-406F-9A9D-D87B571800F7\" slideId=\"262\" kind=\"SameWidth\"\u003e\u003cshape id=\"4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE\" /\u003e\u003cshape id=\"46AB43B5-9424-4C60-99F1-2ECEF7518A6C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"D00B3A2D-041A-4AB0-A29C-B9F20A4F2A9E\" slideId=\"263\" kind=\"SameY\"\u003e\u003cshape id=\"DE71A1EF-4E61-497C-991D-8880D962A337\" /\u003e\u003cshape id=\"68077B32-3E38-49A6-8E20-58E1E584ABD1\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"337524D8-41DB-4136-9ED5-1CC0831C913F\" slideId=\"263\" kind=\"SameWidth\"\u003e\u003cshape id=\"DE71A1EF-4E61-497C-991D-8880D962A337\" /\u003e\u003cshape id=\"68077B32-3E38-49A6-8E20-58E1E584ABD1\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                                   "slides":  [
+                                                  {
+                                                      "slideId":  256,
+                                                      "name":  "Ellipse",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D",
+                                                                           "Name":  "Case_Ellipse_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2",
+                                                                           "Name":  "Case_Ellipse_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "777D341E-1226-46A9-8941-9C6DFE763756",
+                                                                              "SlideId":  256,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D",
+                                                                                               "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "F5B2B974-D7E1-43B9-AE3D-A6E370EBD718",
+                                                                              "SlideId":  256,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "D5221F74-D04B-4C2B-BBD1-1BBA4756BF1D",
+                                                                                               "6AFE829E-5EDE-4FB0-9EA8-0653B2F642C2"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  257,
+                                                      "name":  "RoundedRectangle",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "34945041-39B2-43CE-8532-50D20516F8F7",
+                                                                           "Name":  "Case_RoundedRectangle_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "7318463F-5F9F-4749-B2A9-C34989E84BA2",
+                                                                           "Name":  "Case_RoundedRectangle_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "22DE6FDA-24C6-449A-BA5A-4C4FCED4F38E",
+                                                                              "SlideId":  257,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "34945041-39B2-43CE-8532-50D20516F8F7",
+                                                                                               "7318463F-5F9F-4749-B2A9-C34989E84BA2"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "BE3C57BC-4731-4756-9BC8-6A30E10EB352",
+                                                                              "SlideId":  257,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "34945041-39B2-43CE-8532-50D20516F8F7",
+                                                                                               "7318463F-5F9F-4749-B2A9-C34989E84BA2"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  258,
+                                                      "name":  "Triangle",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "75F59DE8-DC49-49BF-BB99-EC2065A09E50",
+                                                                           "Name":  "Case_Triangle_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "0B05317B-4478-4CBC-9B62-BB9EDC502D1A",
+                                                                           "Name":  "Case_Triangle_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "BD911F93-C647-448A-B6D3-C4E378512C78",
+                                                                              "SlideId":  258,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "75F59DE8-DC49-49BF-BB99-EC2065A09E50",
+                                                                                               "0B05317B-4478-4CBC-9B62-BB9EDC502D1A"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "B2DBD1AD-B889-405B-8BC0-2DB59118CEBE",
+                                                                              "SlideId":  258,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "75F59DE8-DC49-49BF-BB99-EC2065A09E50",
+                                                                                               "0B05317B-4478-4CBC-9B62-BB9EDC502D1A"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  259,
+                                                      "name":  "Diamond",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "038A3974-2546-48E9-A722-7E171735229B",
+                                                                           "Name":  "Case_Diamond_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "B5D797E1-9E80-421A-BC9D-6D07FE29CC3C",
+                                                                           "Name":  "Case_Diamond_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "08932265-4B24-4D95-B5C8-D6E9AC7E4888",
+                                                                              "SlideId":  259,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "038A3974-2546-48E9-A722-7E171735229B",
+                                                                                               "B5D797E1-9E80-421A-BC9D-6D07FE29CC3C"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "876CA5AB-17F7-496C-B4FF-2ED6F023F72D",
+                                                                              "SlideId":  259,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "038A3974-2546-48E9-A722-7E171735229B",
+                                                                                               "B5D797E1-9E80-421A-BC9D-6D07FE29CC3C"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  260,
+                                                      "name":  "RightArrow",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "057D261D-7205-4C25-8E5C-3B4858EA3A0C",
+                                                                           "Name":  "Case_RightArrow_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "EFAC0BBD-9AC7-404F-984A-D7776AF3FE13",
+                                                                           "Name":  "Case_RightArrow_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "5F3962CC-820E-4309-B3EE-FD90892C6546",
+                                                                              "SlideId":  260,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "057D261D-7205-4C25-8E5C-3B4858EA3A0C",
+                                                                                               "EFAC0BBD-9AC7-404F-984A-D7776AF3FE13"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "09EE5C53-4AE4-4399-ABB3-67479F1A1C27",
+                                                                              "SlideId":  260,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "057D261D-7205-4C25-8E5C-3B4858EA3A0C",
+                                                                                               "EFAC0BBD-9AC7-404F-984A-D7776AF3FE13"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  261,
+                                                      "name":  "TextBox",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55",
+                                                                           "Name":  "Case_TextBox_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  50.892204284667969
+                                                                       },
+                                                                       {
+                                                                           "Id":  "DDFC4119-C3A0-486C-828F-3146CD36D9F0",
+                                                                           "Name":  "Case_TextBox_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "2D5C5A26-3E1F-4BEB-A231-C55708C30DFA",
+                                                                              "SlideId":  261,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55",
+                                                                                               "DDFC4119-C3A0-486C-828F-3146CD36D9F0"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "71C6A428-8FC5-431E-9EAC-871B9469BCD4",
+                                                                              "SlideId":  261,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "8DCAE588-CD78-4724-A5B0-F5EEE9BB4D55",
+                                                                                               "DDFC4119-C3A0-486C-828F-3146CD36D9F0"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  262,
+                                                      "name":  "Picture",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE",
+                                                                           "Name":  "Case_Picture_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "46AB43B5-9424-4C60-99F1-2ECEF7518A6C",
+                                                                           "Name":  "Case_Picture_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  180,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "AEB7EE17-E16C-42F9-A1CE-498997161298",
+                                                                              "SlideId":  262,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE",
+                                                                                               "46AB43B5-9424-4C60-99F1-2ECEF7518A6C"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "2BBEED48-D1A7-406F-9A9D-D87B571800F7",
+                                                                              "SlideId":  262,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "4D65AD2F-A366-4E18-9CA3-D4E57FE51ABE",
+                                                                                               "46AB43B5-9424-4C60-99F1-2ECEF7518A6C"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  263,
+                                                      "name":  "LinkedPicture",
+                                                      "kind":  "",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "DE71A1EF-4E61-497C-991D-8880D962A337",
+                                                                           "Name":  "Case_LinkedPicture_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  198.60464477539063,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "68077B32-3E38-49A6-8E20-58E1E584ABD1",
+                                                                           "Name":  "Case_LinkedPicture_B",
+                                                                           "Left":  500,
+                                                                           "Top":  205,
+                                                                           "Width":  198.60464477539063,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "D00B3A2D-041A-4AB0-A29C-B9F20A4F2A9E",
+                                                                              "SlideId":  263,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "DE71A1EF-4E61-497C-991D-8880D962A337",
+                                                                                               "68077B32-3E38-49A6-8E20-58E1E584ABD1"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          },
+                                                                          {
+                                                                              "Id":  "337524D8-41DB-4136-9ED5-1CC0831C913F",
+                                                                              "SlideId":  263,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "DE71A1EF-4E61-497C-991D-8880D962A337",
+                                                                                               "68077B32-3E38-49A6-8E20-58E1E584ABD1"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  264,
+                                                      "name":  "Graphic",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  265,
+                                                      "name":  "Freeform",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  266,
+                                                      "name":  "Group",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  267,
+                                                      "name":  "Unsupported",
+                                                      "kind":  "",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  }
+                                              ]
+                               }
+              }
+}

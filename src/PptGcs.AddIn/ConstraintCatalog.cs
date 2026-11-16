@@ -42,7 +42,7 @@ namespace PptGcs.AddIn
                     ? "按建立时的顺序保持指定边缘间距；负值表示重叠。"
                     : kind == ConstraintKind.Offset ? "成员顺序按选择范围排列，偏移为第二个对象减第一个对象。"
                     : kind == ConstraintKind.SymmetricVertical || kind == ConstraintKind.SymmetricHorizontal
-                    ? "两个矩形关于固定轴镜像，尺寸相等。" : "单位为磅 (pt)，宽高比为无单位比值。" };
+                    ? "两个对象的外接框关于固定轴对称，尺寸相等；内容方向不翻转。" : "单位为磅 (pt)，宽高比为无单位比值。" };
         }
 
         public static string Label(ConstraintKind kind)

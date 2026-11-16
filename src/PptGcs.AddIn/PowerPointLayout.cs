@@ -33,9 +33,7 @@ namespace PptGcs.AddIn
 
         public static void ValidateShape(object shapeObject)
         {
-            dynamic shape = shapeObject;
-            if ((int)shape.Type != 1 || (int)shape.AutoShapeType != 1 || Math.Abs((double)shape.Rotation) > 0.01)
-                throw new InvalidOperationException("当前支持未旋转、未分组的普通矩形。");
+            ShapeCapabilities.Validate(shapeObject);
         }
 
         public static LayoutContext Read(object applicationObject)
@@ -59,12 +57,12 @@ namespace PptGcs.AddIn
                 string id = ReadId((object)shape);
                 if (id == null || !required.Contains(id)) continue;
                 ValidateShape((object)shape);
-                if (context.Shapes.ContainsKey(id)) throw new InvalidOperationException("矩形标识重复，请移除复制对象的约束后重新建立。");
+                if (context.Shapes.ContainsKey(id)) throw new InvalidOperationException("对象标识重复，请移除复制对象的约束后重新建立。");
                 context.Shapes.Add(id, (object)shape);
                 context.Geometry.Add(Geometry((object)shape, id));
             }
             if (required.Any(id => !context.Shapes.ContainsKey(id)))
-                throw new InvalidOperationException("约束引用的矩形已删除或不在此页，请移除失效约束。");
+                throw new InvalidOperationException("约束引用的对象已删除或不在此页，请移除失效约束。");
             return context;
         }
 
@@ -105,7 +103,7 @@ namespace PptGcs.AddIn
             foreach (var value in values)
             {
                 object shapeObject;
-                if (!context.Shapes.TryGetValue(value.Id, out shapeObject)) throw new InvalidOperationException("几何写回找不到目标矩形。");
+                if (!context.Shapes.TryGetValue(value.Id, out shapeObject)) throw new InvalidOperationException("几何写回找不到目标对象。");
                 dynamic shape = shapeObject;
                 ShapeGeometry current = Geometry(shapeObject, value.Id);
                 if (Math.Abs(current.Left-value.Left)<=0.0001 && Math.Abs(current.Top-value.Top)<=0.0001 &&
@@ -116,11 +114,15 @@ namespace PptGcs.AddIn
                 try
                 {
                     if (Math.Abs(current.Width-value.Width)>0.0001) shape.Width = (float)value.Width;
-                    if (Math.Abs(current.Height-value.Height)>0.0001) shape.Height = (float)value.Height;
-                    if (Math.Abs(current.Left-value.Left)>0.0001) shape.Left = (float)value.Left;
-                    if (Math.Abs(current.Top-value.Top)>0.0001) shape.Top = (float)value.Top;
+                    // Text AutoSize and group resizing can change other bounds
+                    // as a side effect. Compare against Office's current values.
+                    if (Math.Abs((double)shape.Height-value.Height)>0.0001) shape.Height = (float)value.Height;
+                    if (Math.Abs((double)shape.Left-value.Left)>0.0001) shape.Left = (float)value.Left;
+                    if (Math.Abs((double)shape.Top-value.Top)>0.0001) shape.Top = (float)value.Top;
                 }
                 finally { if (sizeChanged && aspect != 0) shape.LockAspectRatio = aspect; }
+                if (LayoutSolver.NeedsUpdate(Geometry(shapeObject,value.Id),value))
+                    throw new InvalidOperationException("PowerPoint 未保留请求的对象位置或尺寸，操作已取消。");
             }
         }
     }

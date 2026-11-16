@@ -357,9 +357,11 @@ namespace PptGcs.AddIn
 
         private bool TryBegin(MouseHookData mouse, int messageKind)
         {
+            if (messageKind == WmLeftDoubleClick) return false;
             if ((int)application.Presentations.Count == 0) return false;
             dynamic window = application.ActiveWindow;
             if (window == null || (int)window.ViewType != 9) return false;
+            if ((bool)window.Selection.HasChildShapeRange) return false;
             IntPtr root = GetAncestor(mouse.Window, GaRoot);
             uint process;
             if (root == IntPtr.Zero || root != GetAncestor(GetForegroundWindow(), GaRoot) ||
@@ -400,7 +402,7 @@ namespace PptGcs.AddIn
                 foreach (var item in context.Shapes)
                 {
                     dynamic shape = item.Value;
-                    if ((int)shape.Id != selectedId || !constrained.Contains(item.Key) || !IsRectangle(shape)) continue;
+                    if ((int)shape.Id != selectedId || !constrained.Contains(item.Key) || !CanDrag((object)shape)) continue;
                     closest = ClosestHandle(byId[item.Key], map, mouse.Position);
                     GestureMode? handle = HitHandle(byId[item.Key], map, mouse.Position, handleRadius);
                     if (handle.HasValue) { driver = byId[item.Key]; mode = handle.Value; }
@@ -409,15 +411,19 @@ namespace PptGcs.AddIn
             }
             if (driver == null)
             {
+                // Keep caret placement and text selection native while editing
+                // text. Explicit bounding-box resize handles still work above.
+                if ((int)window.Selection.Type == 3) return false;
                 dynamic hit = window.RangeFromPoint(mouse.Position.X, mouse.Position.Y);
                 if (hit == null)
                 { LogRoute(mouse, messageKind, "native-no-hit", ReadSelection(window), handleRadius, closest, context.Geometry, previousPane); return false; }
+                hit = ShapeCapabilities.TopLevel((object)hit);
                 int hitId = (int)hit.Id;
                 foreach (var item in context.Shapes)
                 {
                     dynamic shape = item.Value;
                     if ((int)shape.Id == hitId && constrained.Contains(item.Key) &&
-                        IsRectangle(shape) && HitBody(byId[item.Key], map, mouse.Position))
+                        CanDrag((object)shape) && HitBody(byId[item.Key], map, mouse.Position))
                     { driver = byId[item.Key]; break; }
                 }
             }
@@ -672,10 +678,10 @@ namespace PptGcs.AddIn
             catch (Exception exception) { return new { error = exception.GetType().Name, message = exception.Message }; }
         }
 
-        private static bool IsRectangle(dynamic shape)
+        private static bool CanDrag(object shapeObject)
         {
-            return (int)shape.Type == 1 && (int)shape.AutoShapeType == 1 &&
-                Math.Abs((double)shape.Rotation) < 0.01 && (int)shape.Visible != 0;
+            dynamic shape = shapeObject;
+            return ShapeCapabilities.IsSupported(shapeObject) && (int)shape.Visible != 0;
         }
 
         private static bool HitBody(ShapeGeometry shape, ScreenMap map, Point point)

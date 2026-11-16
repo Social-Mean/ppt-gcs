@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -18,6 +18,7 @@ namespace PptGcs.AddIn
         private const int MouseMove = 0x0200, MiddleDown = 0x0207, MiddleUp = 0x0208;
         private const int MouseWheel = 0x020A, HorizontalWheel = 0x020E, MiddleKey = 0x04;
         private readonly Func<ConstraintPaneModel> getModel;
+        private readonly Func<string, int, Image> getIcon;
         private readonly Func<string, IList<ShapeGeometry>> preview;
         private readonly Action<string> execute;
         private readonly Action<bool> showPane;
@@ -50,8 +51,10 @@ namespace PptGcs.AddIn
 
         public RadialMenuController(Func<ConstraintPaneModel> getModel,
             Func<string, IList<ShapeGeometry>> preview, Action<string> execute,
-            Action<bool> showPane, Func<object> activeWindow, Action normalize, Action<string, string> log)
+            Action<bool> showPane, Func<object> activeWindow, Action normalize, Action<string, string> log,
+            Func<string, int, Image> getIcon = null)
         {
+            this.getIcon = getIcon;
             this.getModel = getModel ?? throw new ArgumentNullException("getModel");
             this.preview = preview ?? throw new ArgumentNullException("preview");
             this.execute = execute ?? throw new ArgumentNullException("execute");
@@ -200,6 +203,7 @@ namespace PptGcs.AddIn
                 documentWindow = currentWindow; documentIdentity = ComIdentity(currentWindow);
                 documentKey = WindowKey(currentWindow); selectionSignature = SelectionKey(model);
                 selectedCount = model.Objects.Count(item => item.Selected);
+                string unsupported = model.Objects.Where(item => item.Selected).Select(item => item.UnsupportedReason).FirstOrDefault(reason => reason != null);
                 dpiScale = dpi / 96f;
                 outerRadius = Math.Min(136 * dpiScale, Math.Min(rectangle.Width, rectangle.Height) / 2f - 12 * dpiScale);
                 if (outerRadius < 70 * dpiScale) throw new InvalidOperationException("画布空间不足，请扩大窗口后使用轮盘。");
@@ -213,8 +217,8 @@ namespace PptGcs.AddIn
                     var option = model.Options.FirstOrDefault(item => item.Kind == slot.Key);
                     int minimum = option == null ? slot.Minimum : option.MinimumMembers;
                     int maximum = option == null ? 0 : option.MaximumMembers;
-                    slot.Enabled = slot.Minimum == 0 || (selectedCount >= minimum && (maximum == 0 || selectedCount <= maximum));
-                    slot.Reason = slot.Enabled ? null : "请先选中至少 " + minimum + " 个矩形";
+                    slot.Enabled = slot.Minimum == 0 || (unsupported == null && selectedCount >= minimum && (maximum == 0 || selectedCount <= maximum));
+                    slot.Reason = slot.Enabled ? null : unsupported ?? "请先选中至少 " + minimum + " 个对象";
                     slot.Previewed = slot.Minimum == 0;
                     slot.Rectangles.Clear();
                 }
@@ -394,10 +398,13 @@ namespace PptGcs.AddIn
         {
             private readonly RadialMenuController owner;
             private readonly Font labelFont, detailFont, centerFont;
+            private readonly Image[] icons;
             private static readonly Color ClearColor = Color.Magenta;
             public RadialHud(RadialMenuController owner)
             {
                 this.owner = owner;
+                int imageSize=Math.Max(16,Math.Min(128,(int)Math.Round(24*owner.dpiScale)));
+                icons=owner.slots.Select(slot=>owner.getIcon?.Invoke(slot.Key,imageSize)).ToArray();
                 FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = false;
                 StartPosition = FormStartPosition.Manual; AutoScaleMode = AutoScaleMode.None;
                 BackColor = ClearColor; TransparencyKey = ClearColor;
@@ -441,8 +448,17 @@ namespace PptGcs.AddIn
                         graphics.FillPath(fill, path); graphics.DrawPath(outline, path);
                     }
                     double angle = (index * 45 - 90) * Math.PI / 180;
-                    var label = new Rectangle((int)(center.X + Math.Cos(angle) * outer * 0.72 - 41 * scale),
-                        (int)(center.Y + Math.Sin(angle) * outer * 0.72 - 18 * scale), (int)(82 * scale), (int)(36 * scale));
+                    float anchorX=(float)(center.X+Math.Cos(angle)*outer*0.72);
+                    float anchorY=(float)(center.Y+Math.Sin(angle)*outer*0.72);
+                    Image icon=icons[index];
+                    if(icon!=null)
+                    {
+                        int iconX=(int)(anchorX-icon.Width/2f), iconY=(int)(anchorY-23*scale);
+                        if(slot.Enabled) graphics.DrawImageUnscaled(icon,iconX,iconY);
+                        else ControlPaint.DrawImageDisabled(graphics,icon,iconX,iconY,Color.FromArgb(237,239,242));
+                    }
+                    var label = new Rectangle((int)(anchorX-41*scale),
+                        (int)(anchorY+(icon==null?-18:3)*scale), (int)(82*scale), (int)(36*scale));
                     TextRenderer.DrawText(graphics, slot.Label, labelFont, label, slot.Enabled ? Color.FromArgb(25, 34, 47) : Color.FromArgb(130, 136, 145),
                         TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding);
                 }

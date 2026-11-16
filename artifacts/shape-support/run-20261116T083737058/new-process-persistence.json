@@ -1,0 +1,21 @@
+﻿{
+    "Passed":  true,
+    "ReadOnly":  true,
+    "PhysicalMouseInput":  false,
+    "PersistenceNewProcess":  true,
+    "SavedProcessId":  [
+                           50604
+                       ],
+    "ReopenedProcessId":  [
+                              53124
+                          ],
+    "Checks":  [
+                   "different native process from saved.json",
+                   "all native types, text, AutoSize, aspect locks and child membership preserved",
+                   "geometry within 0.01 pt, exact identity tags and XML",
+                   "independent relation formulas"
+               ],
+    "Failure":  null,
+    "Directory":  "D:\\code\\ppt-gcs\\artifacts\\shape-support\\run-20261116T083737058",
+    "Utc":  "2026-11-16T08:42:48.1138947Z"
+}

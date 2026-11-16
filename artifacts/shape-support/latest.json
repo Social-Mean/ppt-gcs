@@ -1,0 +1,360 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  false,
+    "PersistenceNewProcess":  false,
+    "Cases":  [
+                  {
+                      "Kind":  "Ellipse",
+                      "OfficeType":  1,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "RoundedRectangle",
+                      "OfficeType":  1,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "Triangle",
+                      "OfficeType":  1,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "Diamond",
+                      "OfficeType":  1,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "RightArrow",
+                      "OfficeType":  1,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "TextBox",
+                      "OfficeType":  17,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "Picture",
+                      "OfficeType":  13,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "LinkedPicture",
+                      "OfficeType":  11,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "Graphic",
+                      "OfficeType":  28,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "Freeform",
+                      "OfficeType":  5,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  },
+                  {
+                      "Kind":  "Group",
+                      "OfficeType":  6,
+                      "Passed":  true,
+                      "Edits":  [
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  1,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "Move",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    },
+                                    {
+                                        "Driver":  2,
+                                        "Mode":  "ResizeE",
+                                        "NativeUndo":  true,
+                                        "NativeRedo":  true
+                                    }
+                                ]
+                  }
+              ],
+    "ExpectedCases":  11,
+    "CompletedCases":  11,
+    "Checks":  [
+                   "Unsupported_Rotated rejected without geometry, tag or XML changes",
+                   "Unsupported_Line rejected without geometry, tag or XML changes",
+                   "Unsupported_Table rejected without geometry, tag or XML changes",
+                   "Copied nonrectangles have distinct IDs; originals unchanged; new relation Undo/Redo passes",
+                   "Same-process save/reopen preserves all types, native properties, geometry, group membership and relation data"
+               ],
+    "Failure":  null,
+    "Directory":  "D:\\code\\ppt-gcs\\artifacts\\shape-support\\run-20261116T083737058",
+    "Utc":  "2026-11-16T08:38:12.8770449Z"
+}

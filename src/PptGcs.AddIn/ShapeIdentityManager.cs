@@ -33,11 +33,11 @@ namespace PptGcs.AddIn
                     if (id == null) continue;
                     int nativeId = (int)shape.Id;
                     if (slideId <= 0 || nativeId <= 0)
-                        throw new InvalidOperationException("矩形的原生标识无效，未修改任何编号。");
+                        throw new InvalidOperationException("对象的原生标识无效，未修改任何编号。");
                     string physicalKey = slideId.ToString(CultureInfo.InvariantCulture) + "/" +
                         nativeId.ToString(CultureInfo.InvariantCulture);
                     if (!physicalKeys.Add(physicalKey))
-                        throw new InvalidOperationException("矩形的原生标识重复，未修改任何编号。");
+                        throw new InvalidOperationException("对象的原生标识重复，未修改任何编号。");
                     shapes.Add(new IdentityShape
                     {
                         Shape = (object)shape, Id = id, SlideId = slideId,
@@ -71,9 +71,9 @@ namespace PptGcs.AddIn
                 HashSet<int> referenceSlides;
                 if (!references.TryGetValue(group.Key, out referenceSlides)) referenceSlides = new HashSet<int>();
                 if (referenceSlides.Count > 1)
-                    throw new InvalidOperationException("同一矩形编号已被多页约束引用，无法自动确定归属，未修改任何编号。");
+                    throw new InvalidOperationException("同一对象编号已被多页约束引用，无法自动确定归属，未修改任何编号。");
                 if (owned.Count > 1)
-                    throw new InvalidOperationException("多个矩形声明了同一编号的归属，未修改任何编号。");
+                    throw new InvalidOperationException("多个对象声明了同一编号的归属，未修改任何编号。");
 
                 IdentityShape original = owned.SingleOrDefault();
                 if (original == null)
@@ -89,12 +89,12 @@ namespace PptGcs.AddIn
                         int referencedSlide = referenceSlides.Single();
                         var candidates = unowned.Where(s => s.SlideId == referencedSlide).ToList();
                         if (candidates.Count != 1)
-                            throw new InvalidOperationException("约束引用的矩形编号重复或归属不明，无法安全识别原矩形，未修改任何编号。");
+                            throw new InvalidOperationException("约束引用的对象编号重复或归属不明，无法安全识别原对象，未修改任何编号。");
                         original = candidates[0];
                     }
                 }
                 if (referenceSlides.Count != 0 && (original == null || !referenceSlides.Contains(original.SlideId)))
-                    throw new InvalidOperationException("约束与矩形的归属不一致，未修改任何编号。");
+                    throw new InvalidOperationException("约束与对象的归属不一致，未修改任何编号。");
 
                 foreach (IdentityShape member in members)
                 {
@@ -137,7 +137,7 @@ namespace PptGcs.AddIn
                     }
                     catch (Exception restoreError) { errors.Add(restoreError); }
                 }
-                if (errors.Count > 1) throw new AggregateException("矩形编号写入失败，部分标签无法恢复。", errors);
+                if (errors.Count > 1) throw new AggregateException("对象编号写入失败，部分标签无法恢复。", errors);
                 throw;
             }
             return reassigned;

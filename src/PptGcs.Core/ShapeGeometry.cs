@@ -16,7 +16,7 @@ namespace PptGcs.Core
             ValidateFinite(left, "left"); ValidateFinite(top, "top");
             ValidateFinite(width, "width"); ValidateFinite(height, "height");
             if (width < LayoutSolver.MinimumSize || height < LayoutSolver.MinimumSize)
-                throw new ArgumentOutOfRangeException("width/height", "Rectangle dimensions must be at least 1 point.");
+                throw new ArgumentOutOfRangeException("width/height", "Shape dimensions must be at least 1 point.");
             Left = left; Top = top; Width = width; Height = height;
         }
 

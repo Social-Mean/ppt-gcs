@@ -1,0 +1,54 @@
+﻿{
+    "Utc":  "2026-11-16T08:40:43.6618492Z",
+    "ProcessId":  [
+                      49932
+                  ],
+    "State":  {
+                  "Path":  "D:\\code\\ppt-gcs\\artifacts\\v3-command-validation\\run-20261116T084038776\\commands.pptx",
+                  "PresentationTags":  [
+                                           {
+                                               "Name":  "PPTGCS_CONSTRAINTS",
+                                               "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2233414442463832432D314333392D343134342D424432452D3941353042443537334236332220736C69646549643D2232353622206B696E643D2253616D655769647468223E3C73686170652069643D2242414230313645412D343546342D343545442D394630332D44374144444434353844313722202F3E3C73686170652069643D2235393832463532452D303043462D344436462D393742312D36344235454430383438463522202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2238333637463032312D463332342D344342302D414442332D3736313532444137443532452220736C69646549643D2232353622206B696E643D2246697865645769647468222076616C75653D22313830223E3C73686170652069643D2242414230313645412D343546342D343545442D394630332D44374144444434353844313722202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_DOCUMENT",
+                                               "Value":  "C9EAF186-E659-4D94-B9A5-0F4067C0A8E6"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_TEST",
+                                               "Value":  "V3"
+                                           }
+                                       ],
+                  "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"3ADBF82C-1C39-4144-BD2E-9A50BD573B63\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"BAB016EA-45F4-45ED-9F03-D7ADDD458D17\" /\u003e\u003cshape id=\"5982F52E-00CF-4D6F-97B1-64B5ED0848F5\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"8367F021-F324-4CB0-ADB3-76152DA7D52E\" slideId=\"256\" kind=\"FixedWidth\" value=\"180\"\u003e\u003cshape id=\"BAB016EA-45F4-45ED-9F03-D7ADDD458D17\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                  "Slides":  [
+                                 {
+                                     "Id":  256,
+                                     "Name":  "CommandHistory",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "History_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "BAB016EA-45F4-45ED-9F03-D7ADDD458D17"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "C9EAF186-E659-4D94-B9A5-0F4067C0A8E6/256/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  140,
+                                                        "Width":  180,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 }
+                             ]
+              }
+}
