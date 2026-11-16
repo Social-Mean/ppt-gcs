@@ -2,7 +2,7 @@
 param([string]$OutputDirectory)
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-if(-not $OutputDirectory){$OutputDirectory=Join-Path $root 'artifacts\ui-refinement'}
+if(-not $OutputDirectory){$OutputDirectory=Join-Path $root 'artifacts\ribbon-ui'}
 $OutputDirectory=[IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
 $temporary=Join-Path ([IO.Path]::GetTempPath()) ('PptGcsGridRender-'+[Guid]::NewGuid().ToString('N'))
@@ -76,8 +76,16 @@ internal static class ConstraintGridRenderer
             var editor=Descendants(pane).OfType<GroupBox>().Single();
             var fields=editor.Controls.OfType<TableLayoutPanel>().Single();
             var active=grid.Controls.OfType<Button>().Single(c=>(string)c.Tag=="FixedHorizontalGap");
-            if(grid.Controls.Count!=20 || grid.RowCount!=4 || grid.ColumnCount!=5)
-                throw new InvalidOperationException("Expected five columns containing four choices each.");
+            if(grid.Controls.Count!=20 || grid.RowCount!=5 || grid.ColumnCount!=4)
+                throw new InvalidOperationException("Expected four columns and five rows.");
+            var choices=ConstraintCatalog.Options(geometry);
+            for(int index=0;index<choices.Count;index++)
+            {
+                var button=grid.Controls.OfType<Button>().Single(c=>(string)c.Tag==choices[index].Kind);
+                var cell=grid.GetPositionFromControl(button);
+                if(cell.Column!=index%4 || cell.Row!=index/4)
+                    throw new InvalidOperationException("Choices must fill four columns from left to right.");
+            }
             if(fields.Bottom+editor.Padding.Bottom>editor.Height)
                 throw new InvalidOperationException("Editor clips its parameter or apply controls.");
             if(active.Image==null || active.FlatAppearance.BorderSize!=2)
@@ -90,7 +98,7 @@ internal static class ConstraintGridRenderer
                 Application.DoEvents();
                 Capture(pane,Path.Combine(directory,"grid-final-250-right.png"));
             }
-            Console.WriteLine("PASS offscreen grid "+width+": 20 choices, four rows, full editor, real selected Office glyph; horizontal="+viewport.HorizontalScroll.Visible);
+            Console.WriteLine("PASS offscreen grid "+width+": 20 choices, four columns, full editor, real selected Office glyph; horizontal="+viewport.HorizontalScroll.Visible);
         }
     }
 

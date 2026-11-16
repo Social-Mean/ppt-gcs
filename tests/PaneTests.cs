@@ -41,13 +41,13 @@ internal static class PaneTests
         var viewport=Find<Panel>(pane,"约束类型");
         var apply=Find<Button>(pane,"创建约束");
         var buttons=grid.Controls.OfType<Button>().ToList();
-        Check(buttons.Count==20 && grid.ColumnCount==5 && grid.RowCount==4,
-            "twenty constraint buttons use five columns of four");
+        Check(buttons.Count==20 && grid.ColumnCount==4 && grid.RowCount==5,
+            "twenty constraint buttons use four columns and five rows");
         Check(model.Options.Select((option,index)=>new {option,index}).All(item=>{
             var button=buttons.Single(control=>(string)control.Tag==item.option.Kind);
             var cell=grid.GetPositionFromControl(button);
-            return cell.Column==item.index/4 && cell.Row==item.index%4 && button.TabIndex==item.index;
-        }),"catalog order fills each column from top to bottom and defines keyboard tab order");
+            return cell.Column==item.index%4 && cell.Row==item.index/4 && button.TabIndex==item.index;
+        }),"catalog order fills each row from left to right and defines keyboard tab order");
         Check(!Descendants(pane).OfType<ComboBox>().Any(control=>control.AccessibleName=="约束类型"),
             "constraint type no longer uses a dropdown");
         var width=Find<Button>(pane,"约束类型：同宽");

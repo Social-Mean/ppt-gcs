@@ -1,0 +1,212 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  false,
+    "ActualRibbonClicks":  false,
+    "RibbonControlTagsAndSharedDispatch":  true,
+    "CompletedCases":  20,
+    "Cases":  [
+                  {
+                      "Kind":  "SameX",
+                      "Label":  "左对齐",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "CenterXAligned",
+                      "Label":  "水平居中",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "RightAligned",
+                      "Label":  "右对齐",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SameY",
+                      "Label":  "顶端对齐",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "CenterYAligned",
+                      "Label":  "垂直居中",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "BottomAligned",
+                      "Label":  "底端对齐",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "CentersCoincident",
+                      "Label":  "中心重合",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedPosition",
+                      "Label":  "固定位置",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SameWidth",
+                      "Label":  "同宽",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SameHeight",
+                      "Label":  "同高",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedWidth",
+                      "Label":  "固定宽度",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedHeight",
+                      "Label":  "固定高度",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "AspectRatio",
+                      "Label":  "固定宽高比",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "EqualHorizontalGap",
+                      "Label":  "水平等间距",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "EqualVerticalGap",
+                      "Label":  "垂直等间距",
+                      "ParameterEditor":  false,
+                      "NoWriteBeforeConfirmation":  false,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedHorizontalGap",
+                      "Label":  "固定水平间距",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedVerticalGap",
+                      "Label":  "固定垂直间距",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "Offset",
+                      "Label":  "相对偏移",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SymmetricVertical",
+                      "Label":  "关于垂直轴对称",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SymmetricHorizontal",
+                      "Label":  "关于水平轴对称",
+                      "ParameterEditor":  true,
+                      "NoWriteBeforeConfirmation":  true,
+                      "CorrectMembers":  true,
+                      "NativeUndo":  true,
+                      "NativeRedo":  true,
+                      "Passed":  true
+                  }
+              ],
+    "Failure":  null,
+    "Directory":  "D:\\code\\ppt-gcs\\artifacts\\ribbon-ui\\run-20261116T105550933",
+    "Utc":  "2026-11-16T10:56:16.5405684Z"
+}

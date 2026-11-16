@@ -1,0 +1,42 @@
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <ribbon>
+    <tabs>
+      <tab id="PptGcsTab" label="PPT GCS">
+        <group id="Alignment" label="位置约束">
+          <button id="ConstraintSameX" tag="SameX" label="左对齐" imageMso="ObjectsAlignLeftSmart" onAction="CreateConstraint" screentip="左对齐约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintCenterXAligned" tag="CenterXAligned" label="水平居中" imageMso="ObjectsAlignCenterHorizontalSmart" onAction="CreateConstraint" screentip="水平居中约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintRightAligned" tag="RightAligned" label="右对齐" imageMso="ObjectsAlignRightSmart" onAction="CreateConstraint" screentip="右对齐约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintSameY" tag="SameY" label="顶端对齐" imageMso="ObjectsAlignTopSmart" onAction="CreateConstraint" screentip="顶端对齐约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintCenterYAligned" tag="CenterYAligned" label="垂直居中" imageMso="ObjectsAlignMiddleVerticalSmart" onAction="CreateConstraint" screentip="垂直居中约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintBottomAligned" tag="BottomAligned" label="底端对齐" imageMso="ObjectsAlignBottomSmart" onAction="CreateConstraint" screentip="底端对齐约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintCentersCoincident" tag="CentersCoincident" label="中心重合" imageMso="ObjectsAlignSelectedSmart" onAction="CreateConstraint" screentip="中心重合约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintFixedPosition" tag="FixedPosition" label="固定位置" imageMso="LockObject" onAction="CreateConstraint" screentip="固定位置约束" supertip="选中 1 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+        </group>
+        <group id="Dimensions" label="尺寸约束">
+          <button id="ConstraintSameWidth" tag="SameWidth" label="同宽" imageMso="TableColumnsDistribute" onAction="CreateConstraint" screentip="同宽约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintSameHeight" tag="SameHeight" label="同高" imageMso="TableRowsDistribute" onAction="CreateConstraint" screentip="同高约束" supertip="至少选中 2 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintFixedWidth" tag="FixedWidth" label="固定宽度" imageMso="ObjectSizeAndPositionDialog" onAction="CreateConstraint" screentip="固定宽度约束" supertip="选中 1 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintFixedHeight" tag="FixedHeight" label="固定高度" imageMso="ObjectSizeAndPositionDialog" onAction="CreateConstraint" screentip="固定高度约束" supertip="选中 1 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+          <button id="ConstraintAspectRatio" tag="AspectRatio" label="固定宽高比" imageMso="TableLockAspectRatio" onAction="CreateConstraint" screentip="固定宽高比约束" supertip="选中 1 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;单位为磅 (pt)，宽高比为无单位比值。" />
+        </group>
+        <group id="Spacing" label="间距约束">
+          <button id="ConstraintEqualHorizontalGap" tag="EqualHorizontalGap" label="水平等间距" imageMso="AlignDistributeHorizontally" onAction="CreateConstraint" screentip="水平等间距约束" supertip="至少选中 3 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;按建立时的顺序保持边缘间距相等，间距值可以变化。" />
+          <button id="ConstraintEqualVerticalGap" tag="EqualVerticalGap" label="垂直等间距" imageMso="AlignDistributeVertically" onAction="CreateConstraint" screentip="垂直等间距约束" supertip="至少选中 3 个对象。创建后拖动任一成员会保持该关系。&#xD;&#xA;按建立时的顺序保持边缘间距相等，间距值可以变化。" />
+          <button id="ConstraintFixedHorizontalGap" tag="FixedHorizontalGap" label="固定水平间距" imageMso="AlignDistributeHorizontally" onAction="CreateConstraint" screentip="固定水平间距约束" supertip="至少选中 2 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;按建立时的顺序保持指定边缘间距；负值表示重叠。" />
+          <button id="ConstraintFixedVerticalGap" tag="FixedVerticalGap" label="固定垂直间距" imageMso="AlignDistributeVertically" onAction="CreateConstraint" screentip="固定垂直间距约束" supertip="至少选中 2 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;按建立时的顺序保持指定边缘间距；负值表示重叠。" />
+        </group>
+        <group id="Relations" label="偏移与对称">
+          <button id="ConstraintOffset" tag="Offset" label="相对偏移" imageMso="ObjectSizeAndPositionDialog" onAction="CreateConstraint" screentip="相对偏移约束" supertip="选中 2 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;成员顺序按选择范围排列，偏移为第二个对象减第一个对象。" />
+          <button id="ConstraintSymmetricVertical" tag="SymmetricVertical" label="关于垂直轴对称" imageMso="ObjectFlipHorizontal" onAction="CreateConstraint" screentip="关于垂直轴对称约束" supertip="选中 2 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;两个对象的外接框关于固定轴对称，尺寸相等；内容方向不翻转。" />
+          <button id="ConstraintSymmetricHorizontal" tag="SymmetricHorizontal" label="关于水平轴对称" imageMso="ObjectFlipVertical" onAction="CreateConstraint" screentip="关于水平轴对称约束" supertip="选中 2 个对象。在约束窗格中设置参数并确认创建。&#xD;&#xA;两个对象的外接框关于固定轴对称，尺寸相等；内容方向不翻转。" />
+        </group>
+        <group id="Manage" label="管理">
+          <button id="ConstraintsPane" label="约束窗格" imageMso="SelectionPane" onAction="ShowConstraintPane" />
+          <button id="Remove" label="移除选中对象的约束" imageMso="Clear" onAction="UnlinkSelected" />
+          <button id="Demo" label="新建六组演示" imageMso="SlideNew" onAction="CreateDemo" />
+          <button id="Status" label="状态" imageMso="FileProperties" onAction="ShowStatus" />
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

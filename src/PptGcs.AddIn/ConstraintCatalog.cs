@@ -13,9 +13,9 @@ namespace PptGcs.AddIn
             var horizontal = selected.OrderBy(s => s.Left).ToList();
             var vertical = selected.OrderBy(s => s.Top).ToList();
             return new List<ConstraintPaneOption> {
-                Choice(ConstraintKind.SameX,"左边对齐"), Choice(ConstraintKind.RightAligned,"右边对齐"),
-                Choice(ConstraintKind.CenterXAligned,"水平中心对齐"), Choice(ConstraintKind.SameY,"顶部对齐"),
-                Choice(ConstraintKind.BottomAligned,"底部对齐"), Choice(ConstraintKind.CenterYAligned,"垂直中心对齐"),
+                Choice(ConstraintKind.SameX,"左对齐"), Choice(ConstraintKind.CenterXAligned,"水平居中"),
+                Choice(ConstraintKind.RightAligned,"右对齐"), Choice(ConstraintKind.SameY,"顶端对齐"),
+                Choice(ConstraintKind.CenterYAligned,"垂直居中"), Choice(ConstraintKind.BottomAligned,"底端对齐"),
                 Choice(ConstraintKind.CentersCoincident,"中心重合"),
                 Choice(ConstraintKind.SameWidth,"同宽"), Choice(ConstraintKind.SameHeight,"同高"),
                 Choice(ConstraintKind.EqualHorizontalGap,"水平等间距",3), Choice(ConstraintKind.EqualVerticalGap,"垂直等间距",3),

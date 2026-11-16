@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -17,6 +19,7 @@ namespace PptGcs.AddIn
     {
         private const int MouseMove = 0x0200, MiddleDown = 0x0207, MiddleUp = 0x0208;
         private const int MouseWheel = 0x020A, HorizontalWheel = 0x020E, MiddleKey = 0x04;
+        private const float SlotAnchorRadius = 0.64f;
         private readonly Func<ConstraintPaneModel> getModel;
         private readonly Func<string, int, Image> getIcon;
         private readonly Func<string, IList<ShapeGeometry>> preview;
@@ -28,10 +31,10 @@ namespace PptGcs.AddIn
         private readonly uint uiThread;
         private readonly JavaScriptSerializer json = new JavaScriptSerializer();
         private readonly Slot[] slots = {
-            new Slot("SameX", "左边对齐", 2), new Slot("SameY", "顶部对齐", 2),
-            new Slot("SameWidth", "同宽", 2), new Slot("SameHeight", "同高", 2),
-            new Slot("EqualHorizontalGap", "水平等距", 3), new Slot("EqualVerticalGap", "垂直等距", 3),
-            new Slot("more", "更多约束", 0), new Slot("view", "查看约束", 0)
+            new Slot("SameX", ConstraintCatalog.Label(ConstraintKind.SameX), 2), new Slot("SameY", ConstraintCatalog.Label(ConstraintKind.SameY), 2),
+            new Slot("SameWidth", ConstraintCatalog.Label(ConstraintKind.SameWidth), 2), new Slot("SameHeight", ConstraintCatalog.Label(ConstraintKind.SameHeight), 2),
+            new Slot("EqualHorizontalGap", ConstraintCatalog.Label(ConstraintKind.EqualHorizontalGap), 3), new Slot("EqualVerticalGap", ConstraintCatalog.Label(ConstraintKind.EqualVerticalGap), 3),
+            new Slot("more", "更多约束", 0), new Slot("view", "约束窗格", 0)
         };
         private bool open, opening, processing, disposed, swallowMiddleUp, acceptedStart;
         private NativePoint? pendingMove, pendingRelease;
@@ -274,7 +277,7 @@ namespace PptGcs.AddIn
                 }
                 if (slot.Enabled) previewBounds.AddRange(slot.Rectangles);
             }
-            if (hud != null) hud.Invalidate();
+            if (hud != null) hud.UpdateSurface();
             SafeLog("radial-choice", new { gestureId, source = "middle-pointer", choice = index < 0 ? null : slots[index].Key,
                 enabled = index >= 0 && slots[index].Enabled, previewCount = previewBounds.Count, middleDown = KeyDown(MiddleKey) });
         }
@@ -330,8 +333,8 @@ namespace PptGcs.AddIn
                 previewCount = previewBounds.Count,
                 slots = slots.Select((slot, index) => new {
                     index, key = slot.Key, label = slot.Label, enabled = slot.Enabled, reason = slot.Reason,
-                    x = canvasBounds.Left + center.X + Math.Cos((index * 45 - 90) * Math.PI / 180) * outerRadius * 0.72,
-                    y = canvasBounds.Top + center.Y + Math.Sin((index * 45 - 90) * Math.PI / 180) * outerRadius * 0.72
+                    x = canvasBounds.Left + center.X + Math.Cos((index * 45 - 90) * Math.PI / 180) * outerRadius * SlotAnchorRadius,
+                    y = canvasBounds.Top + center.Y + Math.Sin((index * 45 - 90) * Math.PI / 180) * outerRadius * SlotAnchorRadius
                 }).ToArray()
             });
         }
@@ -399,7 +402,9 @@ namespace PptGcs.AddIn
             private readonly RadialMenuController owner;
             private readonly Font labelFont, detailFont, centerFont;
             private readonly Image[] icons;
-            private static readonly Color ClearColor = Color.Magenta;
+            private readonly ImageAttributes disabledIcon = new ImageAttributes();
+            private Bitmap frame;
+            private LayeredWindowSurface layeredSurface;
             public RadialHud(RadialMenuController owner)
             {
                 this.owner = owner;
@@ -409,9 +414,12 @@ namespace PptGcs.AddIn
                 icons=owner.slots.Select(slot=>owner.getIcon?.Invoke(slot.Key,imageSize)).ToArray();
                 FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = false;
                 StartPosition = FormStartPosition.Manual; AutoScaleMode = AutoScaleMode.None;
-                BackColor = ClearColor; TransparencyKey = ClearColor;
                 AccessibleName = "PPT GCS 中键约束轮盘";
-                SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+                SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint, true);
+                disabledIcon.SetColorMatrix(new ColorMatrix(new[] {
+                    new float[] {.22f,.22f,.22f,0,0}, new float[] {.43f,.43f,.43f,0,0},
+                    new float[] {.08f,.08f,.08f,0,0}, new float[] {0,0,0,.6f,0}, new float[] {.25f,.25f,.25f,0,1}
+                }));
                 labelFont = new Font(SystemFonts.MessageBoxFont.FontFamily, 14 * owner.dpiScale, FontStyle.Regular, GraphicsUnit.Pixel);
                 detailFont = new Font(SystemFonts.MessageBoxFont.FontFamily, 12 * owner.dpiScale, FontStyle.Regular, GraphicsUnit.Pixel);
                 centerFont = new Font(SystemFonts.MessageBoxFont.FontFamily, 12 * owner.dpiScale, FontStyle.Bold, GraphicsUnit.Pixel);
@@ -419,7 +427,7 @@ namespace PptGcs.AddIn
             protected override bool ShowWithoutActivation { get { return true; } }
             protected override CreateParams CreateParams
             {
-                get { var parameters = base.CreateParams; parameters.ExStyle |= 0x08000000 | 0x00000080 | 0x00000020; return parameters; }
+                get { var parameters = base.CreateParams; parameters.ExStyle |= 0x00080000 | 0x08000000 | 0x00000080 | 0x00000020; return parameters; }
             }
             protected override void WndProc(ref Message message)
             {
@@ -427,10 +435,34 @@ namespace PptGcs.AddIn
                 if (message.Msg == 0x0084) { message.Result = new IntPtr(-1); return; }
                 base.WndProc(ref message);
             }
-            protected override void OnPaint(PaintEventArgs args)
+            protected override void OnShown(EventArgs args)
             {
-                Graphics graphics = args.Graphics;
-                graphics.Clear(ClearColor); graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                base.OnShown(args);
+                UpdateSurface();
+            }
+            protected override void OnPaintBackground(PaintEventArgs args) { }
+            protected override void OnPaint(PaintEventArgs args) { }
+
+            public void UpdateSurface()
+            {
+                if (IsDisposed || !IsHandleCreated || ClientSize.Width <= 0 || ClientSize.Height <= 0) return;
+                if (frame == null || frame.Size != ClientSize)
+                {
+                    if (frame != null) frame.Dispose();
+                    if (layeredSurface != null) layeredSurface.Dispose();
+                    frame = new Bitmap(ClientSize.Width, ClientSize.Height, PixelFormat.Format32bppPArgb);
+                    layeredSurface = new LayeredWindowSurface(ClientSize);
+                }
+                using (var graphics = Graphics.FromImage(frame)) DrawFrame(graphics);
+                layeredSurface.Present(Handle,frame,Location);
+            }
+
+            private void DrawFrame(Graphics graphics)
+            {
+                graphics.Clear(Color.Transparent);
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+                graphics.CompositingMode = CompositingMode.SourceOver;
                 float scale = owner.dpiScale, outer = owner.outerRadius, inner = owner.innerRadius;
                 PointF center = owner.center;
                 using (var previewPen = new Pen(Color.FromArgb(25, 102, 202), 2 * scale) { DashStyle = DashStyle.Dash })
@@ -450,25 +482,24 @@ namespace PptGcs.AddIn
                         graphics.FillPath(fill, path); graphics.DrawPath(outline, path);
                     }
                     double angle = (index * 45 - 90) * Math.PI / 180;
-                    float anchorX=(float)(center.X+Math.Cos(angle)*outer*0.72);
-                    float anchorY=(float)(center.Y+Math.Sin(angle)*outer*0.72);
+                    float anchorX=(float)(center.X+Math.Cos(angle)*outer*SlotAnchorRadius);
+                    float anchorY=(float)(center.Y+Math.Sin(angle)*outer*SlotAnchorRadius);
                     Image icon=icons[index];
                     if(icon!=null)
                     {
                         int iconX=(int)(anchorX-icon.Width/2f), iconY=(int)(anchorY-28*scale);
                         if(slot.Enabled) graphics.DrawImageUnscaled(icon,iconX,iconY);
-                        else ControlPaint.DrawImageDisabled(graphics,icon,iconX,iconY,Color.FromArgb(237,239,242));
+                        else graphics.DrawImage(icon,new Rectangle(iconX,iconY,icon.Width,icon.Height),0,0,icon.Width,icon.Height,GraphicsUnit.Pixel,disabledIcon);
                     }
                     var label = new Rectangle((int)(anchorX-41*scale),
                         (int)(anchorY+(icon==null?-18:7)*scale), (int)(82*scale), (int)(30*scale));
-                    TextRenderer.DrawText(graphics, slot.Label, labelFont, label, slot.Enabled ? Color.FromArgb(25, 34, 47) : Color.FromArgb(130, 136, 145),
-                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding);
+                    DrawText(graphics,slot.Label,labelFont,label,slot.Enabled ? Color.FromArgb(25,34,47) : Color.FromArgb(130,136,145));
                 }
                 using (var fill = new SolidBrush(Color.White)) graphics.FillEllipse(fill, inside);
                 var centerTop = new Rectangle((int)(center.X - inner + 2 * scale), (int)(center.Y - 18 * scale), (int)(2 * inner - 4 * scale), (int)(20 * scale));
-                TextRenderer.DrawText(graphics, owner.selectedCount + " 个对象", centerFont, centerTop, Color.FromArgb(36, 44, 56), TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                DrawText(graphics,owner.selectedCount + " 个对象",centerFont,centerTop,Color.FromArgb(36,44,56));
                 centerTop.Y += (int)(22 * scale);
-                TextRenderer.DrawText(graphics, "中心取消", detailFont, centerTop, Color.FromArgb(105, 113, 126), TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                DrawText(graphics,"中心取消",detailFont,centerTop,Color.FromArgb(105,113,126));
                 string title = "按住中键，移向命令后松开";
                 string detail = "返回中心或按 Esc 取消";
                 if (owner.currentSlot >= 0)
@@ -485,13 +516,30 @@ namespace PptGcs.AddIn
                 using (var fill = new SolidBrush(Color.White)) graphics.FillRectangle(fill, information);
                 using (var pen = new Pen(Color.FromArgb(147, 157, 171))) graphics.DrawRectangle(pen, x, y, width, height);
                 var text = Rectangle.Round(new RectangleF(x + 8 * scale, y + 5 * scale, width - 16 * scale, 21 * scale));
-                TextRenderer.DrawText(graphics, title, labelFont, text, Color.FromArgb(25, 34, 47), TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+                DrawText(graphics,title,labelFont,text,Color.FromArgb(25,34,47),false);
                 text.Y += (int)(24 * scale); text.Height = (int)(28 * scale);
-                TextRenderer.DrawText(graphics, detail, detailFont, text, Color.FromArgb(74, 83, 97), TextFormatFlags.HorizontalCenter | TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis);
+                DrawText(graphics,detail,detailFont,text,Color.FromArgb(74,83,97));
+            }
+            private static void DrawText(Graphics graphics,string text,Font font,Rectangle bounds,Color color,bool wrap=true)
+            {
+                using (var format = new StringFormat(StringFormat.GenericTypographic))
+                using (var brush = new SolidBrush(color))
+                {
+                    format.Alignment = StringAlignment.Center;
+                    format.LineAlignment = StringAlignment.Center;
+                    format.Trimming = StringTrimming.EllipsisCharacter;
+                    if (!wrap) format.FormatFlags |= StringFormatFlags.NoWrap;
+                    graphics.DrawString(text,font,brush,bounds,format);
+                }
             }
             protected override void Dispose(bool disposing)
             {
-                if (disposing) { labelFont.Dispose(); detailFont.Dispose(); centerFont.Dispose(); }
+                if (disposing)
+                {
+                    labelFont.Dispose(); detailFont.Dispose(); centerFont.Dispose(); disabledIcon.Dispose();
+                    if (frame != null) frame.Dispose();
+                    if (layeredSurface != null) layeredSurface.Dispose();
+                }
                 base.Dispose(disposing);
             }
         }

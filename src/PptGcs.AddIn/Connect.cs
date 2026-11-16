@@ -67,7 +67,7 @@ namespace PptGcs.AddIn
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.4.2", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = "0.5.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -98,38 +98,25 @@ namespace PptGcs.AddIn
             Log("disconnected", "{}");commands=null;identities=null;app = null;
         }
 
-        public string GetCustomUI(string ribbonId)
-        {
-            return @"<customUI xmlns=""http://schemas.microsoft.com/office/2009/07/customui""><ribbon><tabs>
-<tab id=""PptGcsTab"" label=""PPT GCS"">
-<group id=""Alignment"" label=""位置约束"">
-<button id=""SameX"" imageMso=""ObjectsAlignLeftSmart"" label=""同 X（左边对齐）"" onAction=""LinkSameX""/>
-<button id=""SameY"" imageMso=""ObjectsAlignTopSmart"" label=""同 Y（顶部对齐）"" onAction=""LinkSameY""/>
-</group><group id=""Dimensions"" label=""尺寸约束"">
-<button id=""SameWidth"" imageMso=""TableColumnsDistribute"" label=""同宽"" onAction=""LinkSameWidth""/>
-<button id=""SameHeight"" imageMso=""TableRowsDistribute"" label=""同高"" onAction=""LinkSameHeight""/>
-</group><group id=""Spacing"" label=""等间距（至少三个）"">
-<button id=""EqualHorizontalGap"" imageMso=""AlignDistributeHorizontally"" label=""水平等间距"" onAction=""LinkHorizontalGap""/>
-<button id=""EqualVerticalGap"" imageMso=""AlignDistributeVertically"" label=""垂直等间距"" onAction=""LinkVerticalGap""/>
-</group><group id=""Manage"" label=""管理"">
-<button id=""Remove"" imageMso=""Clear"" label=""移除选中对象的约束"" onAction=""UnlinkSelected""/>
-<button id=""Demo"" imageMso=""SlideNew"" label=""新建六组演示"" onAction=""CreateDemo""/>
-<button id=""ConstraintsPane"" imageMso=""SelectionPane"" label=""对象与约束"" onAction=""ShowConstraintPane""/>
-<button id=""Status"" imageMso=""FileProperties"" label=""状态"" onAction=""ShowStatus""/>
-</group></tab></tabs></ribbon></customUI>";
-        }
-        public void LinkSameX(object control) { LinkSelection(ConstraintKind.SameX); }
-        public void LinkSameY(object control) { LinkSelection(ConstraintKind.SameY); }
-        public void LinkSameWidth(object control) { LinkSelection(ConstraintKind.SameWidth); }
-        public void LinkSameHeight(object control) { LinkSelection(ConstraintKind.SameHeight); }
-        public void LinkHorizontalGap(object control) { LinkSelection(ConstraintKind.EqualHorizontalGap); }
-        public void LinkVerticalGap(object control) { LinkSelection(ConstraintKind.EqualVerticalGap); }
+        public string GetCustomUI(string ribbonId) { return RibbonDefinition.CreateXml(); }
 
-        private void LinkSelection(ConstraintKind kind)
-        {
-            RunCommand(() => commands.Add(kind.ToString(), null, null));
-        }
+        public void CreateConstraint(IRibbonControl control)
+        { RunCommand(()=>BeginConstraintCore(control.Tag)); }
 
+        public void BeginConstraint(string kind)
+        { ExecuteShared(()=>BeginConstraintCore(kind)); }
+
+        private void BeginConstraintCore(string kindName)
+        {
+            ConstraintKind kind=RibbonDefinition.ParseKind(kindName);
+            if(RibbonDefinition.RequiresParameterEditor(kind))
+            {
+                var pane=EnsurePane();
+                pane.Pane.Visible=true;
+                pane.Control.ShowEditor(kind.ToString());
+            }
+            else commands.Add(kind.ToString(),null,null);
+        }
         public void UnlinkSelected(object control)
         { RunCommand(() => commands.DeleteForSelection()); }
 
@@ -141,7 +128,7 @@ namespace PptGcs.AddIn
                 presentation.PageSetup.SlideWidth = 960f; presentation.PageSetup.SlideHeight = 540f;
                 var kinds = new[] { ConstraintKind.SameY, ConstraintKind.SameX, ConstraintKind.SameWidth,
                     ConstraintKind.SameHeight, ConstraintKind.EqualHorizontalGap, ConstraintKind.EqualVerticalGap };
-                string[] titles = { "同 Y · 顶部对齐", "同 X · 左边对齐", "同宽 · 拉伸联动", "同高 · 拉伸联动", "水平等间距 · 按边缘距离", "垂直等间距 · 按边缘距离" };
+                string[] titles = { "顶端对齐", "左对齐", "同宽 · 拉伸联动", "同高 · 拉伸联动", "水平等间距 · 按边缘距离", "垂直等间距 · 按边缘距离" };
                 string[] hints = { "从内部上下拖动 A，再上下拖动 B。", "从内部左右拖动 A，再左右拖动 B。",
                     "先选中 A，拖动右边中点缩放；再对 B 做同样操作。", "先选中 A，拖动底边中点缩放；再对 B 做同样操作。",
                     "从内部左右拖动 A，再左右拖动 C。", "从内部上下拖动 A，再上下拖动 C。" };
@@ -235,7 +222,7 @@ namespace PptGcs.AddIn
             return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.4.2\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v0.5.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 
@@ -269,7 +256,7 @@ namespace PptGcs.AddIn
         {
             long handle=WindowIdentity((object)app.ActiveWindow);PaneInstance pane;
             if(!panes.TryGetValue(handle,out pane))return json.Serialize(new {factory=paneFactory!=null,window=handle,created=false});
-            return json.Serialize(new {factory=paneFactory!=null,window=handle,created=true,visible=pane.Pane.Visible,
+            return json.Serialize(new {factory=paneFactory!=null,window=handle,created=true,visible=pane.Pane.Visible,title=pane.Pane.Title,editorKind=pane.Control.EditorKind,
                 dock=pane.Pane.DockPosition.ToString(),width=pane.Pane.Width,host=(long)((dynamic)pane.Pane.ContentControl).HostHandle,control=pane.Control.Handle.ToInt64()});
         }
 
@@ -281,7 +268,7 @@ namespace PptGcs.AddIn
             PaneInstance instance;
             if(!panes.TryGetValue(handle,out instance))
             {
-                CustomTaskPane pane=paneFactory.CreateCTP("PptGcs.ConstraintPaneHost","对象与约束",(object)window);
+                CustomTaskPane pane=paneFactory.CreateCTP("PptGcs.ConstraintPaneHost","约束",(object)window);
                 var ui=new ConstraintPaneControl();
                 instance=new PaneInstance {Pane=pane,Control=ui,Window=(object)window,Presentation=(object)window.Presentation};
                 ui.Bind(new ConstraintPaneActions {

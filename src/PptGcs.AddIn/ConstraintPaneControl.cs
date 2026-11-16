@@ -12,6 +12,7 @@ namespace PptGcs.AddIn
     // Keep all document operations in the supplied shared command callbacks.
     public sealed class ConstraintPaneControl : UserControl
     {
+        private const int OptionColumns = 4;
         private readonly Label pageLabel = new Label();
         private readonly Label messageLabel = new Label();
         private readonly ComboBox scopeBox = new ComboBox();
@@ -54,7 +55,7 @@ namespace PptGcs.AddIn
             MinimumSize = new Size(250, 250);
             Size = new Size(360, 720);
             AutoScroll = true;
-            AccessibleName = "对象与约束窗格";
+            AccessibleName = "约束窗格";
             Padding = new Padding(10);
 
             var content = new TableLayoutPanel {
@@ -192,6 +193,8 @@ namespace PptGcs.AddIn
         }
 
         // The wheel's "more constraints" action can open this exact editor.
+        public string EditorKind { get { return editor.Visible ? selectedKind : null; } }
+
         public void ShowEditor(string kind = null)
         {
             operationMessage = null;
@@ -369,8 +372,8 @@ namespace PptGcs.AddIn
             optionGrid.Controls.Clear();
             optionButtons.Clear();
             selectedKind=model.Options.Any(option=>option.Kind==kind)?kind:model.Options.Select(option=>option.Kind).FirstOrDefault();
-            optionGrid.ColumnCount=Math.Max(1,(model.Options.Count+3)/4);
-            optionGrid.RowCount=4;
+            optionGrid.ColumnCount=OptionColumns;
+            optionGrid.RowCount=Math.Max(1,(model.Options.Count+OptionColumns-1)/OptionColumns);
             optionGrid.GrowStyle=TableLayoutPanelGrowStyle.FixedSize;
             int index=0;
             foreach(var option in model.Options)
@@ -391,7 +394,7 @@ namespace PptGcs.AddIn
                 };
                 SetOptionImage(optionKind,button);
                 optionButtons.Add(optionKind,button);
-                optionGrid.Controls.Add(button,index/4,index%4);
+                optionGrid.Controls.Add(button,index%OptionColumns,index/OptionColumns);
                 index++;
             }
             SizeOptionGrid();
@@ -401,13 +404,13 @@ namespace PptGcs.AddIn
 
         private void SizeOptionGrid()
         {
-            int columns=Math.Max(1,(optionButtons.Count+3)/4);
-            int columnWidth=Pixels(67),rowHeight=Pixels(72);
-            optionGrid.ColumnCount=columns;optionGrid.RowCount=4;
+            int rows=Math.Max(1,(optionButtons.Count+OptionColumns-1)/OptionColumns);
+            int columnWidth=Pixels(80),rowHeight=Pixels(72);
+            optionGrid.ColumnCount=OptionColumns;optionGrid.RowCount=rows;
             optionGrid.ColumnStyles.Clear();optionGrid.RowStyles.Clear();
-            for(int i=0;i<columns;i++)optionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,columnWidth));
-            for(int i=0;i<4;i++)optionGrid.RowStyles.Add(new RowStyle(SizeType.Absolute,rowHeight));
-            optionGrid.Size=new Size(columns*columnWidth,4*rowHeight);
+            for(int i=0;i<OptionColumns;i++)optionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,columnWidth));
+            for(int i=0;i<rows;i++)optionGrid.RowStyles.Add(new RowStyle(SizeType.Absolute,rowHeight));
+            optionGrid.Size=new Size(OptionColumns*columnWidth,rows*rowHeight);
             optionViewport.AutoScrollMinSize=optionGrid.Size;
             optionViewport.Height=optionGrid.Height+Math.Max(Pixels(17),SystemInformation.HorizontalScrollBarHeight);
             optionViewport.MinimumSize=new Size(Pixels(180),optionViewport.Height);
