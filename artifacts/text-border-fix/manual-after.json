@@ -1,0 +1,162 @@
+﻿{
+    "Utc":  "2026-11-16T10:40:22.4027324Z",
+    "Path":  "D:\\code\\ppt-gcs\\artifacts\\text-border-fix\\interaction.pptx",
+    "PresentationTags":  [
+                             {
+                                 "Name":  "PPTGCS_CONSTRAINTS",
+                                 "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2239434332323530372D353831462D343739332D384646452D3142324444373344384136432220736C69646549643D2232353622206B696E643D2253616D6559223E3C73686170652069643D2235433734383542422D423641422D344530372D394538312D30393145303045344433303822202F3E3C73686170652069643D2241313238393644422D334643432D343842432D414331322D39424630394541443131393722202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2237363939393643312D423935342D344244362D384544422D3635444241354438324134342220736C69646549643D2232353622206B696E643D2253616D655769647468223E3C73686170652069643D2235433734383542422D423641422D344530372D394538312D30393145303045344433303822202F3E3C73686170652069643D2241313238393644422D334643432D343842432D414331322D39424630394541443131393722202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                             },
+                             {
+                                 "Name":  "PPTGCS_DOCUMENT",
+                                 "Value":  "8BF5C9E8-C0EC-4324-A2B2-97329F19909A"
+                             },
+                             {
+                                 "Name":  "PPTGCS_TEST",
+                                 "Value":  "V3"
+                             }
+                         ],
+    "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"9CC22507-581F-4793-8FFE-1B2DD73D8A6C\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"5C7485BB-B6AB-4E07-9E81-091E00E4D308\" /\u003e\u003cshape id=\"A12896DB-3FCC-48BC-AC12-9BF09EAD1197\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"769996C1-B954-4BD6-8EDB-65DBA5D82A44\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"5C7485BB-B6AB-4E07-9E81-091E00E4D308\" /\u003e\u003cshape id=\"A12896DB-3FCC-48BC-AC12-9BF09EAD1197\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+    "Snapshot":  {
+                     "presentation":  "D:\\code\\ppt-gcs\\artifacts\\text-border-fix\\interaction.pptx",
+                     "storage":  "presentation-tags",
+                     "constraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"9CC22507-581F-4793-8FFE-1B2DD73D8A6C\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"5C7485BB-B6AB-4E07-9E81-091E00E4D308\" /\u003e\u003cshape id=\"A12896DB-3FCC-48BC-AC12-9BF09EAD1197\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"769996C1-B954-4BD6-8EDB-65DBA5D82A44\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"5C7485BB-B6AB-4E07-9E81-091E00E4D308\" /\u003e\u003cshape id=\"A12896DB-3FCC-48BC-AC12-9BF09EAD1197\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                     "slides":  [
+                                    {
+                                        "slideId":  256,
+                                        "name":  "Slide1",
+                                        "kind":  "",
+                                        "geometry":  [
+                                                         {
+                                                             "Id":  "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                                                             "Name":  "Text_A",
+                                                             "Left":  147.32290649414063,
+                                                             "Top":  296.92959594726563,
+                                                             "Width":  260,
+                                                             "Height":  87.243782043457031
+                                                         },
+                                                         {
+                                                             "Id":  "A12896DB-3FCC-48BC-AC12-9BF09EAD1197",
+                                                             "Name":  "Text_B",
+                                                             "Left":  465.34213256835938,
+                                                             "Top":  296.92959594726563,
+                                                             "Width":  260,
+                                                             "Height":  60.585906982421875
+                                                         }
+                                                     ],
+                                        "constraints":  [
+                                                            {
+                                                                "Id":  "9CC22507-581F-4793-8FFE-1B2DD73D8A6C",
+                                                                "SlideId":  256,
+                                                                "Kind":  "SameY",
+                                                                "ShapeIds":  [
+                                                                                 "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                                                                                 "A12896DB-3FCC-48BC-AC12-9BF09EAD1197"
+                                                                             ],
+                                                                "Value":  null,
+                                                                "SecondaryValue":  null,
+                                                                "Enabled":  true
+                                                            },
+                                                            {
+                                                                "Id":  "769996C1-B954-4BD6-8EDB-65DBA5D82A44",
+                                                                "SlideId":  256,
+                                                                "Kind":  "SameWidth",
+                                                                "ShapeIds":  [
+                                                                                 "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                                                                                 "A12896DB-3FCC-48BC-AC12-9BF09EAD1197"
+                                                                             ],
+                                                                "Value":  null,
+                                                                "SecondaryValue":  null,
+                                                                "Enabled":  true
+                                                            }
+                                                        ]
+                                    }
+                                ]
+                 },
+    "TextA":  "A：点击这里编辑文字\r拖边框可联动移动测试复测",
+    "TextB":  "B：点击这里编辑文字\r拖边框可联动移动",
+    "Slides":  [
+                   {
+                       "Id":  256,
+                       "Name":  "Slide1",
+                       "Tags":  [
+
+                                ],
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "TextBox 1",
+                                          "Type":  17,
+                                          "Guid":  "",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  35,
+                                          "Top":  25,
+                                          "Width":  890,
+                                          "Height":  58.16252,
+                                          "Rotation":  0,
+                                          "LockAspectRatio":  0,
+                                          "Text":  {
+                                                       "Text":  "边框复测：在 A 追加“复测”，再拖 A 上边框、B 下边框各一次。B 可直接起拖，不必预先选中。避开八个缩放点。",
+                                                       "AutoSize":  1,
+                                                       "AutoSize2":  1
+                                                   }
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "Text_A",
+                                          "Type":  17,
+                                          "Guid":  "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                                          "Tags":  [
+                                                       {
+                                                           "Name":  "PPTGCS_ID",
+                                                           "Value":  "5C7485BB-B6AB-4E07-9E81-091E00E4D308"
+                                                       },
+                                                       {
+                                                           "Name":  "PPTGCS_OWNER",
+                                                           "Value":  "8BF5C9E8-C0EC-4324-A2B2-97329F19909A/256/3"
+                                                       }
+                                                   ],
+                                          "Left":  147.3229,
+                                          "Top":  296.9296,
+                                          "Width":  260,
+                                          "Height":  87.24378,
+                                          "Rotation":  0,
+                                          "LockAspectRatio":  0,
+                                          "Text":  {
+                                                       "Text":  "A：点击这里编辑文字\r拖边框可联动移动测试复测",
+                                                       "AutoSize":  1,
+                                                       "AutoSize2":  1
+                                                   }
+                                      },
+                                      {
+                                          "NativeId":  4,
+                                          "Name":  "Text_B",
+                                          "Type":  17,
+                                          "Guid":  "A12896DB-3FCC-48BC-AC12-9BF09EAD1197",
+                                          "Tags":  [
+                                                       {
+                                                           "Name":  "PPTGCS_ID",
+                                                           "Value":  "A12896DB-3FCC-48BC-AC12-9BF09EAD1197"
+                                                       },
+                                                       {
+                                                           "Name":  "PPTGCS_OWNER",
+                                                           "Value":  "8BF5C9E8-C0EC-4324-A2B2-97329F19909A/256/4"
+                                                       }
+                                                   ],
+                                          "Left":  465.342133,
+                                          "Top":  296.9296,
+                                          "Width":  260,
+                                          "Height":  60.585907,
+                                          "Rotation":  0,
+                                          "LockAspectRatio":  0,
+                                          "Text":  {
+                                                       "Text":  "B：点击这里编辑文字\r拖边框可联动移动",
+                                                       "AutoSize":  1,
+                                                       "AutoSize2":  1
+                                                   }
+                                      }
+                                  ]
+                   }
+               ]
+}

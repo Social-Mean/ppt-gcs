@@ -1,0 +1,24 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  true,
+    "NativeTextInteriorRoutes":  3,
+    "PhysicalGestures":  2,
+    "DriverIds":  [
+                      "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                      "A12896DB-3FCC-48BC-AC12-9BF09EAD1197"
+                  ],
+    "HeldFrames":  562,
+    "NativeUndoSteps":  2,
+    "NativeRedoSteps":  2,
+    "Checks":  [
+                   "native text-interior routing and new Text A content; Text B unchanged",
+                   "both drivers perform complete physical Move gestures with valid held-pointer geometry",
+                   "continuous gesture geometry chain, unchanged XML and final state checked before native history",
+                   "one native Undo per complete Move, preserving the edited text and all relationship/identity tags",
+                   "all native Redo steps restore exact text/tags/XML and geometry within 0.01 pt; fixture saved"
+               ],
+    "Failure":  null,
+    "RestorationFailure":  null,
+    "StartUtc":  "2026-11-16T10:38:35.8712375Z",
+    "StopUtc":  "2026-11-16T10:40:22.4027324Z"
+}

@@ -1,0 +1,31 @@
+{
+  "Passed": true,
+  "Checks": [
+    "selected editing-text border moved through GCS",
+    "unselected B exterior border moved through GCS on first drag"
+  ],
+  "Gestures": [
+    {
+      "driver": "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+      "route": "owned-Move",
+      "selectionTypeBefore": 3,
+      "driverAlreadySelected": true,
+      "outsideDistanceDevicePixels": 0,
+      "screenOrigin": [
+        324.0,
+        324.99999999999994
+      ]
+    },
+    {
+      "driver": "A12896DB-3FCC-48BC-AC12-9BF09EAD1197",
+      "route": "owned-Move",
+      "selectionTypeBefore": 2,
+      "driverAlreadySelected": false,
+      "outsideDistanceDevicePixels": 2.6745373535156887,
+      "screenOrigin": [
+        324.0,
+        325.0
+      ]
+    }
+  ]
+}

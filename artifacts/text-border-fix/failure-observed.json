@@ -1,0 +1,18 @@
+{
+  "Passed": false,
+  "Version": "0.4.1",
+  "PhysicalMouseInput": true,
+  "Reason": "Bounding-box-exterior selection borders and unselected interior border strips escaped GCS",
+  "ConfirmedExteriorMisses": 6,
+  "ExteriorDistanceDevicePixels": [
+    0.4161,
+    3.4161,
+    3.4581
+  ],
+  "ConfirmedUnselectedInnerMiss": true,
+  "InnerDistanceDevicePixels": 3.55,
+  "Scale": 1.85,
+  "OriginX": 368,
+  "OriginY": 269,
+  "NativeHistoryVerificationRun": false
+}

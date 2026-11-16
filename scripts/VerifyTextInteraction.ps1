@@ -1,8 +1,7 @@
 ﻿[CmdletBinding()]
-param()
+param([Parameter(Mandatory=$true)][string]$EvidenceDirectory,[string]$RequiredText='复测')
 $ErrorActionPreference='Stop'
-$root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$directory=Join-Path $root 'artifacts\ui-refinement'
+$directory=[IO.Path]::GetFullPath($EvidenceDirectory)
 $fixture=Join-Path $directory 'interaction.pptx'
 $baseline=Get-Content -LiteralPath (Join-Path $directory 'manual-before.json') -Raw | ConvertFrom-Json
 $start=[DateTimeOffset]::Parse($baseline.Utc)
@@ -113,7 +112,7 @@ try {
     Write-State 'manual-after' $after
     $stop=[DateTimeOffset]::Parse($after.Utc)
     if($baseline.Snapshot.presentation -ne $fixture -or $baseline.Snapshot.constraintXml -cne $after.ConstraintXml){throw 'The fixture relationship data changed during the manual interaction.'}
-    if($after.TextA -ceq $baseline.TextA -or -not $after.TextA.Contains('测试')){throw 'Text A does not contain the requested new text.'}
+    if($after.TextA -ceq $baseline.TextA -or -not $after.TextA.Contains($RequiredText)){throw 'Text A does not contain the requested new text.'}
     if($after.TextB -cne $baseline.TextB){throw 'Text B changed during the manual text edit.'}
     $relations=@($after.Snapshot.slides | ForEach-Object {$_.constraints})
     if($relations.Count -ne 2 -or @($relations | Where-Object Kind -eq 'SameY').Count -ne 1 -or @($relations | Where-Object Kind -eq 'SameWidth').Count -ne 1){throw 'Expected exactly the SameY and SameWidth fixture relationships.'}

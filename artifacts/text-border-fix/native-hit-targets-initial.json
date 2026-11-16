@@ -1,0 +1,3258 @@
+﻿{
+    "Passed":  false,
+    "PhysicalMouseInput":  false,
+    "ProgrammaticSelection":  true,
+    "ZoomValues":  [
+                       75,
+                       100,
+                       125
+                   ],
+    "Samples":  [
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  742,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  796,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  768
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1022
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  736,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  802,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  762
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1028
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  769,
+                                      "X":  895
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  742,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  796,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  768
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1022
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  736,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  802,
+                                      "X":  830
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  762
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1028
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  765,
+                                       "Right":  1025,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  769,
+                                      "X":  895
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  false,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  742,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  796,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1170
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1424
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  736,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  802,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1164
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1430
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  769,
+                                      "X":  1297
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  742,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  796,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1170
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1424
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  736,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  802,
+                                      "X":  1232
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  65.069193939989759,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1164
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  754,
+                                      "X":  1430
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  15.297058540778355,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  75,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1167,
+                                       "Right":  1427,
+                                       "Bottom":  799,
+                                       "Top":  739
+                                   },
+                        "Point":  {
+                                      "Y":  769,
+                                      "X":  1297
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  false,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  732,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  807,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  653
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  994
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  726,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  813,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  647
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1000
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  770,
+                                      "X":  824
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  732,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  807,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  653
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  994
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  726,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  813,
+                                      "X":  737
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  647
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1000
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  650,
+                                       "Right":  997,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  770,
+                                      "X":  824
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  false,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  732,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  807,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1189
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1530
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  726,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  813,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1183
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1536
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  770,
+                                      "X":  1360
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  732,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  807,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1189
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1530
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  726,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  813,
+                                      "X":  1273
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  86.5520074868284,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1183
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  749,
+                                      "X":  1536
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  20.223748416156685,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  100,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1186,
+                                       "Right":  1533,
+                                       "Bottom":  810,
+                                       "Top":  729
+                                   },
+                        "Point":  {
+                                      "Y":  770,
+                                      "X":  1360
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  false,
+                        "BorderAllowed":  false,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  713,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  808,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  538
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  966
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  707,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  814,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  532
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  972
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  760,
+                                      "X":  752
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  713,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  808,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  538
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  966
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  707,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  814,
+                                      "X":  644
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  532
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  972
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_A",
+                        "NativeId":  3,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  535,
+                                       "Right":  969,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  760,
+                                      "X":  752
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  3,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  713,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  808,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1208
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1636
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  707,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  814,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1202
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1642
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  true,
+                        "SelectionType":  2,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  760,
+                                      "X":  1422
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  713,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  808,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1208
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "inner",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1636
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  false
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "top",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  707,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "bottom",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  814,
+                                      "X":  1314
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  108.04165863221463,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "left",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1202
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  true,
+                        "BorderAllowed":  true,
+                        "NativeText":  false,
+                        "Classification":  "gcs-move",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "right",
+                        "Zone":  "outer",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  735,
+                                      "X":  1642
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  null,
+                        "RangeError":  null,
+                        "NativeHitMatches":  null,
+                        "Border":  true,
+                        "BorderAllowed":  false,
+                        "NativeText":  false,
+                        "Classification":  "native-other",
+                        "NearestHandleDistance":  25.179356624028344,
+                        "Passed":  true
+                    },
+                    {
+                        "Zoom":  125,
+                        "Shape":  "Text_B",
+                        "NativeId":  4,
+                        "Selected":  false,
+                        "SelectionType":  0,
+                        "Edge":  "center",
+                        "Zone":  "center",
+                        "Dpi":  96,
+                        "Bounds":  {
+                                       "Left":  1205,
+                                       "Right":  1639,
+                                       "Bottom":  811,
+                                       "Top":  710
+                                   },
+                        "Point":  {
+                                      "Y":  760,
+                                      "X":  1422
+                                  },
+                        "SurfaceClass":  "mdiClass",
+                        "RangeId":  4,
+                        "RangeError":  null,
+                        "NativeHitMatches":  true,
+                        "Border":  false,
+                        "BorderAllowed":  true,
+                        "NativeText":  true,
+                        "Classification":  "native-text",
+                        "NearestHandleDistance":  null,
+                        "Passed":  true
+                    }
+                ],
+    "SampleCount":  108,
+    "DocumentStateUnchanged":  true,
+    "RestoredZoom":  123,
+    "Failure":  "System.Management.Automation.RuntimeException: 34 native border targets failed; inspect the report samples.",
+    "RestorationFailure":  null,
+    "Utc":  "2026-11-16T10:35:21.0303437Z"
+}

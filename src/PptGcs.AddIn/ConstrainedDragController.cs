@@ -395,6 +395,7 @@ namespace PptGcs.AddIn
             ShapeGeometry driver = null;
             GestureMode mode = GestureMode.Move;
             object closest = null;
+            ShapeGeometry selectedBorder = null;
 
             int selectedId = SelectedShapeId(window);
             if (selectedId >= 0)
@@ -406,28 +407,33 @@ namespace PptGcs.AddIn
                     closest = ClosestHandle(byId[item.Key], map, mouse.Position);
                     GestureMode? handle = HitHandle(byId[item.Key], map, mouse.Position, handleRadius);
                     if (handle.HasValue) { driver = byId[item.Key]; mode = handle.Value; }
+                    else if (TextPointerPolicy.HitMoveBorder((int)shape.Type, (int)window.Selection.Type == 3,
+                        ScreenBounds(byId[item.Key], map), new System.Drawing.PointF(mouse.Position.X,mouse.Position.Y), 6 * dpi / 96f))
+                        selectedBorder = byId[item.Key];
                     break;
                 }
             }
             if (driver == null)
             {
                 dynamic hit = window.RangeFromPoint(mouse.Position.X, mouse.Position.Y);
-                if (hit == null)
+                if (hit != null) hit = ShapeCapabilities.TopLevel((object)hit);
+                int? hitId = hit == null ? (int?)null : (int)hit.Id;
+                if (selectedBorder != null && TextPointerPolicy.CanUseBorderHit(true,
+                    hitId.HasValue ? (bool?)(hitId.Value == selectedId) : null)) driver = selectedBorder;
+                if (driver == null && !hitId.HasValue)
                 { LogRoute(mouse, messageKind, "native-no-hit", ReadSelection(window), handleRadius, closest, context.Geometry, previousPane); return false; }
-                hit = ShapeCapabilities.TopLevel((object)hit);
-                int hitId = (int)hit.Id;
-                foreach (var item in context.Shapes)
+                if (driver == null) foreach (var item in context.Shapes)
                 {
                     dynamic shape = item.Value;
-                    if ((int)shape.Id == hitId && constrained.Contains(item.Key) &&
-                        CanDrag((object)shape) && HitBody(byId[item.Key], map, mouse.Position))
+                    if ((int)shape.Id == hitId && constrained.Contains(item.Key) && CanDrag((object)shape))
                     {
                         ShapeGeometry geometry = byId[item.Key];
-                        var bounds = new System.Drawing.RectangleF((float)(map.OriginX + geometry.Left * map.ScaleX),
-                            (float)(map.OriginY + geometry.Top * map.ScaleY), (float)(geometry.Width * map.ScaleX), (float)(geometry.Height * map.ScaleY));
-                        if (TextPointerPolicy.UseNativeTextInput((int)shape.Type, (int)shape.Id == selectedId,
-                            (int)shape.Id == selectedId && (int)window.Selection.Type == 3, bounds,
-                            new System.Drawing.PointF(mouse.Position.X, mouse.Position.Y), 6 * dpi / 96f))
+                        var bounds = ScreenBounds(geometry,map);
+                        var point = new System.Drawing.PointF(mouse.Position.X,mouse.Position.Y);
+                        bool editingText = (int)shape.Id == selectedId && (int)window.Selection.Type == 3;
+                        bool border = TextPointerPolicy.HitMoveBorder((int)shape.Type,editingText,bounds,point,6 * dpi / 96f);
+                        if (!border && !HitBody(geometry,map,mouse.Position)) continue;
+                        if (TextPointerPolicy.UseNativeTextInput((int)shape.Type, editingText, bounds, point, 6 * dpi / 96f))
                         {
                             LogRoute(mouse, messageKind, "native-text-interior", ReadSelection(window));
                             return false;
@@ -698,6 +704,12 @@ namespace PptGcs.AddIn
             double left = map.OriginX + shape.Left * map.ScaleX, top = map.OriginY + shape.Top * map.ScaleY;
             return point.X >= left && point.X <= left + shape.Width * map.ScaleX &&
                 point.Y >= top && point.Y <= top + shape.Height * map.ScaleY;
+        }
+
+        private static System.Drawing.RectangleF ScreenBounds(ShapeGeometry shape, ScreenMap map)
+        {
+            return new System.Drawing.RectangleF((float)(map.OriginX + shape.Left * map.ScaleX),
+                (float)(map.OriginY + shape.Top * map.ScaleY), (float)(shape.Width * map.ScaleX), (float)(shape.Height * map.ScaleY));
         }
 
         private static GestureMode? HitHandle(ShapeGeometry shape, ScreenMap map, Point point, double radius)
