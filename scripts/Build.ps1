@@ -25,6 +25,7 @@ if (Test-Path -LiteralPath $testPath) {
         $compilerArguments += '/reference:' + (Join-Path $referenceDirectory "$referenceName.dll")
     }
     $compilerArguments += "/reference:$outputDirectory\PptGcs.Core.dll"
+    $compilerArguments += "/reference:$outputDirectory\MathNet.Numerics.dll"
     $compilerArguments += $testPath
     & $compilerPath @compilerArguments
     if ($LASTEXITCODE -ne 0) { throw "Test compilation failed with exit code $LASTEXITCODE." }

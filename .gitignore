@@ -9,3 +9,7 @@ artifacts/checker-pending.json
 *.user
 .packages/
 ~$*
+artifacts/session-before-v2-*.pptx
+artifacts/layout-v2-xml-failure.pptx
+__pycache__/
+*.pyc

@@ -1,0 +1,6 @@
+{
+  "passed": false,
+  "error": "Runtime error in main run: 2026-11-16T05:16:37.6681865Z gesture-release-mismatch-error {\"gestureId\":\"80de02eb-31d0-4cfb-beed-d8c05f68b45f\",\"driverId\":\"E9FDEEDB-ABEC-4571-A416-28990476E932\",\"mode\":\"Move\",\"geometryMatched\":false,\"lastMotion\":{\"x\":1193,\"y\":776},\"releasePoint\":{\"x\":1184,\"y\":771},\"frames\":55,\"error\":null}",
+  "artifacts": "D:\\code\\ppt-gcs\\artifacts\\layout-v2-validation",
+  "checkedUtc": "2026-11-16T05:17:42.500478+00:00"
+}

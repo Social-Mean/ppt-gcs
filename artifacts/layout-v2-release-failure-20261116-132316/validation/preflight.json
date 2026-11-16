@@ -1,0 +1,1292 @@
+﻿[
+    {
+        "ownerProcess":  32092,
+        "ownerThread":  15144,
+        "currentThread":  15144,
+        "foregroundRoot":  41620944,
+        "foregroundClass":  "PPTFrameClass",
+        "foregroundProcess":  32092,
+        "foregroundThread":  15144,
+        "presentation":  "D:\\code\\ppt-gcs\\artifacts\\layout-v2.pptx",
+        "slideId":  256,
+        "OriginX":  791,
+        "OriginY":  502,
+        "ScaleX":  1.29,
+        "ScaleY":  1.29,
+        "constraints":  [
+                            {
+                                "Id":  "24137007-A17F-4F9F-811B-96778E519A8C",
+                                "SlideId":  256,
+                                "kind":  "SameY",
+                                "ShapeIds":  [
+                                                 "D21B1DD2-4505-41D3-8DE1-D78D114EF3A9",
+                                                 "151B7416-6139-478D-AA3A-A3948478E179"
+                                             ]
+                            }
+                        ],
+        "shapes":  [
+                       {
+                           "id":  "D21B1DD2-4505-41D3-8DE1-D78D114EF3A9",
+                           "name":  "GCS_SameY_A",
+                           "nativeId":  4,
+                           "geometry":  {
+                                            "Id":  "D21B1DD2-4505-41D3-8DE1-D78D114EF3A9",
+                                            "Left":  180,
+                                            "Top":  190,
+                                            "Width":  170,
+                                            "Height":  100
+                                        },
+                           "selected":  true,
+                           "center":  {
+                                          "x":  1133,
+                                          "y":  812
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  4,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1023.2,
+                                               "y":  747.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1132.85,
+                                               "y":  747.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1242.5,
+                                               "y":  747.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1242.5,
+                                               "y":  811.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1242.5,
+                                               "y":  876.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1132.85,
+                                               "y":  876.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1023.2,
+                                               "y":  876.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1023.2,
+                                               "y":  811.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "151B7416-6139-478D-AA3A-A3948478E179",
+                           "name":  "GCS_SameY_B",
+                           "nativeId":  5,
+                           "geometry":  {
+                                            "Id":  "151B7416-6139-478D-AA3A-A3948478E179",
+                                            "Left":  580,
+                                            "Top":  190,
+                                            "Width":  170,
+                                            "Height":  100
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1649,
+                                          "y":  812
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  5,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1539.2,
+                                               "y":  747.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1648.85,
+                                               "y":  747.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1758.5,
+                                               "y":  747.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1758.5,
+                                               "y":  811.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1758.5,
+                                               "y":  876.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1648.85,
+                                               "y":  876.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1539.2,
+                                               "y":  876.1,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1539.2,
+                                               "y":  811.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       }
+                   ]
+    },
+    {
+        "ownerProcess":  32092,
+        "ownerThread":  15144,
+        "currentThread":  15144,
+        "foregroundRoot":  41620944,
+        "foregroundClass":  "PPTFrameClass",
+        "foregroundProcess":  32092,
+        "foregroundThread":  15144,
+        "presentation":  "D:\\code\\ppt-gcs\\artifacts\\layout-v2.pptx",
+        "slideId":  257,
+        "OriginX":  791,
+        "OriginY":  502,
+        "ScaleX":  1.29,
+        "ScaleY":  1.29,
+        "constraints":  [
+                            {
+                                "Id":  "BE818B9C-CB9E-4663-9FCA-B69CF4EAB18A",
+                                "SlideId":  257,
+                                "kind":  "SameX",
+                                "ShapeIds":  [
+                                                 "E9FDEEDB-ABEC-4571-A416-28990476E932",
+                                                 "81F28DD1-696F-4AA7-865B-34171D14A9A5"
+                                             ]
+                            }
+                        ],
+        "shapes":  [
+                       {
+                           "id":  "E9FDEEDB-ABEC-4571-A416-28990476E932",
+                           "name":  "GCS_SameX_A",
+                           "nativeId":  4,
+                           "geometry":  {
+                                            "Id":  "E9FDEEDB-ABEC-4571-A416-28990476E932",
+                                            "Left":  200,
+                                            "Top":  150,
+                                            "Width":  150,
+                                            "Height":  90
+                                        },
+                           "selected":  true,
+                           "center":  {
+                                          "x":  1146,
+                                          "y":  754
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  4,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1049,
+                                               "y":  695.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1145.75,
+                                               "y":  695.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1242.5,
+                                               "y":  695.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1242.5,
+                                               "y":  753.55,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1242.5,
+                                               "y":  811.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1145.75,
+                                               "y":  811.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1049,
+                                               "y":  811.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1049,
+                                               "y":  753.55,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "81F28DD1-696F-4AA7-865B-34171D14A9A5",
+                           "name":  "GCS_SameX_B",
+                           "nativeId":  5,
+                           "geometry":  {
+                                            "Id":  "81F28DD1-696F-4AA7-865B-34171D14A9A5",
+                                            "Left":  200,
+                                            "Top":  350,
+                                            "Width":  170,
+                                            "Height":  90
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1159,
+                                          "y":  1012
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  5,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1049,
+                                               "y":  953.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1158.65,
+                                               "y":  953.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1268.3,
+                                               "y":  953.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1268.3,
+                                               "y":  1011.55,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1268.3,
+                                               "y":  1069.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1158.65,
+                                               "y":  1069.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1049,
+                                               "y":  1069.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1049,
+                                               "y":  1011.55,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       }
+                   ]
+    },
+    {
+        "ownerProcess":  32092,
+        "ownerThread":  15144,
+        "currentThread":  15144,
+        "foregroundRoot":  41620944,
+        "foregroundClass":  "PPTFrameClass",
+        "foregroundProcess":  32092,
+        "foregroundThread":  15144,
+        "presentation":  "D:\\code\\ppt-gcs\\artifacts\\layout-v2.pptx",
+        "slideId":  258,
+        "OriginX":  791,
+        "OriginY":  502,
+        "ScaleX":  1.29,
+        "ScaleY":  1.29,
+        "constraints":  [
+                            {
+                                "Id":  "CF7EDAEC-1009-43BF-B505-5C3247855E1F",
+                                "SlideId":  258,
+                                "kind":  "SameWidth",
+                                "ShapeIds":  [
+                                                 "BB993E5E-81A6-4049-8471-34AE42CA3D16",
+                                                 "A7AB5C4C-05C2-49F8-BA27-63EF8958C559"
+                                             ]
+                            }
+                        ],
+        "shapes":  [
+                       {
+                           "id":  "BB993E5E-81A6-4049-8471-34AE42CA3D16",
+                           "name":  "GCS_SameWidth_A",
+                           "nativeId":  4,
+                           "geometry":  {
+                                            "Id":  "BB993E5E-81A6-4049-8471-34AE42CA3D16",
+                                            "Left":  180,
+                                            "Top":  200,
+                                            "Width":  160,
+                                            "Height":  100
+                                        },
+                           "selected":  true,
+                           "center":  {
+                                          "x":  1126,
+                                          "y":  824
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  4,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1023.2,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1126.4,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1229.6000000000001,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1229.6000000000001,
+                                               "y":  824.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1229.6000000000001,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1126.4,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1023.2,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1023.2,
+                                               "y":  824.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "A7AB5C4C-05C2-49F8-BA27-63EF8958C559",
+                           "name":  "GCS_SameWidth_B",
+                           "nativeId":  5,
+                           "geometry":  {
+                                            "Id":  "A7AB5C4C-05C2-49F8-BA27-63EF8958C559",
+                                            "Left":  580,
+                                            "Top":  200,
+                                            "Width":  160,
+                                            "Height":  140
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1642,
+                                          "y":  850
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  5,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1539.2,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1642.4,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1745.6000000000001,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1745.6000000000001,
+                                               "y":  850.3,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1745.6000000000001,
+                                               "y":  940.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1642.4,
+                                               "y":  940.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1539.2,
+                                               "y":  940.6,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1539.2,
+                                               "y":  850.3,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       }
+                   ]
+    },
+    {
+        "ownerProcess":  32092,
+        "ownerThread":  15144,
+        "currentThread":  15144,
+        "foregroundRoot":  41620944,
+        "foregroundClass":  "PPTFrameClass",
+        "foregroundProcess":  32092,
+        "foregroundThread":  15144,
+        "presentation":  "D:\\code\\ppt-gcs\\artifacts\\layout-v2.pptx",
+        "slideId":  259,
+        "OriginX":  791,
+        "OriginY":  502,
+        "ScaleX":  1.29,
+        "ScaleY":  1.29,
+        "constraints":  [
+                            {
+                                "Id":  "C676E7D9-E4E6-47CC-97A7-3C0C43BB1290",
+                                "SlideId":  259,
+                                "kind":  "SameHeight",
+                                "ShapeIds":  [
+                                                 "BCB5A962-DF1A-43C1-B32C-8F43BCF206A3",
+                                                 "91865777-02FD-4109-B45C-93CDE0BE3CA1"
+                                             ]
+                            }
+                        ],
+        "shapes":  [
+                       {
+                           "id":  "BCB5A962-DF1A-43C1-B32C-8F43BCF206A3",
+                           "name":  "GCS_SameHeight_A",
+                           "nativeId":  4,
+                           "geometry":  {
+                                            "Id":  "BCB5A962-DF1A-43C1-B32C-8F43BCF206A3",
+                                            "Left":  180,
+                                            "Top":  200,
+                                            "Width":  180,
+                                            "Height":  100
+                                        },
+                           "selected":  true,
+                           "center":  {
+                                          "x":  1139,
+                                          "y":  824
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  4,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1023.2,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1139.3000000000002,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1255.4,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1255.4,
+                                               "y":  824.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1255.4,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1139.3000000000002,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1023.2,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1023.2,
+                                               "y":  824.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "91865777-02FD-4109-B45C-93CDE0BE3CA1",
+                           "name":  "GCS_SameHeight_B",
+                           "nativeId":  5,
+                           "geometry":  {
+                                            "Id":  "91865777-02FD-4109-B45C-93CDE0BE3CA1",
+                                            "Left":  580,
+                                            "Top":  200,
+                                            "Width":  220,
+                                            "Height":  100
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1681,
+                                          "y":  824
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  5,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1539.2,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1681.1,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1823,
+                                               "y":  760,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1823,
+                                               "y":  824.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1823,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1681.1,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1539.2,
+                                               "y":  889,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1539.2,
+                                               "y":  824.5,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       }
+                   ]
+    },
+    {
+        "ownerProcess":  32092,
+        "ownerThread":  15144,
+        "currentThread":  15144,
+        "foregroundRoot":  41620944,
+        "foregroundClass":  "PPTFrameClass",
+        "foregroundProcess":  32092,
+        "foregroundThread":  15144,
+        "presentation":  "D:\\code\\ppt-gcs\\artifacts\\layout-v2.pptx",
+        "slideId":  260,
+        "OriginX":  791,
+        "OriginY":  502,
+        "ScaleX":  1.29,
+        "ScaleY":  1.29,
+        "constraints":  [
+                            {
+                                "Id":  "D058791A-AD05-41C6-8D0B-4DCBE06F5F6B",
+                                "SlideId":  260,
+                                "kind":  "EqualHorizontalGap",
+                                "ShapeIds":  [
+                                                 "A90E046A-7B36-4032-A6B7-D27D4BDE33F7",
+                                                 "05EA2F68-140A-4683-AFD5-B2793C18F316",
+                                                 "BA7F39BF-E16A-4D33-87E4-4B0F75ED83E7"
+                                             ]
+                            }
+                        ],
+        "shapes":  [
+                       {
+                           "id":  "A90E046A-7B36-4032-A6B7-D27D4BDE33F7",
+                           "name":  "GCS_EqualHorizontalGap_A",
+                           "nativeId":  4,
+                           "geometry":  {
+                                            "Id":  "A90E046A-7B36-4032-A6B7-D27D4BDE33F7",
+                                            "Left":  120,
+                                            "Top":  220,
+                                            "Width":  120,
+                                            "Height":  90
+                                        },
+                           "selected":  true,
+                           "center":  {
+                                          "x":  1023,
+                                          "y":  844
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  4,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  945.8,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1023.1999999999999,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1100.6,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1100.6,
+                                               "y":  843.84999999999991,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1100.6,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1023.1999999999999,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  945.8,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  945.8,
+                                               "y":  843.84999999999991,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "05EA2F68-140A-4683-AFD5-B2793C18F316",
+                           "name":  "GCS_EqualHorizontalGap_B",
+                           "nativeId":  5,
+                           "geometry":  {
+                                            "Id":  "05EA2F68-140A-4683-AFD5-B2793C18F316",
+                                            "Left":  388,
+                                            "Top":  220,
+                                            "Width":  160,
+                                            "Height":  90
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1395,
+                                          "y":  844
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  5,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1291.52,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1394.72,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1497.92,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1497.92,
+                                               "y":  843.84999999999991,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1497.92,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1394.72,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1291.52,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1291.52,
+                                               "y":  843.84999999999991,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "BA7F39BF-E16A-4D33-87E4-4B0F75ED83E7",
+                           "name":  "GCS_EqualHorizontalGap_C",
+                           "nativeId":  6,
+                           "geometry":  {
+                                            "Id":  "BA7F39BF-E16A-4D33-87E4-4B0F75ED83E7",
+                                            "Left":  696,
+                                            "Top":  220,
+                                            "Width":  100,
+                                            "Height":  90
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1753,
+                                          "y":  844
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  6,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1688.8400000000001,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1753.3400000000001,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1817.8400000000001,
+                                               "y":  785.8,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1817.8400000000001,
+                                               "y":  843.84999999999991,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1817.8400000000001,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1753.3400000000001,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1688.8400000000001,
+                                               "y":  901.9,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1688.8400000000001,
+                                               "y":  843.84999999999991,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       }
+                   ]
+    },
+    {
+        "ownerProcess":  32092,
+        "ownerThread":  15144,
+        "currentThread":  15144,
+        "foregroundRoot":  41620944,
+        "foregroundClass":  "PPTFrameClass",
+        "foregroundProcess":  32092,
+        "foregroundThread":  15144,
+        "presentation":  "D:\\code\\ppt-gcs\\artifacts\\layout-v2.pptx",
+        "slideId":  261,
+        "OriginX":  791,
+        "OriginY":  502,
+        "ScaleX":  1.29,
+        "ScaleY":  1.29,
+        "constraints":  [
+                            {
+                                "Id":  "8DC53D86-AC22-4660-BCA5-7F2A83680429",
+                                "SlideId":  261,
+                                "kind":  "EqualVerticalGap",
+                                "ShapeIds":  [
+                                                 "7DD70019-BD3B-45BD-A9A3-01CF6B8D5BBF",
+                                                 "C97A92A8-F0D2-49B0-AA3A-90347161484E",
+                                                 "ACE097BB-3A0E-4AD4-99D4-0D270FCA4D22"
+                                             ]
+                            }
+                        ],
+        "shapes":  [
+                       {
+                           "id":  "7DD70019-BD3B-45BD-A9A3-01CF6B8D5BBF",
+                           "name":  "GCS_EqualVerticalGap_A",
+                           "nativeId":  4,
+                           "geometry":  {
+                                            "Id":  "7DD70019-BD3B-45BD-A9A3-01CF6B8D5BBF",
+                                            "Left":  420,
+                                            "Top":  100,
+                                            "Width":  140,
+                                            "Height":  60
+                                        },
+                           "selected":  true,
+                           "center":  {
+                                          "x":  1423,
+                                          "y":  670
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  4,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1332.8000000000002,
+                                               "y":  631,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1423.1000000000001,
+                                               "y":  631,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1513.4,
+                                               "y":  631,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1513.4,
+                                               "y":  669.7,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1513.4,
+                                               "y":  708.4,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1423.1000000000001,
+                                               "y":  708.4,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1332.8000000000002,
+                                               "y":  708.4,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1332.8000000000002,
+                                               "y":  669.7,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "C97A92A8-F0D2-49B0-AA3A-90347161484E",
+                           "name":  "GCS_EqualVerticalGap_B",
+                           "nativeId":  5,
+                           "geometry":  {
+                                            "Id":  "C97A92A8-F0D2-49B0-AA3A-90347161484E",
+                                            "Left":  420,
+                                            "Top":  249,
+                                            "Width":  180,
+                                            "Height":  80
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1449,
+                                          "y":  875
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  5,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1332.8000000000002,
+                                               "y":  823.21,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1448.9,
+                                               "y":  823.21,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1565.0000000000002,
+                                               "y":  823.21,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1565.0000000000002,
+                                               "y":  874.81000000000006,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1565.0000000000002,
+                                               "y":  926.41000000000008,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1448.9,
+                                               "y":  926.41000000000008,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1332.8000000000002,
+                                               "y":  926.41000000000008,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1332.8000000000002,
+                                               "y":  874.81000000000006,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       },
+                       {
+                           "id":  "ACE097BB-3A0E-4AD4-99D4-0D270FCA4D22",
+                           "name":  "GCS_EqualVerticalGap_C",
+                           "nativeId":  6,
+                           "geometry":  {
+                                            "Id":  "ACE097BB-3A0E-4AD4-99D4-0D270FCA4D22",
+                                            "Left":  420,
+                                            "Top":  418,
+                                            "Width":  120,
+                                            "Height":  55
+                                        },
+                           "selected":  false,
+                           "center":  {
+                                          "x":  1410,
+                                          "y":  1077
+                                      },
+                           "hitWindow":  8263034,
+                           "hitClass":  "mdiClass",
+                           "canvas":  true,
+                           "rangeId":  6,
+                           "rangeError":  null,
+                           "handles":  [
+                                           {
+                                               "mode":  "ResizeNW",
+                                               "x":  1332.8000000000002,
+                                               "y":  1041.22,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeN",
+                                               "x":  1410.2000000000003,
+                                               "y":  1041.22,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeNE",
+                                               "x":  1487.6000000000001,
+                                               "y":  1041.22,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeE",
+                                               "x":  1487.6000000000001,
+                                               "y":  1076.6950000000002,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSE",
+                                               "x":  1487.6000000000001,
+                                               "y":  1112.17,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeS",
+                                               "x":  1410.2000000000003,
+                                               "y":  1112.17,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeSW",
+                                               "x":  1332.8000000000002,
+                                               "y":  1112.17,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           },
+                                           {
+                                               "mode":  "ResizeW",
+                                               "x":  1332.8000000000002,
+                                               "y":  1076.6950000000002,
+                                               "hitClass":  "mdiClass",
+                                               "canvas":  true
+                                           }
+                                       ]
+                       }
+                   ]
+    }
+]

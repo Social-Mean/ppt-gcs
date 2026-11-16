@@ -1,0 +1,235 @@
+﻿{
+    "Utc":  "2026-11-16T05:33:43.4927155Z",
+    "ProcessId":  [
+                      52948
+                  ],
+    "PowerPointVersion":  "16.0",
+    "presentation":  "D:\\code\\ppt-gcs\\artifacts\\layout-v2.pptx",
+    "slides":  [
+                   {
+                       "slideId":  256,
+                       "name":  "SameY",
+                       "kind":  "SameY",
+                       "geometry":  [
+                                        {
+                                            "Id":  "D21B1DD2-4505-41D3-8DE1-D78D114EF3A9",
+                                            "Name":  "GCS_SameY_A",
+                                            "Left":  171.47283935546875,
+                                            "Top":  244.2635498046875,
+                                            "Width":  170,
+                                            "Height":  100
+                                        },
+                                        {
+                                            "Id":  "151B7416-6139-478D-AA3A-A3948478E179",
+                                            "Name":  "GCS_SameY_B",
+                                            "Left":  603.25579833984375,
+                                            "Top":  244.2635498046875,
+                                            "Width":  170,
+                                            "Height":  100
+                                        }
+                                    ],
+                       "constraints":  [
+                                           {
+                                               "Id":  "24137007-A17F-4F9F-811B-96778E519A8C",
+                                               "SlideId":  256,
+                                               "Kind":  "SameY",
+                                               "ShapeIds":  [
+                                                                "D21B1DD2-4505-41D3-8DE1-D78D114EF3A9",
+                                                                "151B7416-6139-478D-AA3A-A3948478E179"
+                                                            ]
+                                           }
+                                       ]
+                   },
+                   {
+                       "slideId":  257,
+                       "name":  "SameX",
+                       "kind":  "SameX",
+                       "geometry":  [
+                                        {
+                                            "Id":  "E9FDEEDB-ABEC-4571-A416-28990476E932",
+                                            "Name":  "GCS_SameX_A",
+                                            "Left":  212.40315246582031,
+                                            "Top":  136.82173156738281,
+                                            "Width":  150,
+                                            "Height":  90
+                                        },
+                                        {
+                                            "Id":  "81F28DD1-696F-4AA7-865B-34171D14A9A5",
+                                            "Name":  "GCS_SameX_B",
+                                            "Left":  212.40315246582031,
+                                            "Top":  356.97677612304688,
+                                            "Width":  170,
+                                            "Height":  90
+                                        }
+                                    ],
+                       "constraints":  [
+                                           {
+                                               "Id":  "BE818B9C-CB9E-4663-9FCA-B69CF4EAB18A",
+                                               "SlideId":  257,
+                                               "Kind":  "SameX",
+                                               "ShapeIds":  [
+                                                                "E9FDEEDB-ABEC-4571-A416-28990476E932",
+                                                                "81F28DD1-696F-4AA7-865B-34171D14A9A5"
+                                                            ]
+                                           }
+                                       ]
+                   },
+                   {
+                       "slideId":  258,
+                       "name":  "SameWidth",
+                       "kind":  "SameWidth",
+                       "geometry":  [
+                                        {
+                                            "Id":  "BB993E5E-81A6-4049-8471-34AE42CA3D16",
+                                            "Name":  "GCS_SameWidth_A",
+                                            "Left":  179.99992370605469,
+                                            "Top":  199.99992370605469,
+                                            "Width":  204.961181640625,
+                                            "Height":  152.71315002441406
+                                        },
+                                        {
+                                            "Id":  "A7AB5C4C-05C2-49F8-BA27-63EF8958C559",
+                                            "Name":  "GCS_SameWidth_B",
+                                            "Left":  580,
+                                            "Top":  200.00015258789063,
+                                            "Width":  204.961181640625,
+                                            "Height":  137.67440795898438
+                                        }
+                                    ],
+                       "constraints":  [
+                                           {
+                                               "Id":  "CF7EDAEC-1009-43BF-B505-5C3247855E1F",
+                                               "SlideId":  258,
+                                               "Kind":  "SameWidth",
+                                               "ShapeIds":  [
+                                                                "BB993E5E-81A6-4049-8471-34AE42CA3D16",
+                                                                "A7AB5C4C-05C2-49F8-BA27-63EF8958C559"
+                                                            ]
+                                           }
+                                       ]
+                   },
+                   {
+                       "slideId":  259,
+                       "name":  "SameHeight",
+                       "kind":  "SameHeight",
+                       "geometry":  [
+                                        {
+                                            "Id":  "BCB5A962-DF1A-43C1-B32C-8F43BCF206A3",
+                                            "Name":  "GCS_SameHeight_A",
+                                            "Left":  180,
+                                            "Top":  200.00007629394531,
+                                            "Width":  180,
+                                            "Height":  105.42637634277344
+                                        },
+                                        {
+                                            "Id":  "91865777-02FD-4109-B45C-93CDE0BE3CA1",
+                                            "Name":  "GCS_SameHeight_B",
+                                            "Left":  580,
+                                            "Top":  200.00007629394531,
+                                            "Width":  220,
+                                            "Height":  105.42637634277344
+                                        }
+                                    ],
+                       "constraints":  [
+                                           {
+                                               "Id":  "C676E7D9-E4E6-47CC-97A7-3C0C43BB1290",
+                                               "SlideId":  259,
+                                               "Kind":  "SameHeight",
+                                               "ShapeIds":  [
+                                                                "BCB5A962-DF1A-43C1-B32C-8F43BCF206A3",
+                                                                "91865777-02FD-4109-B45C-93CDE0BE3CA1"
+                                                            ]
+                                           }
+                                       ]
+                   },
+                   {
+                       "slideId":  260,
+                       "name":  "EqualHorizontalGap",
+                       "kind":  "EqualHorizontalGap",
+                       "geometry":  [
+                                        {
+                                            "Id":  "A90E046A-7B36-4032-A6B7-D27D4BDE33F7",
+                                            "Name":  "GCS_EqualHorizontalGap_A",
+                                            "Left":  120,
+                                            "Top":  220,
+                                            "Width":  120,
+                                            "Height":  90
+                                        },
+                                        {
+                                            "Id":  "05EA2F68-140A-4683-AFD5-B2793C18F316",
+                                            "Name":  "GCS_EqualHorizontalGap_B",
+                                            "Left":  388,
+                                            "Top":  220,
+                                            "Width":  160,
+                                            "Height":  90
+                                        },
+                                        {
+                                            "Id":  "BA7F39BF-E16A-4D33-87E4-4B0F75ED83E7",
+                                            "Name":  "GCS_EqualHorizontalGap_C",
+                                            "Left":  696,
+                                            "Top":  220,
+                                            "Width":  100,
+                                            "Height":  90
+                                        }
+                                    ],
+                       "constraints":  [
+                                           {
+                                               "Id":  "D058791A-AD05-41C6-8D0B-4DCBE06F5F6B",
+                                               "SlideId":  260,
+                                               "Kind":  "EqualHorizontalGap",
+                                               "ShapeIds":  [
+                                                                "A90E046A-7B36-4032-A6B7-D27D4BDE33F7",
+                                                                "05EA2F68-140A-4683-AFD5-B2793C18F316",
+                                                                "BA7F39BF-E16A-4D33-87E4-4B0F75ED83E7"
+                                                            ]
+                                           }
+                                       ]
+                   },
+                   {
+                       "slideId":  261,
+                       "name":  "EqualVerticalGap",
+                       "kind":  "EqualVerticalGap",
+                       "geometry":  [
+                                        {
+                                            "Id":  "7DD70019-BD3B-45BD-A9A3-01CF6B8D5BBF",
+                                            "Name":  "GCS_EqualVerticalGap_A",
+                                            "Left":  420,
+                                            "Top":  100,
+                                            "Width":  140,
+                                            "Height":  60
+                                        },
+                                        {
+                                            "Id":  "C97A92A8-F0D2-49B0-AA3A-90347161484E",
+                                            "Name":  "GCS_EqualVerticalGap_B",
+                                            "Left":  420,
+                                            "Top":  249,
+                                            "Width":  180,
+                                            "Height":  80
+                                        },
+                                        {
+                                            "Id":  "ACE097BB-3A0E-4AD4-99D4-0D270FCA4D22",
+                                            "Name":  "GCS_EqualVerticalGap_C",
+                                            "Left":  420,
+                                            "Top":  418,
+                                            "Width":  120,
+                                            "Height":  55
+                                        }
+                                    ],
+                       "constraints":  [
+                                           {
+                                               "Id":  "8DC53D86-AC22-4660-BCA5-7F2A83680429",
+                                               "SlideId":  261,
+                                               "Kind":  "EqualVerticalGap",
+                                               "ShapeIds":  [
+                                                                "7DD70019-BD3B-45BD-A9A3-01CF6B8D5BBF",
+                                                                "C97A92A8-F0D2-49B0-AA3A-90347161484E",
+                                                                "ACE097BB-3A0E-4AD4-99D4-0D270FCA4D22"
+                                                            ]
+                                           }
+                                       ]
+                   }
+               ],
+    "ConstraintXml":  [
+                          "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"24137007-A17F-4F9F-811B-96778E519A8C\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"D21B1DD2-4505-41D3-8DE1-D78D114EF3A9\"/\u003e\u003cshape id=\"151B7416-6139-478D-AA3A-A3948478E179\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"BE818B9C-CB9E-4663-9FCA-B69CF4EAB18A\" slideId=\"257\" kind=\"SameX\"\u003e\u003cshape id=\"E9FDEEDB-ABEC-4571-A416-28990476E932\"/\u003e\u003cshape id=\"81F28DD1-696F-4AA7-865B-34171D14A9A5\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"CF7EDAEC-1009-43BF-B505-5C3247855E1F\" slideId=\"258\" kind=\"SameWidth\"\u003e\u003cshape id=\"BB993E5E-81A6-4049-8471-34AE42CA3D16\"/\u003e\u003cshape id=\"A7AB5C4C-05C2-49F8-BA27-63EF8958C559\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"C676E7D9-E4E6-47CC-97A7-3C0C43BB1290\" slideId=\"259\" kind=\"SameHeight\"\u003e\u003cshape id=\"BCB5A962-DF1A-43C1-B32C-8F43BCF206A3\"/\u003e\u003cshape id=\"91865777-02FD-4109-B45C-93CDE0BE3CA1\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"D058791A-AD05-41C6-8D0B-4DCBE06F5F6B\" slideId=\"260\" kind=\"EqualHorizontalGap\"\u003e\u003cshape id=\"A90E046A-7B36-4032-A6B7-D27D4BDE33F7\"/\u003e\u003cshape id=\"05EA2F68-140A-4683-AFD5-B2793C18F316\"/\u003e\u003cshape id=\"BA7F39BF-E16A-4D33-87E4-4B0F75ED83E7\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"8DC53D86-AC22-4660-BCA5-7F2A83680429\" slideId=\"261\" kind=\"EqualVerticalGap\"\u003e\u003cshape id=\"7DD70019-BD3B-45BD-A9A3-01CF6B8D5BBF\"/\u003e\u003cshape id=\"C97A92A8-F0D2-49B0-AA3A-90347161484E\"/\u003e\u003cshape id=\"ACE097BB-3A0E-4AD4-99D4-0D270FCA4D22\"/\u003e\u003c/constraint\u003e\u003c/constraints\u003e"
+                      ]
+}

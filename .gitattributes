@@ -1,3 +1,4 @@
 # Keep captured validation logs byte-for-byte, including original whitespace.
 artifacts/*.log -text -whitespace
+artifacts/**/*.log -text -whitespace
 *.pptx binary

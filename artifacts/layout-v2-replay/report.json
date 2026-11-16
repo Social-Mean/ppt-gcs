@@ -1,0 +1,117 @@
+{
+  "passed": true,
+  "evidenceType": "programmatic-replay-native-undo",
+  "provesPhysicalMouseInput": false,
+  "tolerancePt": 0.01,
+  "cases": [
+    {
+      "gestureId": "21cc2945-2016-4d0d-834b-94e00f34b301",
+      "kind": "SameY",
+      "driverId": "D21B1DD2-4505-41D3-8DE1-D78D114EF3A9",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "7373397b-15dc-453e-aa31-864967ff654d",
+      "kind": "SameY",
+      "driverId": "151B7416-6139-478D-AA3A-A3948478E179",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "5ccded4b-19f4-4da2-b419-ebec884bad5f",
+      "kind": "SameX",
+      "driverId": "E9FDEEDB-ABEC-4571-A416-28990476E932",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "58d35114-a762-48dc-a64c-170721fede47",
+      "kind": "SameX",
+      "driverId": "81F28DD1-696F-4AA7-865B-34171D14A9A5",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "4d1a2516-27f1-4603-9d3f-95a753dc467b",
+      "kind": "SameWidth",
+      "driverId": "BB993E5E-81A6-4049-8471-34AE42CA3D16",
+      "mode": "ResizeSE",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "e9571528-7cae-4a1f-8988-00faaa3da020",
+      "kind": "SameWidth",
+      "driverId": "A7AB5C4C-05C2-49F8-BA27-63EF8958C559",
+      "mode": "ResizeSE",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "b185b71d-bd96-4d51-b20f-185abe4a878e",
+      "kind": "SameHeight",
+      "driverId": "BCB5A962-DF1A-43C1-B32C-8F43BCF206A3",
+      "mode": "ResizeS",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "a1f4937b-faa9-4777-bcde-ce888c5db6a8",
+      "kind": "SameHeight",
+      "driverId": "91865777-02FD-4109-B45C-93CDE0BE3CA1",
+      "mode": "ResizeS",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "1dbde9ca-18ec-4680-9985-789bf57fb24c",
+      "kind": "EqualHorizontalGap",
+      "driverId": "A90E046A-7B36-4032-A6B7-D27D4BDE33F7",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "33b16807-a3c1-41da-9b16-e723b87652da",
+      "kind": "EqualHorizontalGap",
+      "driverId": "BA7F39BF-E16A-4D33-87E4-4B0F75ED83E7",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "2ee27f12-301e-4bba-b8c3-7fa24f25aa5a",
+      "kind": "EqualVerticalGap",
+      "driverId": "7DD70019-BD3B-45BD-A9A3-01CF6B8D5BBF",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    },
+    {
+      "gestureId": "9dc21bf1-4941-4f40-9c26-c83a8be74e31",
+      "kind": "EqualVerticalGap",
+      "driverId": "ACE097BB-3A0E-4AD4-99D4-0D270FCA4D22",
+      "mode": "Move",
+      "frames": 3,
+      "releaseCorrectionPixels": 15
+    }
+  ],
+  "nativeUndoSteps": 14,
+  "nativeRedoSteps": 14,
+  "checks": [
+    "six kinds and two drivers",
+    "constraints on every programmatic frame",
+    "exact release target independent of solver",
+    "release correction beyond last move",
+    "single native undo and redo per gesture",
+    "two-step native history chain",
+    "all-slide geometry and XML preservation"
+  ],
+  "artifacts": "D:\\code\\ppt-gcs\\artifacts\\layout-v2-replay",
+  "checkedUtc": "2026-11-16T05:30:26.954435+00:00"
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "Path": "D:\\code\\ppt-gcs\\bin\\PptGcs.AddIn.dll",
+    "Hash": "68CD2F884FE5F2E2A4FB715565734FB3C43715B9171BC101C48A4CD827DD5B92"
+  },
+  {
+    "Path": "D:\\code\\ppt-gcs\\bin\\PptGcs.Core.dll",
+    "Hash": "7BC01173B84382AAB6B04D4C25651EF2219BAAF7D3F574F55ED845ACBA68286F"
+  },
+  {
+    "Path": "D:\\code\\ppt-gcs\\bin\\MathNet.Numerics.dll",
+    "Hash": "4C9803A4B0673B93A99A2237E35543BE2F6741FBD54B0FF045CF92E877BE09D4"
+  }
+]

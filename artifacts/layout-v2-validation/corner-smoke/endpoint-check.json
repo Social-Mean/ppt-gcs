@@ -1,0 +1,6 @@
+{
+  "passed": false,
+  "error": "Each constraint kind needs two distinct driven shapes",
+  "artifacts": "D:\\code\\ppt-gcs\\artifacts\\layout-v2-validation\\corner-smoke",
+  "checkedUtc": "2026-11-16T05:30:27.034765+00:00"
+}
