@@ -32,9 +32,10 @@ internal static class RibbonTests
             "all constraint buttons dispatch through one canonical kind tag");
         Check(constraints.All(button => (string)button.Attribute("label") == options.Single(option => option.Kind == (string)button.Attribute("tag")).Label),
             "ribbon and pane share every constraint label");
-        Check(constraints.All(button => (string)button.Attribute("imageMso") == OfficeIconProvider.ImageMso((string)button.Attribute("tag")) &&
-            !String.IsNullOrWhiteSpace((string)button.Attribute("imageMso"))),
-            "every constraint uses the existing Office icon mapping");
+        Check(constraints.All(button => OfficeIconProvider.UsesFramedImage((string)button.Attribute("tag"))
+            ? (string)button.Attribute("getImage")=="GetCentersCoincidentImage" && button.Attribute("imageMso")==null
+            : (string)button.Attribute("imageMso")==OfficeIconProvider.ImageMso((string)button.Attribute("tag")) && !String.IsNullOrWhiteSpace((string)button.Attribute("imageMso"))),
+            "all icon routes use shared resources and the framed center icon uses its Ribbon image callback");
         string[] nativeLabels = {"左对齐", "水平居中", "右对齐", "顶端对齐", "垂直居中", "底端对齐"};
         Check(options.Take(6).Select(option => option.Label).SequenceEqual(nativeLabels),
             "alignment labels and ordering match the native PowerPoint menu");

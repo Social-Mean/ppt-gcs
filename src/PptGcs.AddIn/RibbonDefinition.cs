@@ -59,7 +59,9 @@ namespace PptGcs.AddIn
                 : "创建后拖动任一成员会保持该关系。";
             return new XElement(Ns + "button", new XAttribute("id", "Constraint" + option.Kind),
                 new XAttribute("tag", option.Kind), new XAttribute("label", option.Label),
-                new XAttribute("imageMso", OfficeIconProvider.ImageMso(option.Kind)),
+                OfficeIconProvider.UsesFramedImage(option.Kind)
+                    ? new XAttribute("getImage","GetCentersCoincidentImage")
+                    : new XAttribute("imageMso", OfficeIconProvider.ImageMso(option.Kind)),
                 new XAttribute("onAction", "CreateConstraint"), new XAttribute("screentip", option.Label + "约束"),
                 new XAttribute("supertip", members + action + Environment.NewLine + option.Description));
         }

@@ -1,0 +1,17 @@
+{
+  "Version": "0.5.2",
+  "Files": [
+    {
+      "File": "PptGcs.AddIn.dll",
+      "SHA256": "8B198F2EA64DDC0C69D0708AFE4C2321E24F6D6F565D0CEAB339E4E2DCFFA309"
+    },
+    {
+      "File": "PptGcs.Core.dll",
+      "SHA256": "DD152DDFC4A977B639D97284B46480B2AE4E15228FA9DF3F5304A89023BCF91D"
+    },
+    {
+      "File": "PptGcs.PaneHost.dll",
+      "SHA256": "0307AC628CE7B63F44F78B6B4B5487329F0058ABBC060110F2F13E35B991B703"
+    }
+  ]
+}

@@ -17,6 +17,7 @@ namespace PptGcs.AddIn
         private readonly Dictionary<string, Image> images = new Dictionary<string, Image>();
         private readonly Dictionary<string, string> errors = new Dictionary<string, string>();
         private bool disposed;
+        private object centersCoincidentPicture;
 
         // Names from OfficeDev/office-fluent-ui-command-identifiers, PowerPoint.
         // Equal-size glyphs use Office's equal-column/equal-row commands.
@@ -42,6 +43,7 @@ namespace PptGcs.AddIn
         public static IEnumerable<string> Commands { get { return identifiers.Keys; } }
         public static string ImageMso(string command)
         { string id; return command != null && identifiers.TryGetValue(command, out id) ? id : null; }
+        public static bool UsesFramedImage(string command) { return command=="CentersCoincident"; }
 
         public Image Get(string command, int size)
         {
@@ -58,6 +60,10 @@ namespace PptGcs.AddIn
             {
                 picture = ((dynamic)application).CommandBars.GetImageMso(id, size, size);
                 result = CopyPicture(picture);
+                if(UsesFramedImage(command))
+                {
+                    using(var original=result)result=AddFrame(original);
+                }
                 images.Add(key, result);
                 return result;
             }
@@ -79,9 +85,39 @@ namespace PptGcs.AddIn
             return identifiers.Select(pair => {
                 Image image = Get(pair.Key, 24);
                 string error; errors.TryGetValue(pair.Value + ":24", out error);
-                return new { command = pair.Key, imageMso = pair.Value, loaded = image != null,
+                return new { command = pair.Key, imageMso = pair.Value, framed = UsesFramedImage(pair.Key), loaded = image != null,
                     width = image == null ? 0 : image.Width, height = image == null ? 0 : image.Height, error };
             }).ToArray();
+        }
+
+        public object GetCentersCoincidentPicture()
+        {
+            if(disposed)throw new ObjectDisposedException("OfficeIconProvider");
+            if(centersCoincidentPicture!=null)return centersCoincidentPicture;
+            var image=(Bitmap)Get("CentersCoincident",32);
+            if(image!=null)centersCoincidentPicture=RibbonPicture.Create(image);
+            return centersCoincidentPicture;
+        }
+
+        private static Bitmap AddFrame(Image original)
+        {
+            var image=new Bitmap(original.Width,original.Height,PixelFormat.Format32bppArgb);
+            try
+            {
+                using(var graphics=Graphics.FromImage(image))
+                using(var brush=new SolidBrush(Color.FromArgb(98,108,129)))
+                {
+                    graphics.Clear(Color.Transparent);
+                    graphics.DrawImageUnscaled(original,0,0);
+                    float edge=original.Width/16f;
+                    graphics.FillRectangle(brush,0,0,image.Width,edge);
+                    graphics.FillRectangle(brush,0,image.Height-edge,image.Width,edge);
+                    graphics.FillRectangle(brush,0,edge,edge,image.Height-2*edge);
+                    graphics.FillRectangle(brush,image.Width-edge,edge,edge,image.Height-2*edge);
+                }
+                return image;
+            }
+            catch {image.Dispose();throw;}
         }
 
         private static Image CopyPicture(object picture)
@@ -130,6 +166,8 @@ namespace PptGcs.AddIn
         {
             if (disposed) return;
             disposed = true;
+            if(centersCoincidentPicture!=null && Marshal.IsComObject(centersCoincidentPicture))Marshal.ReleaseComObject(centersCoincidentPicture);
+            centersCoincidentPicture=null;
             foreach (var image in images.Values) image.Dispose();
             images.Clear(); errors.Clear();
         }

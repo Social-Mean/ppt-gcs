@@ -1,8 +1,8 @@
 # PPT GCS
 
-Windows 桌面 PowerPoint 的形状排版约束插件。v0.5.1 支持自选图形、文本框、图片、SVG 图标、自由曲线和组合整体，提供 20 种布局约束、原生可停靠的“约束”窗格、中键八向轮盘，以及约束新增、修改、启停、删除和几何编辑的原生撤销/重做。功能区、轮盘和窗格使用 Office 内置图标。
+Windows 桌面 PowerPoint 的形状排版约束插件。v0.5.2 支持自选图形、文本框、图片、SVG 图标、自由曲线和组合整体，提供 20 种布局约束、原生可停靠的“约束”窗格、中键八向轮盘，以及约束新增、修改、启停、删除和几何编辑的原生撤销/重做。功能区、轮盘和窗格使用 Office 图标资源。
 
-“固定宽高比”使用 PowerPoint 的“幻灯片大小”图标，“中心重合”使用“效果”图标。自定义窗格与原生窗格切换条的接口边界见 [窗格集成说明](docs/pane-integration.md)。
+“固定宽高比”使用 PowerPoint 的“幻灯片大小”图标。“中心重合”保留“效果”资源中的圆形并补上矩形外框，功能区和窗格共用同一张图，见 [图标修正验证](docs/validation-center-icon.md)。自定义窗格与原生窗格切换条的接口边界见 [窗格集成说明](docs/pane-integration.md)。
 
 全部 20 类约束已在 Ribbon 提供入口，新建类型按钮为 4 列、5 行，对齐名称与 PowerPoint 一致。轮盘采用逐像素透明层，修复洋红透明键导致的紫色锯齿。232 项自动检查和真实 PowerPoint 中 20 类入口的共享执行/原生历史检查通过，范围见 [v0.5 界面验证](docs/validation-ribbon-ui.md)。
 
@@ -23,7 +23,7 @@ v0.3 的矩形约束、轮盘和窗格真实鼠标结果见 [v0.3 验证记录](
 .\scripts\Install.ps1
 ```
 
-`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行核心、编号、存储、窗格、轮盘、形状支持、图标、文本指针、Ribbon 和透明渲染的 232 项自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`；无需在系统中安装 net48 targeting pack。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
+`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行核心、编号、存储、窗格、轮盘、形状支持、图标、文本指针、Ribbon 和透明渲染的 236 项自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`；无需在系统中安装 net48 targeting pack。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
 
 `Install.ps1` 注册当前用户的加载项和 `PptGcs.ConstraintPaneHost` 原生控件，不需要管理员权限。重新打开 PowerPoint 后应出现 **PPT GCS** 功能区。注册指向本项目的 DLL；移动项目目录后需重新运行安装脚本。重新构建前请关闭 PowerPoint，避免加载中的 DLL 被占用。
 
@@ -64,9 +64,9 @@ v0.3 的矩形约束、轮盘和窗格真实鼠标结果见 [v0.3 验证记录](
 
 ## Office 内置图标
 
-功能区通过 `imageMso` 引用 Office 图标，窗格和轮盘通过 `CommandBars.GetImageMso` 从当前 PowerPoint 获取同一套资源。对齐、居中、等间距使用相应的内置命令图标；同宽、同高借用 Office 的平均分布列宽/行高图标。图标保留文字标签，不改变约束含义；显示样式由已安装 Office 提供。
+功能区通常通过 `imageMso` 引用 Office 图标，窗格和轮盘通过 `CommandBars.GetImageMso` 从当前 PowerPoint 获取同一套资源。对齐、居中、等间距使用相应的内置命令图标；同宽、同高借用 Office 的平均分布列宽/行高图标。图标保留文字标签，不改变约束含义。
 
-固定宽高比映射到 `PowerPointPageSetup`（幻灯片大小），中心重合映射到 `ThemeEffectsGallery`（效果）；两者仍执行插件原有约束命令。
+固定宽高比映射到 `PowerPointPageSetup`（幻灯片大小）。中心重合以 `ThemeEffectsGallery`（效果）的原生圆形为基础添加矩形外框；功能区通过 `getImage` 使用与窗格相同的合成图，并以原生 DIB 保留透明度。两者仍执行插件原有约束命令。
 
 托管图像按 Office 实际返回的 straight alpha 格式保存，避免半透明边缘被错误解释。窗格采用 16、轮盘采用 32 逻辑像素，按宿主实际 DPI 获取对应设备像素尺寸并原样绘制；DPI 改变后重新取图，不在绘制时访问 Office。
 

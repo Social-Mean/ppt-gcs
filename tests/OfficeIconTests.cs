@@ -37,6 +37,27 @@ internal static class OfficeIconTests
                 try{provider.Get("SameX",15);}catch(ArgumentOutOfRangeException){rejected=true;}
                 Check(rejected,"Office image size bounds are enforced");
             }
+            using(var app=new FakeIconApplication())
+            using(var provider=new OfficeIconProvider(app,null))
+            {
+                var framed=(Bitmap)provider.Get("CentersCoincident",32);
+                Color frame=framed.GetPixel(framed.Width/2,0);
+                Check(frame.A==255 && frame.R==98 && frame.G==108 && frame.B==129,
+                    "center icon has the requested visible rectangular outline");
+                Check(framed.GetPixel(4,4).A==0,
+                    "empty space between the center glyph and its frame stays transparent");
+                object picture=provider.GetCentersCoincidentPicture();
+                var copy=typeof(OfficeIconProvider).GetMethod("CopyPicture",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+                using(var roundTrip=(Bitmap)copy.Invoke(null,new[]{picture}))
+                {
+                    bool identical=roundTrip.Size==framed.Size;
+                    for(int y=0;y<framed.Height;y++)for(int x=0;x<framed.Width;x++)
+                        identical &= roundTrip.GetPixel(x,y).ToArgb()==framed.GetPixel(x,y).ToArgb();
+                    Check(identical,"Ribbon IPictureDisp preserves the exact framed image and alpha used by the pane");
+                }
+                Check(ReferenceEquals(picture,provider.GetCentersCoincidentPicture()),
+                    "repeated Ribbon callbacks reuse the owning picture instead of leaking handles");
+            }
             int errors=0;
             using(var app=new FakeIconApplication {CommandBars={Fail=true}})
             using(var provider=new OfficeIconProvider(app,(id,error)=>errors++))
@@ -91,17 +112,17 @@ public sealed class FakeIconCommandBars : IDisposable
         if(Fail)throw new InvalidOperationException("Office cannot supply this image");
         if(handle==IntPtr.Zero)
         {
-            var header=new BitmapHeader {Size=40,Width=24,Height=-24,Planes=1,BitCount=32};
+            var header=new BitmapHeader {Size=40,Width=width,Height=-height,Planes=1,BitCount=32};
             IntPtr pixels;
             handle=CreateDIBSection(IntPtr.Zero,ref header,0,out pixels,IntPtr.Zero,0);
             if(handle==IntPtr.Zero)throw new InvalidOperationException("Test DIB creation failed");
             // Exact straight BGRA values observed in the installed Office
             // Former TableLockAspectRatio 16 px artwork, plus white RGB under zero alpha.
-            var data=new byte[24*24*4];
+            var data=new byte[width*height*4];
             for(int i=0;i<data.Length;i+=4){data[i]=255;data[i+1]=255;data[i+2]=255;}
             if(!TransparentOnly)
             {
-                int middle=(12*24+12)*4;
+                int middle=((height/2)*width+width/2)*4;
                 data[middle]=45;data[middle+1]=135;data[middle+2]=255;data[middle+3]=79;
             }
             Marshal.Copy(data,0,pixels,data.Length);

@@ -1,0 +1,17 @@
+{
+  "Passed": true,
+  "Count": 236,
+  "Suites": [
+    "PASS: 42 core tests",
+    "PASS: 11 identity tests",
+    "PASS: 11 native constraint store tests",
+    "PASS: 29 pane tests",
+    "PASS: 18 radial state tests (no physical mouse input)",
+    "PASS: 23 shape support tests",
+    "PASS: 15 Office icon tests",
+    "PASS: 47 text pointer tests",
+    "PASS: 15 ribbon tests",
+    "PASS: 25 radial alpha rendering tests (no PowerPoint or physical input)"
+  ],
+  "NativeHostBuildPassed": true
+}

@@ -40,6 +40,8 @@ internal static class ConstraintGridRenderer
             foreach(var sample in samples)
                 images.Add(sample.Key,Image.FromFile(Path.Combine(arguments[0],
                     "artifacts/ui-refinement/icons-before/"+sample.Value+"-16-straight.png")));
+            images.Add("CentersCoincidentFramed",Image.FromFile(Path.Combine(arguments[0],
+                "artifacts/center-icon-correction/chosen-center-16.png")));
             foreach(int width in new[]{380,250}) Render(width,arguments[1],images);
         }
         finally {foreach(var image in images.Values)image.Dispose();}
@@ -54,7 +56,7 @@ internal static class ConstraintGridRenderer
             pane.Bind(new ConstraintPaneActions {Add=(kind,value,second)=>{}});
             pane.SetIcons((kind,size)=>{
                 Image image;
-                string id=OfficeIconProvider.ImageMso(kind);
+                string id=OfficeIconProvider.UsesFramedImage(kind)?"CentersCoincidentFramed":OfficeIconProvider.ImageMso(kind);
                 return id!=null && images.TryGetValue(id,out image) && image.Width==size?image:null;
             });
             var geometry=new List<ShapeGeometry> {
