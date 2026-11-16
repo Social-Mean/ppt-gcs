@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using PptGcs.AddIn;
+using PptGcs.Core;
 
 internal static class PaneTests
 {
@@ -14,6 +16,7 @@ internal static class PaneTests
         try
         {
             using (var pane = new ConstraintPaneControl()) Run(pane);
+            using (var pane = new ConstraintPaneControl()) RunGrid(pane);
             Console.WriteLine("PASS: " + passed + " pane tests");
             return 0;
         }
@@ -22,6 +25,74 @@ internal static class PaneTests
             Console.Error.WriteLine(exception);
             return 1;
         }
+    }
+
+    private static void RunGrid(ConstraintPaneControl pane)
+    {
+        pane.CreateControl();
+        var model=Model("网格测试","shape:256/");
+        model.Options=ConstraintCatalog.Options(new List<ShapeGeometry>());
+        model.Objects[1].Selected=true;
+        string created=null;
+        pane.Bind(new ConstraintPaneActions {Add=(kind,value,second)=>created=kind});
+        pane.Render(model);
+        pane.ShowEditor("SameWidth");
+        var grid=Find<TableLayoutPanel>(pane,"约束类型按钮");
+        var viewport=Find<Panel>(pane,"约束类型");
+        var apply=Find<Button>(pane,"创建约束");
+        var buttons=grid.Controls.OfType<Button>().ToList();
+        Check(buttons.Count==20 && grid.ColumnCount==5 && grid.RowCount==4,
+            "twenty constraint buttons use five columns of four");
+        Check(model.Options.Select((option,index)=>new {option,index}).All(item=>{
+            var button=buttons.Single(control=>(string)control.Tag==item.option.Kind);
+            var cell=grid.GetPositionFromControl(button);
+            return cell.Column==item.index/4 && cell.Row==item.index%4 && button.TabIndex==item.index;
+        }),"catalog order fills each column from top to bottom and defines keyboard tab order");
+        Check(!Descendants(pane).OfType<ComboBox>().Any(control=>control.AccessibleName=="约束类型"),
+            "constraint type no longer uses a dropdown");
+        var width=Find<Button>(pane,"约束类型：同宽");
+        var height=Find<Button>(pane,"约束类型：同高");
+        Check(width.FlatAppearance.BorderSize==2 && width.BackColor==(SystemInformation.HighContrast?SystemColors.Highlight:Color.FromArgb(220,235,252)),
+            "the active constraint type has a visible selected state");
+        height.PerformClick();
+        Check(height.FlatAppearance.BorderSize==2 && width.FlatAppearance.BorderSize==1,
+            "clicking a constraint button switches the single selected type");
+        apply.PerformClick();
+        Check(created=="SameHeight","button choice invokes the shared create command");
+
+        pane.ShowEditor("FixedWidth");
+        Check(!Find<Button>(pane,"约束类型：固定宽度").Enabled && !apply.Enabled,
+            "buttons and create action reflect maximum selection size");
+        model.Objects[1].Selected=false;
+        pane.Render(model);
+        var number=Find<NumericUpDown>(pane,"第一个约束参数");
+        number.Value=137;
+        for(int i=0;i<4;i++)pane.Render(model);
+        Check(number.Value==137 && Find<Button>(pane,"约束类型：固定宽度").Enabled,
+            "selection refresh updates button eligibility without replacing entered parameters");
+
+        model.Objects[0].UnsupportedReason="旋转对象暂不支持";
+        pane.Render(model);
+        Check(grid.Controls.OfType<Button>().All(button=>!button.Enabled) && !apply.Enabled,
+            "unsupported selected objects disable all creation choices");
+        model.Objects[0].UnsupportedReason=null;
+        pane.Render(model);
+        var relations=Find<ListView>(pane,"对象之间的约束");
+        relations.Items[1].Selected=true;
+        Find<Button>(pane,"修改…").PerformClick();
+        Check(grid.Controls.OfType<Button>().All(button=>!button.Enabled) && apply.Enabled,
+            "editing an existing relation locks its type while allowing parameter changes");
+
+        pane.Width=250;pane.PerformLayout();
+        var editor=Find<GroupBox>(pane,"约束参数编辑");
+        var fields=editor.Controls.OfType<TableLayoutPanel>().Single();
+        fields.PerformLayout();editor.PerformLayout();pane.PerformLayout();
+        Check(fields.Bottom+editor.Padding.Bottom<=editor.Height,
+            "wrapped editor hints keep the parameter and apply controls inside the group");
+        Check(viewport.AutoScroll && viewport.AutoScrollMinSize.Width==grid.Width && grid.Width>viewport.ClientSize.Width,
+            "narrow panes preserve readable button columns with horizontal scrolling");
+        Check(grid.Controls.OfType<Button>().All(button=>!String.IsNullOrEmpty(button.AccessibleName) && button.AccessibleName.StartsWith("约束类型：")),
+            "all type buttons expose meaningful accessible names");
     }
 
     private static void Run(ConstraintPaneControl pane)

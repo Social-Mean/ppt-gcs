@@ -1,0 +1,61 @@
+﻿{
+    "Utc":  "2026-11-16T09:02:10.2330787Z",
+    "Snapshot":  {
+                     "presentation":  "D:\\code\\ppt-gcs\\artifacts\\ui-refinement\\interaction.pptx",
+                     "storage":  "presentation-tags",
+                     "constraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"9CC22507-581F-4793-8FFE-1B2DD73D8A6C\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"5C7485BB-B6AB-4E07-9E81-091E00E4D308\" /\u003e\u003cshape id=\"A12896DB-3FCC-48BC-AC12-9BF09EAD1197\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"769996C1-B954-4BD6-8EDB-65DBA5D82A44\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"5C7485BB-B6AB-4E07-9E81-091E00E4D308\" /\u003e\u003cshape id=\"A12896DB-3FCC-48BC-AC12-9BF09EAD1197\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                     "slides":  [
+                                    {
+                                        "slideId":  256,
+                                        "name":  "Slide1",
+                                        "kind":  "",
+                                        "geometry":  [
+                                                         {
+                                                             "Id":  "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                                                             "Name":  "Text_A",
+                                                             "Left":  120,
+                                                             "Top":  190,
+                                                             "Width":  260,
+                                                             "Height":  60.585906982421875
+                                                         },
+                                                         {
+                                                             "Id":  "A12896DB-3FCC-48BC-AC12-9BF09EAD1197",
+                                                             "Name":  "Text_B",
+                                                             "Left":  540,
+                                                             "Top":  190,
+                                                             "Width":  260,
+                                                             "Height":  60.585906982421875
+                                                         }
+                                                     ],
+                                        "constraints":  [
+                                                            {
+                                                                "Id":  "9CC22507-581F-4793-8FFE-1B2DD73D8A6C",
+                                                                "SlideId":  256,
+                                                                "Kind":  "SameY",
+                                                                "ShapeIds":  [
+                                                                                 "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                                                                                 "A12896DB-3FCC-48BC-AC12-9BF09EAD1197"
+                                                                             ],
+                                                                "Value":  null,
+                                                                "SecondaryValue":  null,
+                                                                "Enabled":  true
+                                                            },
+                                                            {
+                                                                "Id":  "769996C1-B954-4BD6-8EDB-65DBA5D82A44",
+                                                                "SlideId":  256,
+                                                                "Kind":  "SameWidth",
+                                                                "ShapeIds":  [
+                                                                                 "5C7485BB-B6AB-4E07-9E81-091E00E4D308",
+                                                                                 "A12896DB-3FCC-48BC-AC12-9BF09EAD1197"
+                                                                             ],
+                                                                "Value":  null,
+                                                                "SecondaryValue":  null,
+                                                                "Enabled":  true
+                                                            }
+                                                        ]
+                                    }
+                                ]
+                 },
+    "TextA":  "A：点击这里编辑文字\r拖边框可联动移动",
+    "TextB":  "B：点击这里编辑文字\r拖边框可联动移动"
+}

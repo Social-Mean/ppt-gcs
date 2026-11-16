@@ -403,7 +403,9 @@ namespace PptGcs.AddIn
             public RadialHud(RadialMenuController owner)
             {
                 this.owner = owner;
-                int imageSize=Math.Max(16,Math.Min(128,(int)Math.Round(24*owner.dpiScale)));
+                // Office supplies native 16/32 px artwork; the former 24 px
+                // request interpolated even at 100% display scaling.
+                int imageSize=Math.Max(16,Math.Min(128,(int)Math.Round(32*owner.dpiScale)));
                 icons=owner.slots.Select(slot=>owner.getIcon?.Invoke(slot.Key,imageSize)).ToArray();
                 FormBorderStyle = FormBorderStyle.None; ShowInTaskbar = false;
                 StartPosition = FormStartPosition.Manual; AutoScaleMode = AutoScaleMode.None;
@@ -453,12 +455,12 @@ namespace PptGcs.AddIn
                     Image icon=icons[index];
                     if(icon!=null)
                     {
-                        int iconX=(int)(anchorX-icon.Width/2f), iconY=(int)(anchorY-23*scale);
+                        int iconX=(int)(anchorX-icon.Width/2f), iconY=(int)(anchorY-28*scale);
                         if(slot.Enabled) graphics.DrawImageUnscaled(icon,iconX,iconY);
                         else ControlPaint.DrawImageDisabled(graphics,icon,iconX,iconY,Color.FromArgb(237,239,242));
                     }
                     var label = new Rectangle((int)(anchorX-41*scale),
-                        (int)(anchorY+(icon==null?-18:3)*scale), (int)(82*scale), (int)(36*scale));
+                        (int)(anchorY+(icon==null?-18:7)*scale), (int)(82*scale), (int)(30*scale));
                     TextRenderer.DrawText(graphics, slot.Label, labelFont, label, slot.Enabled ? Color.FromArgb(25, 34, 47) : Color.FromArgb(130, 136, 145),
                         TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak | TextFormatFlags.NoPadding);
                 }

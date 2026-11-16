@@ -106,15 +106,15 @@ namespace PptGcs.AddIn
                     throw new InvalidOperationException("Cannot copy the Office icon pixels.");
             }
             finally { if (dc != IntPtr.Zero) ReleaseDC(IntPtr.Zero, dc); }
-            // RGB bitmaps can have an unused zero alpha byte. Office
-            // icons supply premultiplied alpha, which must survive the copy.
-            bool hasAlpha = false;
-            for (int i = 3; i < pixels.Length; i += 4) hasAlpha |= pixels[i] != 0;
-            if (!hasAlpha) for (int i = 3; i < pixels.Length; i += 4) pixels[i] = 255;
-            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
+            // GetImageMso returns straight BGRA, including RGB values greater
+            // than alpha on antialiased edges. Marking those bytes as PArgb
+            // brightens the edges and corrupts compositing onto the pane.
+            // A source format with no alpha channel is opaque by definition.
+            if (native.BitsPixel < 32) for (int i = 3; i < pixels.Length; i += 4) pixels[i] = 255;
+            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             try
             {
-                var bits = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppPArgb);
+                var bits = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
                 try
                 {
                     for (int y = 0; y < height; y++)

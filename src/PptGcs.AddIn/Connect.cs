@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -67,7 +67,7 @@ namespace PptGcs.AddIn
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.4.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = "0.4.1", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -235,7 +235,7 @@ namespace PptGcs.AddIn
             return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.4.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v0.4.1\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 
@@ -283,7 +283,6 @@ namespace PptGcs.AddIn
             {
                 CustomTaskPane pane=paneFactory.CreateCTP("PptGcs.ConstraintPaneHost","对象与约束",(object)window);
                 var ui=new ConstraintPaneControl();
-                ui.SetIcons(officeIcons.Get);
                 instance=new PaneInstance {Pane=pane,Control=ui,Window=(object)window,Presentation=(object)window.Presentation};
                 ui.Bind(new ConstraintPaneActions {
                     Add=(kind,value,second)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Add(kind,value,second))),
@@ -296,6 +295,7 @@ namespace PptGcs.AddIn
                 try
                 {
                     ((dynamic)pane.ContentControl).AttachWindow(ui.Handle.ToInt64());
+                    ui.SetIcons(officeIcons.Get);
                     pane.DockPosition=MsoCTPDockPosition.msoCTPDockPositionRight;
                     pane.Width=380;
                     panes.Add(handle,instance);

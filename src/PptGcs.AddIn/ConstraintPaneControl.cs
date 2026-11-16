@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace PptGcs.AddIn
@@ -21,7 +22,9 @@ namespace PptGcs.AddIn
         private readonly Button enableButton = new Button();
         private readonly Button deleteButton = new Button();
         private readonly GroupBox editor = new GroupBox();
-        private readonly ComboBox optionBox = new ComboBox();
+        private readonly Panel optionViewport = new Panel();
+        private readonly TableLayoutPanel optionGrid = new TableLayoutPanel();
+        private readonly Dictionary<string,Button> optionButtons = new Dictionary<string,Button>();
         private readonly Label editorHint = new Label();
         private readonly Label valueLabel = new Label();
         private readonly Label secondLabel = new Label();
@@ -30,7 +33,8 @@ namespace PptGcs.AddIn
         private readonly Button applyButton = new Button();
         private readonly ToolTip tips = new ToolTip();
         private readonly ImageList relationImages = new ImageList { ColorDepth=ColorDepth.Depth32Bit };
-        private readonly Dictionary<string,Image> iconImages = new Dictionary<string,Image>();
+        private Func<string,int,Image> getIcon;
+        private string selectedKind;
         private ConstraintPaneActions actions;
         private ConstraintPaneModel model = new ConstraintPaneModel();
         private bool rendering;
@@ -119,22 +123,41 @@ namespace PptGcs.AddIn
             RefreshLists();
         }
 
-        // Called once when the Office pane is created, never from a paint event.
+        // Images are supplied at their physical pixel size, never scaled while painting.
         public void SetIcons(Func<string,int,Image> getIcon)
         {
             if(getIcon==null)throw new ArgumentNullException("getIcon");
-            int size=Math.Max(16,Math.Min(128,(int)Math.Round(16*DeviceDpi/96d)));
-            relationImages.Images.Clear();iconImages.Clear();
+            this.getIcon=getIcon;
+            ReloadIcons();
+        }
+
+        private int Pixels(int logical)
+        { return (int)Math.Round(logical*(IsHandleCreated?(int)GetDpiForWindow(Handle):DeviceDpi)/96d); }
+
+        private void ReloadIcons()
+        {
+            if(getIcon==null || IsDisposed)return;
+            int size=Math.Max(16,Math.Min(128,Pixels(16)));
+            relationImages.Images.Clear();
             relationImages.ImageSize=new Size(size,size);
             foreach(string kind in OfficeIconProvider.Commands)
             {
                 Image image=getIcon(kind,size);
                 if(image==null)continue;
-                iconImages.Add(kind,image);
                 relationImages.Images.Add(kind,image);
             }
-            optionBox.ItemHeight=Math.Max(Font.Height+4,size+4);
-            listSignature=null;RefreshLists();optionBox.Invalidate();
+            foreach(var pair in optionButtons) SetOptionImage(pair.Key,pair.Value);
+            listSignature=null;RefreshLists();
+        }
+
+        private void SetOptionImage(string kind,Button button)
+        { button.Image=getIcon==null?null:getIcon(kind,Math.Max(16,Math.Min(128,Pixels(16)))); }
+
+        protected override void OnDpiChangedAfterParent(EventArgs args)
+        {
+            base.OnDpiChangedAfterParent(args);
+            SizeOptionGrid();
+            ReloadIcons();
         }
 
         public void Bind(ConstraintPaneActions callbacks)
@@ -175,13 +198,13 @@ namespace PptGcs.AddIn
             RefreshMessage();
             editingId = null;
             editor.Text = "新建约束";
-            optionBox.Enabled = true;
             PopulateOptions(kind);
             applyButton.Text = "创建约束";
             editor.Visible = true;
             LoadEditorValues(null);
             ScrollControlIntoView(editor);
-            optionBox.Focus();
+            Button selected;
+            if(selectedKind!=null && optionButtons.TryGetValue(selectedKind,out selected) && selected.Enabled) selected.Focus();
         }
 
         public void ShowMessage(string message)
@@ -194,20 +217,31 @@ namespace PptGcs.AddIn
         {
             editor.Text = "新建约束";
             editor.Dock = DockStyle.Fill;
-            editor.AutoSize = true;
+            editor.AutoSize = false;
             editor.Visible = false;
             editor.Padding = new Padding(8, 14, 8, 8);
             editor.AccessibleName = "约束参数编辑";
-            var fields = new TableLayoutPanel { AutoSize = true, Dock = DockStyle.Top, ColumnCount = 2, Margin = Padding.Empty };
+            var fields = new TableLayoutPanel { AutoSize = true, AutoSizeMode=AutoSizeMode.GrowAndShrink, Dock = DockStyle.Top, ColumnCount = 2, Margin = Padding.Empty };
+            // GroupBox's preferred size ignores wrapped descendants of a
+            // top-docked table. Follow the table's actual height instead.
+            Action fitEditor=()=>{
+                int height=fields.Bottom+editor.Padding.Bottom;
+                if(editor.Height!=height)editor.Height=height;
+            };
+            fields.SizeChanged+=(sender,args)=>fitEditor();
+            editor.Layout+=(sender,args)=>fitEditor();
             fields.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             fields.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            optionBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            optionBox.DrawMode=DrawMode.OwnerDrawFixed;
-            optionBox.DrawItem+=DrawOption;
-            optionBox.Dock = DockStyle.Fill;
-            optionBox.AccessibleName = "约束类型";
-            optionBox.SelectedIndexChanged += (sender, args) => { if (!rendering) LoadEditorValues(null); };
-            fields.Controls.Add(optionBox, 0, 0); fields.SetColumnSpan(optionBox, 2);
+            optionViewport.Dock=DockStyle.Fill;
+            optionViewport.AutoScroll=true;
+            optionViewport.Margin=Padding.Empty;
+            optionViewport.AccessibleName="约束类型";
+            optionGrid.Location=Point.Empty;
+            optionGrid.Margin=Padding.Empty;
+            optionGrid.Padding=Padding.Empty;
+            optionGrid.AccessibleName="约束类型按钮";
+            optionViewport.Controls.Add(optionGrid);
+            fields.Controls.Add(optionViewport, 0, 0); fields.SetColumnSpan(optionViewport, 2);
             editorHint.AutoSize = true; editorHint.Dock = DockStyle.Fill;
             editorHint.Margin = new Padding(0, 6, 0, 6);
             fields.Controls.Add(editorHint, 0, 1); fields.SetColumnSpan(editorHint, 2);
@@ -321,7 +355,6 @@ namespace PptGcs.AddIn
             editingId = relation.Id;
             editor.Text = "修改约束参数";
             PopulateOptions(relation.Kind);
-            optionBox.Enabled = false;
             applyButton.Text = "保存修改";
             editor.Visible = true;
             LoadEditorValues(relation);
@@ -329,41 +362,82 @@ namespace PptGcs.AddIn
             if (valueBox.Visible) valueBox.Focus();
         }
 
-        private void DrawOption(object sender,DrawItemEventArgs args)
-        {
-            args.DrawBackground();
-            if(args.Index<0 || args.Index>=optionBox.Items.Count)return;
-            var option=(ConstraintPaneOption)optionBox.Items[args.Index];
-            Image image;
-            Rectangle text=args.Bounds;
-            text.X+=3;text.Width-=6;
-            if(iconImages.TryGetValue(option.Kind,out image))
-            {
-                args.Graphics.DrawImageUnscaled(image,text.X,text.Y+(text.Height-image.Height)/2);
-                text.X+=image.Width+5;text.Width-=image.Width+5;
-            }
-            TextRenderer.DrawText(args.Graphics,option.Label,args.Font,text,args.ForeColor,
-                TextFormatFlags.Left|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);
-            args.DrawFocusRectangle();
-        }
-
         private void PopulateOptions(string kind)
         {
-            rendering = true;
-            try
+            optionGrid.SuspendLayout();
+            foreach(Control control in optionGrid.Controls.Cast<Control>().ToArray()) control.Dispose();
+            optionGrid.Controls.Clear();
+            optionButtons.Clear();
+            selectedKind=model.Options.Any(option=>option.Kind==kind)?kind:model.Options.Select(option=>option.Kind).FirstOrDefault();
+            optionGrid.ColumnCount=Math.Max(1,(model.Options.Count+3)/4);
+            optionGrid.RowCount=4;
+            optionGrid.GrowStyle=TableLayoutPanelGrowStyle.FixedSize;
+            int index=0;
+            foreach(var option in model.Options)
             {
-                optionBox.Items.Clear();
-                foreach (var option in model.Options) optionBox.Items.Add(option);
-                int index = model.Options.ToList().FindIndex(option => option.Kind == kind);
-                optionBox.SelectedIndex = index >= 0 ? index : (optionBox.Items.Count > 0 ? 0 : -1);
+                string optionKind=option.Kind;
+                var button=new Button {
+                    Text=option.Label??option.Kind, AccessibleName="约束类型："+(option.Label??option.Kind),
+                    Tag=optionKind, Dock=DockStyle.Fill, Margin=new Padding(Pixels(2)), Padding=new Padding(Pixels(3)),
+                    TabIndex=index, FlatStyle=FlatStyle.Flat, UseVisualStyleBackColor=false,
+                    ImageAlign=ContentAlignment.TopCenter, TextAlign=ContentAlignment.MiddleCenter,
+                    TextImageRelation=TextImageRelation.ImageAboveText
+                };
+                button.Click+=(sender,args)=>{
+                    if(editingId!=null || selectedKind==optionKind)return;
+                    selectedKind=optionKind;
+                    operationMessage=null;RefreshMessage();
+                    LoadEditorValues(null);
+                };
+                SetOptionImage(optionKind,button);
+                optionButtons.Add(optionKind,button);
+                optionGrid.Controls.Add(button,index/4,index%4);
+                index++;
             }
-            finally { rendering = false; }
+            SizeOptionGrid();
+            optionGrid.ResumeLayout();
+            RefreshOptionButtons();
+        }
+
+        private void SizeOptionGrid()
+        {
+            int columns=Math.Max(1,(optionButtons.Count+3)/4);
+            int columnWidth=Pixels(67),rowHeight=Pixels(72);
+            optionGrid.ColumnCount=columns;optionGrid.RowCount=4;
+            optionGrid.ColumnStyles.Clear();optionGrid.RowStyles.Clear();
+            for(int i=0;i<columns;i++)optionGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,columnWidth));
+            for(int i=0;i<4;i++)optionGrid.RowStyles.Add(new RowStyle(SizeType.Absolute,rowHeight));
+            optionGrid.Size=new Size(columns*columnWidth,4*rowHeight);
+            optionViewport.AutoScrollMinSize=optionGrid.Size;
+            optionViewport.Height=optionGrid.Height+Math.Max(Pixels(17),SystemInformation.HorizontalScrollBarHeight);
+            optionViewport.MinimumSize=new Size(Pixels(180),optionViewport.Height);
+        }
+
+        private void RefreshOptionButtons()
+        {
+            int count=model.Objects.Count(item=>item.Selected);
+            string unsupported=model.Objects.Where(item=>item.Selected).Select(item=>item.UnsupportedReason).FirstOrDefault(reason=>reason!=null);
+            foreach(var option in model.Options)
+            {
+                Button button;
+                if(!optionButtons.TryGetValue(option.Kind,out button))continue;
+                bool selected=option.Kind==selectedKind;
+                bool eligible=unsupported==null && count>=option.MinimumMembers && (option.MaximumMembers<=0 || count<=option.MaximumMembers);
+                button.Enabled=editingId==null && eligible;
+                button.BackColor=selected?(SystemInformation.HighContrast?SystemColors.Highlight:Color.FromArgb(220,235,252)):SystemColors.Control;
+                button.ForeColor=selected && SystemInformation.HighContrast?SystemColors.HighlightText:SystemColors.ControlText;
+                button.FlatAppearance.BorderSize=selected?2:1;
+                button.FlatAppearance.BorderColor=selected?SystemColors.Highlight:SystemColors.ControlDark;
+                string required=option.MaximumMembers==option.MinimumMembers?option.MinimumMembers.ToString():"至少 "+option.MinimumMembers;
+                string reason=editingId!=null?"修改关系时不能更换约束类型。":unsupported??"需要 "+required+" 个对象，当前已选 "+count+" 个。";
+                tips.SetToolTip(button,(option.Label??option.Kind)+Environment.NewLine+(option.Description??String.Empty)+Environment.NewLine+reason);
+                button.AccessibleDescription=(option.Description??String.Empty)+" "+reason+(selected?" 已选中。":String.Empty);
+            }
         }
 
         private ConstraintPaneOption EditorOption()
         {
-            var item = optionBox.SelectedItem as ConstraintPaneOption;
-            return item == null ? null : model.Options.FirstOrDefault(option => option.Kind == item.Kind);
+            return model.Options.FirstOrDefault(option=>option.Kind==selectedKind);
         }
 
         private void LoadEditorValues(ConstraintPaneRelation relation)
@@ -384,6 +458,7 @@ namespace PptGcs.AddIn
 
         private void UpdateEditorHint()
         {
+            RefreshOptionButtons();
             var option = EditorOption();
             int count = model.Objects.Count(item => item.Selected);
             string unsupported = model.Objects.Where(item => item.Selected).Select(item => item.UnsupportedReason).FirstOrDefault(reason => reason != null);
@@ -490,10 +565,12 @@ namespace PptGcs.AddIn
                 selectionQueued = false;
                 actions = null;
                 tips.Dispose();
-                relations.SmallImageList=null;relationImages.Dispose();iconImages.Clear();
+                relations.SmallImageList=null;relationImages.Dispose();getIcon=null;
                 if (pageLabel.Font != Font) pageLabel.Font.Dispose();
             }
             base.Dispose(disposing);
         }
+
+        [DllImport("user32.dll")] private static extern uint GetDpiForWindow(IntPtr window);
     }
 }

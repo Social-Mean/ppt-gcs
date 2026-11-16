@@ -411,9 +411,6 @@ namespace PptGcs.AddIn
             }
             if (driver == null)
             {
-                // Keep caret placement and text selection native while editing
-                // text. Explicit bounding-box resize handles still work above.
-                if ((int)window.Selection.Type == 3) return false;
                 dynamic hit = window.RangeFromPoint(mouse.Position.X, mouse.Position.Y);
                 if (hit == null)
                 { LogRoute(mouse, messageKind, "native-no-hit", ReadSelection(window), handleRadius, closest, context.Geometry, previousPane); return false; }
@@ -424,7 +421,19 @@ namespace PptGcs.AddIn
                     dynamic shape = item.Value;
                     if ((int)shape.Id == hitId && constrained.Contains(item.Key) &&
                         CanDrag((object)shape) && HitBody(byId[item.Key], map, mouse.Position))
-                    { driver = byId[item.Key]; break; }
+                    {
+                        ShapeGeometry geometry = byId[item.Key];
+                        var bounds = new System.Drawing.RectangleF((float)(map.OriginX + geometry.Left * map.ScaleX),
+                            (float)(map.OriginY + geometry.Top * map.ScaleY), (float)(geometry.Width * map.ScaleX), (float)(geometry.Height * map.ScaleY));
+                        if (TextPointerPolicy.UseNativeTextInput((int)shape.Type, (int)shape.Id == selectedId,
+                            (int)shape.Id == selectedId && (int)window.Selection.Type == 3, bounds,
+                            new System.Drawing.PointF(mouse.Position.X, mouse.Position.Y), 6 * dpi / 96f))
+                        {
+                            LogRoute(mouse, messageKind, "native-text-interior", ReadSelection(window));
+                            return false;
+                        }
+                        driver = geometry; break;
+                    }
                 }
             }
             if (driver == null)
