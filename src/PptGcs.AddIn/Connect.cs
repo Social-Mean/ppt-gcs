@@ -14,17 +14,24 @@ using PptGcs.Core;
 namespace PptGcs.AddIn
 {
     [ComVisible(true), Guid("1B728F4B-5AF0-41FD-8589-86E44A7A5501"), ProgId("PptGcs.Connect"), ClassInterface(ClassInterfaceType.AutoDispatch)]
-    public sealed class Connect : StandardOleMarshalObject, IDTExtensibility2, IRibbonExtensibility
+    public sealed class Connect : StandardOleMarshalObject, IDTExtensibility2, IRibbonExtensibility, ICustomTaskPaneConsumer
     {
         private dynamic app;
         private Timer timer;
         private ConstrainedDragController controller;
         private ShapeIdentityManager identities;
+        private ConstraintCommands commands;
+        private RadialMenuController radial;
+        private ICTPFactory paneFactory;
+        private readonly Dictionary<long,PaneInstance> panes = new Dictionary<long,PaneInstance>();
+        private bool selectingFromPane;
+        private bool stopping;
         private bool repairingIdentities;
-        private Action<object> selectionChanged, presentationOpened;
+        private Action<object> selectionChanged, presentationOpened, presentationClosed;
         // EApplication event interface and DISPIDs from Office's MSPPT.OLB.
         private static readonly Guid ApplicationEvents = new Guid("914934C2-5A91-11CF-8700-00AA0060263B");
         private bool busy;
+        private bool refreshing;
         private DateTime nextRefresh;
         private string activeKey;
         private string lastError;
@@ -34,19 +41,31 @@ namespace PptGcs.AddIn
 
         public void OnConnection(object application, ext_ConnectMode mode, object addIn, ref Array custom)
         {
+            Application.EnableVisualStyles();
+            stopping=false;
             app = application;
             ((dynamic)addIn).Object = this;
             identities = new ShapeIdentityManager();
+            commands = new ConstraintCommands(application, NormalizeIdentities, Log);
             controller = new ConstrainedDragController(application, Log, NormalizeActiveIdentities);
+            radial = new RadialMenuController(commands.BuildModel,commands.Preview,
+                kind=>ExecuteShared(()=>commands.Add(kind,null,null)),
+                more=> {var pane=EnsurePane();pane.Pane.Visible=true;if(more)pane.Control.ShowEditor();},
+                ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log);
+            controller.AlternateMouseInput=radial.HandleMouse;
+            controller.AlternateKeyboardInput=radial.HandleKeyboard;
+            controller.AlternateInputActive=()=>radial!=null && radial.IsOpen;
             selectionChanged = selection => OnIdentityEvent(null);
             presentationOpened = presentation => OnIdentityEvent(presentation);
+            presentationClosed = OnPresentationClosed;
             ComEventsHelper.Combine(application, ApplicationEvents, 2001, selectionChanged);
             ComEventsHelper.Combine(application, ApplicationEvents, 2021, presentationOpened);
+            ComEventsHelper.Combine(application, ApplicationEvents, 2004, presentationClosed);
             for (int i = 1; i <= (int)app.Presentations.Count; i++) OnIdentityEvent((object)app.Presentations[i]);
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.2.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = "0.3.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -55,15 +74,25 @@ namespace PptGcs.AddIn
         private void Stop()
         {
             if (timer == null && controller == null) return;
+            if(stopping)return;
+            stopping=true;
             if (timer != null) { timer.Stop(); timer.Dispose(); timer = null; }
+            if(controller!=null)
+            {
+                controller.AlternateMouseInput=null;controller.AlternateKeyboardInput=null;controller.AlternateInputActive=null;
+                controller.Dispose();controller=null;
+            }
+            if(radial!=null){radial.Dispose();radial=null;}
+            foreach(var pane in panes.Values) pane.Dispose();
+            panes.Clear(); paneFactory = null;
             if (app != null)
             {
                 if (selectionChanged != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2001, selectionChanged);
                 if (presentationOpened != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2021, presentationOpened);
+                if (presentationClosed != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2004, presentationClosed);
             }
-            selectionChanged = null; presentationOpened = null;
-            if (controller != null) { controller.Dispose(); controller = null; }
-            Log("disconnected", "{}"); app = null;
+            selectionChanged = null; presentationOpened = null;presentationClosed=null;
+            Log("disconnected", "{}");commands=null;identities=null;app = null;
         }
 
         public string GetCustomUI(string ribbonId)
@@ -82,6 +111,7 @@ namespace PptGcs.AddIn
 </group><group id=""Manage"" label=""管理"">
 <button id=""Remove"" label=""移除选中对象的约束"" onAction=""UnlinkSelected""/>
 <button id=""Demo"" label=""新建六组演示"" onAction=""CreateDemo""/>
+<button id=""ConstraintsPane"" label=""对象与约束"" onAction=""ShowConstraintPane""/>
 <button id=""Status"" label=""状态"" onAction=""ShowStatus""/>
 </group></tab></tabs></ribbon></customUI>";
         }
@@ -94,107 +124,17 @@ namespace PptGcs.AddIn
 
         private void LinkSelection(ConstraintKind kind)
         {
-            RunCommand(() => {
-                NormalizeActiveIdentities();
-                LayoutContext context = PowerPointLayout.Read((object)app);
-                dynamic selection = ((dynamic)context.Window).Selection;
-                int minimum = IsGap(kind) ? 3 : 2;
-                if ((int)selection.Type != 2 || (int)selection.ShapeRange.Count < minimum)
-                    throw new InvalidOperationException("请在同一页选中至少 " + minimum + " 个矩形。");
-                var shapes = new List<object>();
-                for (int i = 1; i <= (int)selection.ShapeRange.Count; i++) shapes.Add((object)selection.ShapeRange[i]);
-                AddConstraint(context, shapes, kind);
-            });
-        }
-
-        private static bool IsGap(ConstraintKind kind)
-        {
-            return kind == ConstraintKind.EqualHorizontalGap || kind == ConstraintKind.EqualVerticalGap;
-        }
-
-        private void AddConstraint(LayoutContext context, List<object> selected, ConstraintKind kind)
-        {
-            foreach (var shape in selected) PowerPointLayout.ValidateShape(shape);
-            if (IsGap(kind))
-                selected = selected.OrderBy(s => kind == ConstraintKind.EqualHorizontalGap ? (double)((dynamic)s).Left : (double)((dynamic)s).Top).ToList();
-            var ids = new List<string>();
-            var savedTags = new Dictionary<object, string>();
-            foreach (var shape in selected)
-            {
-                string existing = (string)((dynamic)shape).Tags[PowerPointLayout.TagName];
-                string id = PowerPointLayout.ReadId(shape) ?? Guid.NewGuid().ToString("D").ToUpperInvariant();
-                if (ids.Contains(id) || (context.Shapes.ContainsKey(id) && (int)((dynamic)context.Shapes[id]).Id != (int)((dynamic)shape).Id))
-                    throw new InvalidOperationException("矩形编号未能唯一识别，约束未更改。");
-                ids.Add(id); savedTags.Add(shape, existing);
-                if (!context.Shapes.ContainsKey(id))
-                {
-                    context.Shapes.Add(id, shape);
-                    context.Geometry.Add(PowerPointLayout.Geometry(shape, id));
-                }
-            }
-            ConstraintDocument original = context.Document;
-            var all = original.Constraints.ToList();
-            var relation = new LayoutConstraint(Guid.NewGuid().ToString("D"), context.SlideId, kind, ids);
-            all.Add(relation);
-            var proposed = new ConstraintDocument(all);
-            var relations = proposed.Constraints.Where(c => c.SlideId == context.SlideId).ToList();
-            var target = context.Geometry.Single(g => g.Id == ids[0]);
-            // Solve before changing the document so incompatible additions are atomic.
-            var solved = LayoutSolver.Solve(context.Geometry, relations, target.Id, target);
-            app.StartNewUndoEntry();
-            try
-            {
-                for (int i = 0; i < selected.Count; i++) ((dynamic)selected[i]).Tags.Add(PowerPointLayout.TagName, ids[i]);
-                PowerPointLayout.WriteDocument(context.Presentation, proposed);
-                PowerPointLayout.Apply(context, solved);
-                var readback = PowerPointLayout.Snapshot(context);
-                if (LayoutSolver.MaxResidual(readback, relations) > LayoutSolver.PositionTolerance)
-                    throw new InvalidOperationException("PowerPoint 的自动尺寸设置阻止了约束写回。");
-                NormalizeIdentities(context.Presentation);
-                activeKey = null;
-                Log("constraint-added", json.Serialize(new { id = relation.Id, kind = kind.ToString(), slideId = context.SlideId, shapeIds = ids }));
-            }
-            catch
-            {
-                PowerPointLayout.Apply(context, context.Geometry);
-                PowerPointLayout.WriteDocument(context.Presentation, original);
-                foreach (var entry in savedTags)
-                {
-                    if (String.IsNullOrEmpty(entry.Value)) ((dynamic)entry.Key).Tags.Delete(PowerPointLayout.TagName);
-                    else ((dynamic)entry.Key).Tags.Add(PowerPointLayout.TagName, entry.Value);
-                }
-                throw;
-            }
-            finally { app.StartNewUndoEntry(); }
+            RunCommand(() => commands.Add(kind.ToString(), null, null));
         }
 
         public void UnlinkSelected(object control)
-        {
-            RunCommand(() => {
-                NormalizeActiveIdentities();
-                dynamic window = app.ActiveWindow;
-                dynamic selection = window.Selection;
-                if ((int)selection.Type != 2) throw new InvalidOperationException("请先选中矩形。");
-                var ids = new HashSet<string>();
-                for (int i = 1; i <= (int)selection.ShapeRange.Count; i++)
-                {
-                    string id = PowerPointLayout.ReadId((object)selection.ShapeRange[i]);
-                    if (id != null) ids.Add(id);
-                }
-                int slideId = (int)window.View.Slide.SlideID;
-                ConstraintDocument current = PowerPointLayout.ReadDocument((object)window.Presentation);
-                var remaining = current.Constraints.Where(c => c.SlideId != slideId || !c.ShapeIds.Any(ids.Contains)).ToList();
-                app.StartNewUndoEntry();
-                PowerPointLayout.WriteDocument((object)window.Presentation, new ConstraintDocument(remaining));
-                app.StartNewUndoEntry();
-                activeKey = null;
-            });
-        }
+        { RunCommand(() => commands.DeleteForSelection()); }
 
         public void CreateDemo(object control)
         {
             RunCommand(() => {
                 dynamic presentation = app.Presentations.Add();
+                presentation.Tags.Add("PPTGCS_TEST","V3");
                 presentation.PageSetup.SlideWidth = 960f; presentation.PageSetup.SlideHeight = 540f;
                 var kinds = new[] { ConstraintKind.SameY, ConstraintKind.SameX, ConstraintKind.SameWidth,
                     ConstraintKind.SameHeight, ConstraintKind.EqualHorizontalGap, ConstraintKind.EqualVerticalGap };
@@ -243,7 +183,8 @@ namespace PptGcs.AddIn
                         shapes.Add(Rectangle(slide, kind, "C", 420,420,120,55));
                     }
                     app.ActiveWindow.View.GotoSlide(index+1);
-                    AddConstraint(PowerPointLayout.Read((object)app), shapes, kind);
+                    slide.Shapes.Range(shapes.Select(shape => (object)((dynamic)shape).Name).ToArray()).Select();
+                    commands.Add(kind.ToString(), null, null);
                 }
                 app.ActiveWindow.View.GotoSlide(1);
                 activeKey = null;
@@ -285,15 +226,146 @@ namespace PptGcs.AddIn
                     if (id == null) continue;
                     geometry.Add(new { Id=id, Name=(string)shape.Name, Left=(double)shape.Left, Top=(double)shape.Top, Width=(double)shape.Width, Height=(double)shape.Height });
                 }
-                var constraints = document.Constraints.Where(c => c.SlideId == slideId).Select(c => new { c.Id,c.SlideId,Kind=c.Kind.ToString(),c.ShapeIds }).ToList();
+                var constraints = document.Constraints.Where(c => c.SlideId == slideId).Select(c => new { c.Id,c.SlideId,Kind=c.Kind.ToString(),c.ShapeIds,c.Value,c.SecondaryValue,c.Enabled }).ToList();
                 slides.Add(new { slideId, name=(string)slide.Name, kind=(string)slide.Tags["PPTGCS_CASE"], geometry, constraints });
             }
-            return json.Serialize(new { presentation=(string)presentation.FullName, slides });
+            return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.2.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v0.3.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
+
+        public string GetConstraintXml() { return PowerPointLayout.ReadDocument((object)app.ActivePresentation).ToXml(); }
+        public string GetPaneState() { return json.Serialize(commands.BuildModel()); }
+        public string GetRadialState() { return radial.GetState(); }
+        public string AddConstraintCommand(string kind,string parameters)
+        {
+            string id=null;var values=ReadParameters(parameters);
+            ExecuteShared(()=>id=commands.Add(kind,values.Item1,values.Item2));return id;
+        }
+        public void UpdateConstraintCommand(string id,string parameters)
+        { var values=ReadParameters(parameters);ExecuteShared(()=>commands.Update(id,values.Item1,values.Item2)); }
+        public void SetConstraintEnabled(string id,bool enabled) { ExecuteShared(()=>commands.SetEnabled(id,enabled)); }
+        public void DeleteConstraintCommand(string id) { ExecuteShared(()=>commands.Delete(id)); }
+        public void SelectConstraintObjects(string idsJson)
+        { commands.SelectShapes(json.Deserialize<List<string>>(idsJson));RefreshPane(); }
+
+        private Tuple<double?,double?> ReadParameters(string parameters)
+        {
+            var values=String.IsNullOrWhiteSpace(parameters)?new Dictionary<string,double>():json.Deserialize<Dictionary<string,double>>(parameters);
+            return Tuple.Create(values.ContainsKey("value")?(double?)values["value"]:null,values.ContainsKey("second")?(double?)values["second"]:null);
+        }
+
+        public void CTPFactoryAvailable(ICTPFactory factory) { paneFactory=factory; }
+        public void ShowConstraintPane(object control) { RunCommand(()=>EnsurePane().Pane.Visible=true); }
+        public string OpenConstraintPane()
+        { var pane=EnsurePane();pane.Pane.Visible=true;return GetPaneState(); }
+        public string GetPaneDiagnostics()
+        {
+            long handle=WindowIdentity((object)app.ActiveWindow);PaneInstance pane;
+            if(!panes.TryGetValue(handle,out pane))return json.Serialize(new {factory=paneFactory!=null,window=handle,created=false});
+            return json.Serialize(new {factory=paneFactory!=null,window=handle,created=true,visible=pane.Pane.Visible,
+                dock=pane.Pane.DockPosition.ToString(),width=pane.Pane.Width,host=(long)((dynamic)pane.Pane.ContentControl).HostHandle,control=pane.Control.Handle.ToInt64()});
+        }
+
+        private PaneInstance EnsurePane()
+        {
+            if(paneFactory==null) throw new InvalidOperationException("Office 尚未提供任务窗格接口。");
+            dynamic window=app.ActiveWindow;
+            long handle=WindowIdentity((object)window);
+            PaneInstance instance;
+            if(!panes.TryGetValue(handle,out instance))
+            {
+                CustomTaskPane pane=paneFactory.CreateCTP("PptGcs.ConstraintPaneHost","对象与约束",(object)window);
+                var ui=new ConstraintPaneControl();
+                instance=new PaneInstance {Pane=pane,Control=ui,Window=(object)window,Presentation=(object)window.Presentation};
+                ui.Bind(new ConstraintPaneActions {
+                    Add=(kind,value,second)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Add(kind,value,second))),
+                    Update=(id,value,second)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Update(id,value,second))),
+                    SetEnabled=(id,enabled)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.SetEnabled(id,enabled))),
+                    Delete=id=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Delete(id))),
+                    SelectShapes=ids=>InPaneWindow(handle,()=> { if(selectingFromPane)return;selectingFromPane=true;try{commands.SelectShapes(ids);}finally{selectingFromPane=false;}RefreshPane(); }),
+                    Refresh=()=>InPaneWindow(handle,RefreshPane)
+                });
+                try
+                {
+                    ((dynamic)pane.ContentControl).AttachWindow(ui.Handle.ToInt64());
+                    pane.DockPosition=MsoCTPDockPosition.msoCTPDockPositionRight;
+                    pane.Width=380;
+                    panes.Add(handle,instance);
+                }
+                catch {instance.Dispose();throw;}
+            }
+            instance.Control.Render(commands.BuildModel());
+            return instance;
+        }
+
+        private void RefreshPane()
+        {
+            if(app==null || (int)app.Presentations.Count==0)return;
+            try
+            {
+                long handle=WindowIdentity((object)app.ActiveWindow);
+                PaneInstance pane;
+                if(panes.TryGetValue(handle,out pane)) pane.Control.Render(commands.BuildModel());
+            }
+            catch(Exception exception) {lastError=exception.Message;}
+        }
+
+        private void ExecuteShared(Action command)
+        {
+            if(busy || (controller!=null && controller.IsDragging) || (radial!=null && radial.IsOpen)) throw new InvalidOperationException("请先结束当前操作。");
+            busy=true;
+            try {command();activeKey=null;lastError=null;}
+            finally {busy=false;RefreshPane();}
+        }
+
+        private void InPaneWindow(long owner,Action action)
+        {
+            if(stopping || app==null || (int)app.Presentations.Count==0 || WindowIdentity((object)app.ActiveWindow)!=owner)
+                throw new InvalidOperationException("请先激活此窗格所属的演示文稿窗口。");
+            action();
+        }
+
+        private static long WindowIdentity(object window)
+        {
+            IntPtr identity=Marshal.GetIUnknownForObject(window);
+            try {return identity.ToInt64();} finally {Marshal.Release(identity);}
+        }
+
+        private void OnPresentationClosed(object presentation)
+        {
+            if(stopping)return;
+            long key=WindowIdentity(presentation);
+            foreach(var item in panes.Where(p=>WindowIdentity(p.Value.Presentation)==key).ToList())
+            {item.Value.Dispose();panes.Remove(item.Key);}
+        }
+
+        private void PrunePanes()
+        {
+            if(panes.Count==0)return;
+            var active=new HashSet<long>();
+            for(int i=1;i<=(int)app.Windows.Count;i++)active.Add(WindowIdentity((object)app.Windows[i]));
+            foreach(var item in panes.Where(p=>!active.Contains(p.Key)).ToList())
+            {item.Value.Dispose();panes.Remove(item.Key);}
+        }
+
+        private sealed class PaneInstance : IDisposable
+        {
+            public CustomTaskPane Pane;public ConstraintPaneControl Control;public object Window,Presentation;
+            private bool disposed;
+            public void Dispose()
+            {
+                if(disposed)return;disposed=true;
+                try {((dynamic)Pane.ContentControl).DetachWindow();} catch(COMException) { }
+                catch(InvalidComObjectException) { }
+                if(Control!=null) Control.Dispose();
+                try {if(Pane!=null)Pane.Delete();} catch(COMException) { }
+                catch(InvalidComObjectException) { }
+                Window=null;Presentation=null;Pane=null;Control=null;
+            }
+        }
 
         private void NormalizeActiveIdentities()
         {
@@ -321,11 +393,12 @@ namespace PptGcs.AddIn
 
         private void OnIdentityEvent(object presentation)
         {
-            if (busy || repairingIdentities || app == null || (controller != null && controller.IsDragging)) return;
+            if (stopping || busy || repairingIdentities || app == null || (controller != null && controller.IsDragging)) return;
             try
             {
                 if (presentation == null) NormalizeActiveIdentities();
                 else NormalizeIdentities(presentation);
+                if(!selectingFromPane)RefreshPane();
             }
             catch (Exception exception)
             {
@@ -335,17 +408,13 @@ namespace PptGcs.AddIn
         }
 
         // Integration harness only: this is programmatic geometry replay, never
-        // evidence of real mouse input. Restrict it to the six-case test fixture.
+        // evidence of real mouse input. Require the explicit test document marker.
         public string ReplayGestureForTest(string driverId, string mode, string offsetsJson)
         {
-            if (busy || controller.IsDragging) throw new InvalidOperationException("The add-in is busy.");
+            if (busy || controller.IsDragging || radial.IsOpen) throw new InvalidOperationException("The add-in is busy.");
             dynamic presentation = app.ActivePresentation;
-            string[] cases = { "SameY", "SameX", "SameWidth", "SameHeight", "EqualHorizontalGap", "EqualVerticalGap" };
-            if ((int)presentation.Slides.Count != cases.Length)
-                throw new InvalidOperationException("Replay requires the six-slide test fixture.");
-            for (int i=1; i <= cases.Length; i++)
-                if ((string)presentation.Slides[i].Tags["PPTGCS_CASE"] != cases[i-1])
-                    throw new InvalidOperationException("Replay requires the six-slide test fixture.");
+            if ((string)presentation.Tags["PPTGCS_TEST"] != "V3")
+                throw new InvalidOperationException("Replay requires an explicitly marked V3 test fixture.");
             double[][] offsets = json.Deserialize<double[][]>(offsetsJson);
             busy = true;
             try
@@ -358,13 +427,15 @@ namespace PptGcs.AddIn
 
         private void Tick(object sender, EventArgs args)
         {
-            if (busy || app == null) return;
-            busy = true;
+            if (busy || refreshing || app == null || stopping) return;
+            refreshing = true;
             try
             {
                 controller.Tick();
-                if (controller.IsDragging || (activeKey != null && DateTime.UtcNow < nextRefresh)) return;
+                radial.Tick();
+                if (controller.IsDragging || radial.IsOpen || (activeKey != null && DateTime.UtcNow < nextRefresh)) return;
                 nextRefresh = DateTime.UtcNow.AddMilliseconds(200);
+                PrunePanes();
                 if ((int)app.Presentations.Count == 0) { activeKey=null;constraintCount=0;return; }
                 dynamic window = app.ActiveWindow;
                 if (window == null || (int)window.ViewType != 9) return;
@@ -382,18 +453,19 @@ namespace PptGcs.AddIn
                     Log("document-loaded",json.Serialize(new { presentation=(string)presentation.FullName,slideId,constraints=constraintCount }));
                 }
                 lastError=null;
+                RefreshPane();
             }
             catch (COMException) { }
             catch (Exception ex) { if (lastError!=ex.Message) Log("host-error",json.Serialize(new { error=ex.Message }));lastError=ex.Message; }
-            finally { busy=false; }
+            finally { refreshing=false; }
         }
         private void RunCommand(Action action)
         {
-            if (busy || (controller != null && controller.IsDragging)) return;
+            if (busy || (controller != null && controller.IsDragging) || (radial!=null && radial.IsOpen)) return;
             busy=true;
             try { action(); }
             catch (Exception ex) { Log("command-error",json.Serialize(new { error=ex.ToString() }));MessageBox.Show(ex.Message,"PPT GCS"); }
-            finally { busy=false; }
+            finally { busy=false;activeKey=null;RefreshPane(); }
         }
         private void Log(string type,string data)
         {

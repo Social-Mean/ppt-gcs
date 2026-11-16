@@ -23,27 +23,12 @@ namespace PptGcs.AddIn
 
         public static ConstraintDocument ReadDocument(object presentationObject)
         {
-            dynamic presentation = presentationObject;
-            dynamic parts = presentation.CustomXMLParts.SelectByNamespace(ConstraintDocument.NamespaceUri);
-            if ((int)parts.Count == 0) return new ConstraintDocument(new LayoutConstraint[0]);
-            if ((int)parts.Count != 1) throw new InvalidOperationException("文档中有重复的约束数据，已停止联动。");
-            return ConstraintDocument.Parse((string)parts[1].XML);
+            return NativeConstraintStore.Read(presentationObject);
         }
 
         public static void WriteDocument(object presentationObject, ConstraintDocument document)
         {
-            dynamic presentation = presentationObject;
-            dynamic parts = presentation.CustomXMLParts.SelectByNamespace(ConstraintDocument.NamespaceUri);
-            if ((int)parts.Count == 0) presentation.CustomXMLParts.Add(document.ToXml());
-            else if ((int)parts.Count == 1)
-            {
-                // LoadXML only initializes an empty part. Replace populated parts.
-                dynamic previous = parts[1];
-                dynamic replacement = presentation.CustomXMLParts.Add(document.ToXml());
-                try { previous.Delete(); }
-                catch { replacement.Delete(); throw; }
-            }
-            else throw new InvalidOperationException("文档中有重复的约束数据。");
+            NativeConstraintStore.Write(presentationObject, document);
         }
 
         public static void ValidateShape(object shapeObject)
@@ -66,7 +51,7 @@ namespace PptGcs.AddIn
                 SlideId = (int)slide.SlideID,
                 Document = ReadDocument((object)window.Presentation)
             };
-            context.Constraints = context.Document.Constraints.Where(c => c.SlideId == context.SlideId).ToList();
+            context.Constraints = context.Document.Constraints.Where(c => c.SlideId == context.SlideId && c.Enabled).ToList();
             var required = new HashSet<string>(context.Constraints.SelectMany(c => c.ShapeIds));
             for (int i = 1; i <= (int)slide.Shapes.Count; i++)
             {

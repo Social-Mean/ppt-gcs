@@ -1,0 +1,82 @@
+﻿[
+    {
+        "Property":  "Name",
+        "Before":  "MetadataProbe",
+        "After":  "ChangedProbe",
+        "UndoEnabled":  true,
+        "Undone":  "MetadataProbe",
+        "RedoEnabled":  true,
+        "Redone":  "ChangedProbe",
+        "Pass":  true
+    },
+    {
+        "Property":  "AlternativeText",
+        "Before":  "baseline-alt",
+        "After":  "changed-alt",
+        "UndoEnabled":  true,
+        "Undone":  "baseline-alt",
+        "RedoEnabled":  true,
+        "Redone":  "changed-alt",
+        "Pass":  true
+    },
+    {
+        "Property":  "Title",
+        "Before":  "baseline-title",
+        "After":  "changed-title",
+        "UndoEnabled":  true,
+        "Undone":  "baseline-title",
+        "RedoEnabled":  true,
+        "Redone":  "changed-title",
+        "Pass":  true
+    },
+    {
+        "Property":  "Text",
+        "Before":  "baseline-text",
+        "After":  "changed-text",
+        "UndoEnabled":  true,
+        "Undone":  "baseline-text",
+        "RedoEnabled":  true,
+        "Redone":  "changed-text",
+        "Pass":  true
+    },
+    {
+        "Property":  "ShapeTag",
+        "Before":  "baseline-tag",
+        "After":  "changed-tag",
+        "UndoEnabled":  true,
+        "Undone":  "baseline-tag",
+        "RedoEnabled":  true,
+        "Redone":  "changed-tag",
+        "Pass":  true
+    },
+    {
+        "Property":  "SlideTag",
+        "Before":  "baseline-slide",
+        "After":  "changed-slide",
+        "UndoEnabled":  true,
+        "Undone":  "baseline-slide",
+        "RedoEnabled":  true,
+        "Redone":  "changed-slide",
+        "Pass":  true
+    },
+    {
+        "Property":  "PresentationTag",
+        "Before":  "baseline-presentation",
+        "After":  "changed-presentation",
+        "UndoEnabled":  true,
+        "Undone":  "baseline-presentation",
+        "RedoEnabled":  true,
+        "Redone":  "changed-presentation",
+        "Pass":  true
+    },
+    {
+        "Property":  "CustomXml",
+        "Before":  0,
+        "After":  1,
+        "UndoEnabled":  false,
+        "Undone":  1,
+        "RedoEnabled":  false,
+        "Redone":  1,
+        "Pass":  false
+    }
+]

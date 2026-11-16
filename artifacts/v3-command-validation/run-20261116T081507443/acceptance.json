@@ -1,0 +1,27 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  false,
+    "CheckPane":  true,
+    "Checks":  [
+                   "native Undo undo-01",
+                   "native Undo undo-02",
+                   "native Undo undo-03",
+                   "native Undo undo-04",
+                   "native Undo undo-05",
+                   "native Redo redo-01",
+                   "native Redo redo-02",
+                   "native Redo redo-03",
+                   "native Redo redo-04",
+                   "native Redo redo-05",
+                   "five atomic add/update/disable/enable/delete transactions",
+                   "conflicting add is atomic",
+                   "relation members select native shapes and pane model follows",
+                   "native task pane visible with active hosted control",
+                   "native Undo undo-missing-cleanup",
+                   "native Redo redo-missing-cleanup",
+                   "missing relation remains visible and can be individually removed"
+               ],
+    "Failure":  null,
+    "Directory":  "D:\\code\\ppt-gcs\\artifacts\\v3-command-validation\\run-20261116T081507443",
+    "Utc":  "2026-11-16T08:15:12.4387234Z"
+}

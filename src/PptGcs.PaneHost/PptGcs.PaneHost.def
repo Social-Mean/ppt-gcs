@@ -1,0 +1,4 @@
+LIBRARY "PptGcs.PaneHost.dll"
+EXPORTS
+    DllCanUnloadNow PRIVATE
+    DllGetClassObject PRIVATE

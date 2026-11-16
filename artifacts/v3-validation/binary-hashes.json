@@ -1,0 +1,14 @@
+[
+  {
+    "Path": "D:\\code\\ppt-gcs\\bin\\PptGcs.AddIn.dll",
+    "Hash": "ED7D3979976FC693D416629DBC9288BBC41FB53A3668EAC9732D2A2E69576E3D"
+  },
+  {
+    "Path": "D:\\code\\ppt-gcs\\bin\\PptGcs.Core.dll",
+    "Hash": "D7CF6A09DADBF3E1BE1AC5060141A97932872ED071424E07FA4DC15863EE2F41"
+  },
+  {
+    "Path": "D:\\code\\ppt-gcs\\bin\\PptGcs.PaneHost.dll",
+    "Hash": "8809AD17121D9CA4A43906DED644BFB01B7C48192CD2C7364897F73E50B5AD8F"
+  }
+]

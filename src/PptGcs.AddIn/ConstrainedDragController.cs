@@ -29,6 +29,9 @@ namespace PptGcs.AddIn
         private Point? queuedMotion, queuedRelease;
 
         public bool IsDragging { get { return gesture != null; } }
+        public Func<int,int,int,IntPtr,bool> AlternateMouseInput { get; set; }
+        public Func<int,bool,bool> AlternateKeyboardInput { get; set; }
+        public Func<bool> AlternateInputActive { get; set; }
 
         public ConstrainedDragController(object application, Action<string, string> log, Action normalizeIdentities)
         {
@@ -119,7 +122,7 @@ namespace PptGcs.AddIn
         public void ReplayGestureForTest(string driverId, string mode, double[][] offsets)
         {
             RequireUiThread();
-            if (disposed || gesture != null || gestureLoopRunning)
+            if (disposed || gesture != null || gestureLoopRunning || (AlternateInputActive!=null && AlternateInputActive()))
                 throw new InvalidOperationException("A gesture is already active or the controller is disposed.");
             GestureMode parsedMode;
             if (!Enum.TryParse(mode, false, out parsedMode) || !Enum.IsDefined(typeof(GestureMode), parsedMode))
@@ -199,6 +202,11 @@ namespace PptGcs.AddIn
                     var nested = (MouseHookData)Marshal.PtrToStructure(data, typeof(MouseHookData));
                     if (QueueOwnedPointer(kind, nested.Position)) return new IntPtr(1);
                 }
+                else if(AlternateInputActive!=null && AlternateInputActive() && AlternateMouseInput!=null)
+                {
+                    var nested=(MouseHookData)Marshal.PtrToStructure(data,typeof(MouseHookData));
+                    if(AlternateMouseInput(kind,nested.Position.X,nested.Position.Y,nested.Window))return new IntPtr(1);
+                }
                 return CallNextHookEx(hook, code, message, data);
             }
             bool owned = gesture != null || pendingLeftUp;
@@ -209,6 +217,10 @@ namespace PptGcs.AddIn
                 if (gesture != null)
                 {
                     if (QueueOwnedPointer(kind, mouse.Position)) return new IntPtr(1);
+                }
+                else if (AlternateMouseInput != null && AlternateMouseInput(kind,mouse.Position.X,mouse.Position.Y,mouse.Window))
+                {
+                    return new IntPtr(1);
                 }
                 else if (kind == WmLeftUp && pendingLeftUp)
                 {
@@ -260,6 +272,8 @@ namespace PptGcs.AddIn
 
         private IntPtr OnKeyboard(int code, IntPtr key, IntPtr flags)
         {
+            if (code == HcAction && !disposed && gesture == null && AlternateKeyboardInput != null &&
+                AlternateKeyboardInput(key.ToInt32(),(flags.ToInt64() & 0x80000000L)==0)) return new IntPtr(1);
             if (code != HcAction || disposed || gesture == null || !gestureLoopRunning || gesture.IsTest)
                 return CallNextHookEx(keyboardHook, code, key, flags);
             if (key.ToInt32() == 0x1B && (flags.ToInt64() & 0x80000000L) == 0 && !queuedRelease.HasValue)
@@ -463,7 +477,7 @@ namespace PptGcs.AddIn
                 double dy = (point.Y - state.StartMouse.Y) / state.Map.ScaleY;
                 ShapeGeometry target = ComputeTarget(state.Driver, state.Mode, dx, dy);
                 IReadOnlyList<ShapeGeometry> result;
-                try { result = LayoutSolver.Solve(state.Before, state.Context.Constraints, state.Driver.Id, target); }
+                try { result = LayoutSolver.Solve(state.Before, state.Context.Constraints, state.Driver.Id, target, EditMode(state.Mode)); }
                 catch (ConstraintConflictException exception)
                 {
                     if (state.LastRejection != exception.Message)
@@ -515,8 +529,14 @@ namespace PptGcs.AddIn
                 double dx = (point.X - state.StartMouse.X) / state.Map.ScaleX;
                 double dy = (point.Y - state.StartMouse.Y) / state.Map.ScaleY;
                 ShapeGeometry target = state.DragThresholdPassed ? ComputeTarget(state.Driver, state.Mode, dx, dy) : state.Driver;
-                var expected = LayoutSolver.Solve(state.Before, state.Context.Constraints, state.Driver.Id, target);
+                var expected = LayoutSolver.Solve(state.Before, state.Context.Constraints, state.Driver.Id, target, EditMode(state.Mode));
                 geometryMatched = SameGeometry(state.LastGeometry, expected);
+            }
+            catch (ConstraintConflictException exception)
+            {
+                SafeGestureLog(state,"gesture-release-rejected",new {gestureId=state.Id,driverId=state.Driver.Id,
+                    mode=state.Mode.ToString(),reason=exception.Message,frames=state.Frames,geometry=state.LastGeometry});
+                return;
             }
             catch (Exception exception) { error = exception.GetType().Name + ": " + exception.Message; }
             SafeGestureLog(state, geometryMatched ? "gesture-release" : "gesture-release-mismatch-error", new
@@ -591,6 +611,9 @@ namespace PptGcs.AddIn
             return new ShapeGeometry(start.Id, west ? start.Left + start.Width - width : start.Left,
                 north ? start.Top + start.Height - height : start.Top, width, height);
         }
+
+        private static GeometryEditMode EditMode(GestureMode mode)
+        { return (GeometryEditMode)Enum.Parse(typeof(GeometryEditMode),mode.ToString()); }
 
         private static bool SameGeometry(IEnumerable<ShapeGeometry> first, IEnumerable<ShapeGeometry> second)
         {

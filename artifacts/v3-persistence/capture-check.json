@@ -1,0 +1,38 @@
+﻿{
+    "Passed":  true,
+    "Action":  "Capture",
+    "Baseline":  "D:\\code\\ppt-gcs\\artifacts\\v3-persistence\\before.json",
+    "Path":  "D:\\code\\ppt-gcs\\artifacts\\v3-constraint-validation\\run-20261116T071635507\\twenty-constraints.pptx",
+    "ProcessId":  [
+                      35736
+                  ],
+    "ConstraintCheck":  {
+                            "Kinds":  [
+                                          "SameX",
+                                          "SameY",
+                                          "SameWidth",
+                                          "SameHeight",
+                                          "EqualHorizontalGap",
+                                          "EqualVerticalGap",
+                                          "RightAligned",
+                                          "BottomAligned",
+                                          "CenterXAligned",
+                                          "CenterYAligned",
+                                          "CentersCoincident",
+                                          "FixedWidth",
+                                          "FixedHeight",
+                                          "FixedPosition",
+                                          "AspectRatio",
+                                          "FixedHorizontalGap",
+                                          "FixedVerticalGap",
+                                          "Offset",
+                                          "SymmetricVertical",
+                                          "SymmetricHorizontal"
+                                      ],
+                            "Constraints":  20,
+                            "Enabled":  20,
+                            "MaximumResidualPt":  6.103515625E-05,
+                            "TaggedShapes":  40
+                        },
+    "ReadOnly":  true
+}

@@ -1,0 +1,66 @@
+﻿{
+    "Utc":  "2026-11-16T06:55:00.2354804Z",
+    "ProcessId":  [
+                      632
+                  ],
+    "State":  {
+                  "Path":  "D:\\code\\ppt-gcs\\artifacts\\v3-command-validation\\run-20261116T065458723\\commands.pptx",
+                  "PresentationTags":  [
+                                           {
+                                               "Name":  "PPTGCS_CONSTRAINTS",
+                                               "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A763222202F3E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_DOCUMENT",
+                                               "Value":  "5F21DFF8-A810-4D67-8352-D9DB8FCE1924"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_TEST",
+                                               "Value":  "V3"
+                                           }
+                                       ],
+                  "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\" /\u003e",
+                  "Slides":  [
+                                 {
+                                     "Id":  256,
+                                     "Name":  "CommandHistory",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "History_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "BD65C3F1-9023-48CE-ABC8-C295D9B955D6"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "5F21DFF8-A810-4D67-8352-D9DB8FCE1924/256/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  140,
+                                                        "Width":  220,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "History_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  450,
+                                                        "Top":  240,
+                                                        "Width":  150,
+                                                        "Height":  110,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 }
+                             ]
+              }
+}

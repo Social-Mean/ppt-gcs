@@ -1,0 +1,57 @@
+{
+  "Passed": true,
+  "WholePhysicalGestures": [
+    {
+      "gestureId": "45a472a1-f69a-43b6-85fc-7b3069dc8076",
+      "mode": "ResizeE",
+      "nativeUndoStep": 13
+    },
+    {
+      "gestureId": "aab63689-bcf7-44cf-94b0-0dfc732de212",
+      "mode": "ResizeE",
+      "nativeUndoStep": 12
+    },
+    {
+      "gestureId": "6c261914-4b55-4701-a9eb-2db48d481ca9",
+      "mode": "ResizeE",
+      "nativeUndoStep": 10
+    },
+    {
+      "gestureId": "99d11472-0969-4850-a550-2bb4fbdd99b8",
+      "mode": "ResizeE",
+      "nativeUndoStep": 8
+    },
+    {
+      "gestureId": "f20f81ca-9b58-432c-b899-5a5f7ecb420f",
+      "mode": "ResizeSE",
+      "nativeUndoStep": 7
+    },
+    {
+      "gestureId": "a7c58c8e-f932-4b48-a54f-2a4905f7d1b5",
+      "mode": "Move",
+      "nativeUndoStep": 1
+    }
+  ],
+  "MetadataTransactionSteps": [
+    2,
+    4,
+    5,
+    6,
+    9,
+    11,
+    14
+  ],
+  "AdditionalUnconstrainedNativeEdits": [
+    {
+      "nativeUndoStep": 3,
+      "shapeIds": [
+        "BDE0B270-B0A7-4CAB-BC4C-2287A4FCA1F7"
+      ]
+    }
+  ],
+  "Checks": [
+    "one complete native undo step per physical gesture",
+    "one native step per metadata command",
+    "extra native edits only affect unconstrained shapes"
+  ]
+}

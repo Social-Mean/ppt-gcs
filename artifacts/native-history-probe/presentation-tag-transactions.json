@@ -1,0 +1,85 @@
+﻿{
+    "Passed":  true,
+    "Checks":  [
+                   "native Undo 1/4",
+                   "native Undo 2/4",
+                   "native Undo 3/4",
+                   "native Undo 4/4",
+                   "native Redo 1/4",
+                   "native Redo 2/4",
+                   "native Redo 3/4",
+                   "native Redo 4/4",
+                   "save/reopen transaction data and geometry",
+                   "largest tag save/reopen"
+               ],
+    "Sizes":  [
+                  {
+                      "TextChars":  1024,
+                      "HexLength":  2060,
+                      "Exact":  true
+                  },
+                  {
+                      "TextChars":  16384,
+                      "HexLength":  32780,
+                      "Exact":  true
+                  },
+                  {
+                      "TextChars":  65536,
+                      "HexLength":  131084,
+                      "Exact":  true
+                  },
+                  {
+                      "TextChars":  1048576,
+                      "HexLength":  2097164,
+                      "Exact":  true
+                  }
+              ],
+    "States":  [
+                   {
+                       "Data":  "",
+                       "Token":  "",
+                       "ShapeTag":  "",
+                       "Width":  100,
+                       "Height":  60,
+                       "Left":  30,
+                       "Top":  30
+                   },
+                   {
+                       "Data":  "3C636F6E73747261696E74733E3C636F6E73747261696E74204B696E643D2253616D65576964746822204C6162656C3D22E6B693EE859FE69E83E5A8A3E5B3B0E6828E4361736522202F3E3C2F636F6E73747261696E74733E",
+                       "Token":  "TEST-TOKEN",
+                       "ShapeTag":  "TEST-GUID",
+                       "Width":  140,
+                       "Height":  70,
+                       "Left":  30,
+                       "Top":  30
+                   },
+                   {
+                       "Data":  "3C636F6E73747261696E74733E3C636F6E73747261696E74204B696E643D2246697865645769647468222056616C75653D2231383022202F3E3C2F636F6E73747261696E74733E",
+                       "Token":  "TEST-TOKEN",
+                       "ShapeTag":  "TEST-GUID",
+                       "Width":  180,
+                       "Height":  70,
+                       "Left":  30,
+                       "Top":  30
+                   },
+                   {
+                       "Data":  "3C636F6E73747261696E74733E3C636F6E73747261696E74204B696E643D2246697865645769647468222056616C75653D223138302220456E61626C65643D2266616C736522202F3E3C2F636F6E73747261696E74733E",
+                       "Token":  "TEST-TOKEN",
+                       "ShapeTag":  "TEST-GUID",
+                       "Width":  180,
+                       "Height":  70,
+                       "Left":  30,
+                       "Top":  30
+                   },
+                   {
+                       "Data":  "",
+                       "Token":  "TEST-TOKEN",
+                       "ShapeTag":  "TEST-GUID",
+                       "Width":  180,
+                       "Height":  70,
+                       "Left":  30,
+                       "Top":  30
+                   }
+               ],
+    "ProcessId":  55248
+}

@@ -1,0 +1,689 @@
+﻿{
+    "Utc":  "2026-11-16T07:44:01.4558169Z",
+    "ProcessId":  57128,
+    "Path":  "D:\\code\\ppt-gcs\\artifacts\\v3-interaction\\interaction.pptx",
+    "PresentationTags":  [
+                             {
+                                 "Name":  "PPTGCS_CONSTRAINTS",
+                                 "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2235464137463630462D373333422D343337352D384246332D4534333235444336424338312220736C69646549643D2232353622206B696E643D2253616D655769647468223E3C73686170652069643D2235463441413237352D363039352D344434422D383136432D37454445343233423242434422202F3E3C73686170652069643D2242443437304530312D384339452D343645332D423435302D43464139434544323333464422202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                             },
+                             {
+                                 "Name":  "PPTGCS_DOCUMENT",
+                                 "Value":  "4070882D-9F1D-42C7-B95B-6861466F7365"
+                             },
+                             {
+                                 "Name":  "PPTGCS_TEST",
+                                 "Value":  "V3"
+                             }
+                         ],
+    "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"5FA7F60F-733B-4375-8BF3-E4325DC6BC81\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"5F4AA275-6095-4D4B-816C-7EDE423B2BCD\" /\u003e\u003cshape id=\"BD470E01-8C9E-46E3-B450-CFA9CED233FD\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+    "Snapshot":  {
+                     "presentation":  "D:\\code\\ppt-gcs\\artifacts\\v3-interaction\\interaction.pptx",
+                     "storage":  "presentation-tags",
+                     "constraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"5FA7F60F-733B-4375-8BF3-E4325DC6BC81\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"5F4AA275-6095-4D4B-816C-7EDE423B2BCD\" /\u003e\u003cshape id=\"BD470E01-8C9E-46E3-B450-CFA9CED233FD\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                     "slides":  [
+                                    {
+                                        "slideId":  256,
+                                        "name":  "Wheel",
+                                        "kind":  "",
+                                        "geometry":  [
+                                                         {
+                                                             "Id":  "5F4AA275-6095-4D4B-816C-7EDE423B2BCD",
+                                                             "Name":  "A",
+                                                             "Left":  160,
+                                                             "Top":  220,
+                                                             "Width":  285.34890747070313,
+                                                             "Height":  100
+                                                         },
+                                                         {
+                                                             "Id":  "BD470E01-8C9E-46E3-B450-CFA9CED233FD",
+                                                             "Name":  "B",
+                                                             "Left":  540,
+                                                             "Top":  260,
+                                                             "Width":  285.34890747070313,
+                                                             "Height":  140
+                                                         }
+                                                     ],
+                                        "constraints":  [
+                                                            {
+                                                                "Id":  "5FA7F60F-733B-4375-8BF3-E4325DC6BC81",
+                                                                "SlideId":  256,
+                                                                "Kind":  "SameWidth",
+                                                                "ShapeIds":  [
+                                                                                 "5F4AA275-6095-4D4B-816C-7EDE423B2BCD",
+                                                                                 "BD470E01-8C9E-46E3-B450-CFA9CED233FD"
+                                                                             ],
+                                                                "Value":  null,
+                                                                "SecondaryValue":  null,
+                                                                "Enabled":  true
+                                                            }
+                                                        ]
+                                    },
+                                    {
+                                        "slideId":  257,
+                                        "name":  "Pane",
+                                        "kind":  "",
+                                        "geometry":  [
+                                                         {
+                                                             "Id":  "BDE0B270-B0A7-4CAB-BC4C-2287A4FCA1F7",
+                                                             "Name":  "A",
+                                                             "Left":  289.99990844726563,
+                                                             "Top":  227.46125793457031,
+                                                             "Width":  311.230712890625,
+                                                             "Height":  207.48709106445313
+                                                         }
+                                                     ],
+                                        "constraints":  [
+
+                                                        ]
+                                    },
+                                    {
+                                        "slideId":  258,
+                                        "name":  "Gap",
+                                        "kind":  "",
+                                        "geometry":  [
+
+                                                     ],
+                                        "constraints":  [
+
+                                                        ]
+                                    }
+                                ]
+                 },
+    "Pane":  {
+                 "PageLabel":  "第 2 页 · Pane",
+                 "Message":  "已选 1 个对象 · 当前页 0 条关系",
+                 "Objects":  [
+                                 {
+                                     "Id":  "shape:257/2",
+                                     "Name":  "说明标题",
+                                     "Selected":  false,
+                                     "RelationCount":  0
+                                 },
+                                 {
+                                     "Id":  "shape:257/3",
+                                     "Name":  "操作说明",
+                                     "Selected":  false,
+                                     "RelationCount":  0
+                                 },
+                                 {
+                                     "Id":  "shape:257/4",
+                                     "Name":  "A",
+                                     "Selected":  true,
+                                     "RelationCount":  0
+                                 }
+                             ],
+                 "Relations":  [
+
+                               ],
+                 "Options":  [
+                                 {
+                                     "Kind":  "SameX",
+                                     "Label":  "左边对齐",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "RightAligned",
+                                     "Label":  "右边对齐",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "CenterXAligned",
+                                     "Label":  "水平中心对齐",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "SameY",
+                                     "Label":  "顶部对齐",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "BottomAligned",
+                                     "Label":  "底部对齐",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "CenterYAligned",
+                                     "Label":  "垂直中心对齐",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "CentersCoincident",
+                                     "Label":  "中心重合",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "SameWidth",
+                                     "Label":  "同宽",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "SameHeight",
+                                     "Label":  "同高",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "EqualHorizontalGap",
+                                     "Label":  "水平等间距",
+                                     "Description":  "按建立时的顺序保持边缘间距相等，间距值可以变化。",
+                                     "MinimumMembers":  3,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "EqualVerticalGap",
+                                     "Label":  "垂直等间距",
+                                     "Description":  "按建立时的顺序保持边缘间距相等，间距值可以变化。",
+                                     "MinimumMembers":  3,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  null,
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  null,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "FixedWidth",
+                                     "Label":  "固定宽度",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  1,
+                                     "MaximumMembers":  1,
+                                     "ValueLabel":  "宽度 (pt)",
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  311.230712890625,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  1,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "FixedHeight",
+                                     "Label":  "固定高度",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  1,
+                                     "MaximumMembers":  1,
+                                     "ValueLabel":  "高度 (pt)",
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  207.48709106445313,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  1,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "FixedPosition",
+                                     "Label":  "固定位置",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  1,
+                                     "MaximumMembers":  1,
+                                     "ValueLabel":  "左侧 X (pt)",
+                                     "SecondLabel":  "顶部 Y (pt)",
+                                     "DefaultValue":  289.99990844726563,
+                                     "DefaultSecond":  227.46125793457031,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "AspectRatio",
+                                     "Label":  "固定宽高比",
+                                     "Description":  "单位为磅 (pt)，宽高比为无单位比值。",
+                                     "MinimumMembers":  1,
+                                     "MaximumMembers":  1,
+                                     "ValueLabel":  "宽 / 高",
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  1.5000003677045397,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  0.001,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "FixedHorizontalGap",
+                                     "Label":  "固定水平间距",
+                                     "Description":  "按建立时的顺序保持指定边缘间距；负值表示重叠。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  "边缘间距 (pt)",
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  20,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "FixedVerticalGap",
+                                     "Label":  "固定垂直间距",
+                                     "Description":  "按建立时的顺序保持指定边缘间距；负值表示重叠。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  0,
+                                     "ValueLabel":  "边缘间距 (pt)",
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  20,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "Offset",
+                                     "Label":  "相对偏移",
+                                     "Description":  "成员顺序按选择范围排列，偏移为第二个对象减第一个对象。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  2,
+                                     "ValueLabel":  "第二个相对第一个 X (pt)",
+                                     "SecondLabel":  "相对 Y (pt)",
+                                     "DefaultValue":  0,
+                                     "DefaultSecond":  0,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "SymmetricVertical",
+                                     "Label":  "关于垂直轴对称",
+                                     "Description":  "两个矩形关于固定轴镜像，尺寸相等。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  2,
+                                     "ValueLabel":  "对称轴 X (pt)",
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  480,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 },
+                                 {
+                                     "Kind":  "SymmetricHorizontal",
+                                     "Label":  "关于水平轴对称",
+                                     "Description":  "两个矩形关于固定轴镜像，尺寸相等。",
+                                     "MinimumMembers":  2,
+                                     "MaximumMembers":  2,
+                                     "ValueLabel":  "对称轴 Y (pt)",
+                                     "SecondLabel":  null,
+                                     "DefaultValue":  270,
+                                     "DefaultSecond":  null,
+                                     "MinimumValue":  -1000000,
+                                     "MaximumValue":  1000000,
+                                     "MinimumSecond":  -1000000,
+                                     "MaximumSecond":  1000000
+                                 }
+                             ]
+             },
+    "Radial":  {
+                   "open":  false,
+                   "source":  "middle-pointer",
+                   "gestureId":  "b4cf83b4-7e57-49f2-aeb9-7d3a694aa6c1",
+                   "selectedCount":  3,
+                   "currentChoice":  null,
+                   "middleDown":  false,
+                   "lastChoice":  "EqualHorizontalGap",
+                   "lastOutcome":  "applied",
+                   "lastError":  null,
+                   "canvasWindow":  109909672,
+                   "rootWindow":  100078810,
+                   "center":  {
+                                  "x":  1333,
+                                  "y":  997
+                              },
+                   "innerRadius":  38,
+                   "outerRadius":  136,
+                   "previewCount":  0,
+                   "slots":  [
+                                 {
+                                     "index":  0,
+                                     "key":  "SameX",
+                                     "label":  "左边对齐",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1333,
+                                     "y":  899.08
+                                 },
+                                 {
+                                     "index":  1,
+                                     "key":  "SameY",
+                                     "label":  "顶部对齐",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1402.2398960137866,
+                                     "y":  927.76010398621327
+                                 },
+                                 {
+                                     "index":  2,
+                                     "key":  "SameWidth",
+                                     "label":  "同宽",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1430.92,
+                                     "y":  997
+                                 },
+                                 {
+                                     "index":  3,
+                                     "key":  "SameHeight",
+                                     "label":  "同高",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1402.2398960137866,
+                                     "y":  1066.2398960137866
+                                 },
+                                 {
+                                     "index":  4,
+                                     "key":  "EqualHorizontalGap",
+                                     "label":  "水平等距",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1333,
+                                     "y":  1094.92
+                                 },
+                                 {
+                                     "index":  5,
+                                     "key":  "EqualVerticalGap",
+                                     "label":  "垂直等距",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1263.7601039862134,
+                                     "y":  1066.2398960137866
+                                 },
+                                 {
+                                     "index":  6,
+                                     "key":  "more",
+                                     "label":  "更多约束",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1235.08,
+                                     "y":  997
+                                 },
+                                 {
+                                     "index":  7,
+                                     "key":  "view",
+                                     "label":  "查看约束",
+                                     "enabled":  true,
+                                     "reason":  null,
+                                     "x":  1263.7601039862132,
+                                     "y":  927.76010398621327
+                                 }
+                             ]
+               },
+    "Slides":  [
+                   {
+                       "Id":  256,
+                       "Name":  "Wheel",
+                       "Shapes":  [
+                                      {
+                                          "Id":  2,
+                                          "Name":  "说明标题",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  30,
+                                          "Top":  20,
+                                          "Width":  900,
+                                          "Height":  38.77504
+                                      },
+                                      {
+                                          "Id":  3,
+                                          "Name":  "操作说明",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  30,
+                                          "Top":  65,
+                                          "Width":  900,
+                                          "Height":  29.08126
+                                      },
+                                      {
+                                          "Id":  4,
+                                          "Name":  "A",
+                                          "Tags":  [
+                                                       {
+                                                           "Name":  "PPTGCS_ID",
+                                                           "Value":  "5F4AA275-6095-4D4B-816C-7EDE423B2BCD"
+                                                       },
+                                                       {
+                                                           "Name":  "PPTGCS_OWNER",
+                                                           "Value":  "4070882D-9F1D-42C7-B95B-6861466F7365/256/4"
+                                                       }
+                                                   ],
+                                          "Left":  160,
+                                          "Top":  220,
+                                          "Width":  285.3489,
+                                          "Height":  100
+                                      },
+                                      {
+                                          "Id":  5,
+                                          "Name":  "B",
+                                          "Tags":  [
+                                                       {
+                                                           "Name":  "PPTGCS_ID",
+                                                           "Value":  "BD470E01-8C9E-46E3-B450-CFA9CED233FD"
+                                                       },
+                                                       {
+                                                           "Name":  "PPTGCS_OWNER",
+                                                           "Value":  "4070882D-9F1D-42C7-B95B-6861466F7365/256/5"
+                                                       }
+                                                   ],
+                                          "Left":  540,
+                                          "Top":  260,
+                                          "Width":  285.3489,
+                                          "Height":  140
+                                      }
+                                  ]
+                   },
+                   {
+                       "Id":  257,
+                       "Name":  "Pane",
+                       "Shapes":  [
+                                      {
+                                          "Id":  2,
+                                          "Name":  "说明标题",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  30,
+                                          "Top":  20,
+                                          "Width":  900,
+                                          "Height":  38.77504
+                                      },
+                                      {
+                                          "Id":  3,
+                                          "Name":  "操作说明",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  30,
+                                          "Top":  65,
+                                          "Width":  900,
+                                          "Height":  29.08126
+                                      },
+                                      {
+                                          "Id":  4,
+                                          "Name":  "A",
+                                          "Tags":  [
+                                                       {
+                                                           "Name":  "PPTGCS_ID",
+                                                           "Value":  "BDE0B270-B0A7-4CAB-BC4C-2287A4FCA1F7"
+                                                       },
+                                                       {
+                                                           "Name":  "PPTGCS_OWNER",
+                                                           "Value":  "4070882D-9F1D-42C7-B95B-6861466F7365/257/4"
+                                                       }
+                                                   ],
+                                          "Left":  289.9999,
+                                          "Top":  227.461258,
+                                          "Width":  311.2307,
+                                          "Height":  207.487091
+                                      }
+                                  ]
+                   },
+                   {
+                       "Id":  258,
+                       "Name":  "Gap",
+                       "Shapes":  [
+                                      {
+                                          "Id":  2,
+                                          "Name":  "说明标题",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  30,
+                                          "Top":  20,
+                                          "Width":  900,
+                                          "Height":  38.77504
+                                      },
+                                      {
+                                          "Id":  3,
+                                          "Name":  "操作说明",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  30,
+                                          "Top":  65,
+                                          "Width":  900,
+                                          "Height":  29.08126
+                                      },
+                                      {
+                                          "Id":  4,
+                                          "Name":  "A",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  110,
+                                          "Top":  250,
+                                          "Width":  120,
+                                          "Height":  90
+                                      },
+                                      {
+                                          "Id":  5,
+                                          "Name":  "B",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  380,
+                                          "Top":  230,
+                                          "Width":  160,
+                                          "Height":  110
+                                      },
+                                      {
+                                          "Id":  6,
+                                          "Name":  "C",
+                                          "Tags":  [
+
+                                                   ],
+                                          "Left":  720,
+                                          "Top":  260,
+                                          "Width":  100,
+                                          "Height":  80
+                                      }
+                                  ]
+                   }
+               ]
+}

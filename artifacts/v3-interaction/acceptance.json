@@ -1,0 +1,34 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  true,
+    "RadialCommands":  [
+                           "SameWidth",
+                           "EqualHorizontalGap"
+                       ],
+    "PhysicalGestures":  6,
+    "HeldFrames":  349,
+    "NativeUndoSteps":  14,
+    "NativeRedoSteps":  14,
+    "Coverage":  {
+                     "EqualHorizontalGap":  [
+                                                "59940ED3-53DC-483F-9BE6-E760E8BC0137"
+                                            ],
+                     "AspectRatio":  [
+                                         "BDE0B270-B0A7-4CAB-BC4C-2287A4FCA1F7",
+                                         "BDE0B270-B0A7-4CAB-BC4C-2287A4FCA1F7",
+                                         "BDE0B270-B0A7-4CAB-BC4C-2287A4FCA1F7"
+                                     ],
+                     "SameWidth":  [
+                                       "5F4AA275-6095-4D4B-816C-7EDE423B2BCD",
+                                       "BD470E01-8C9E-46E3-B450-CFA9CED233FD"
+                                   ]
+                 },
+    "UserConfirmedPaneVisible":  true,
+    "Checks":  [
+                   "real middle-button radial creation",
+                   "two-way width and ratio/gap held-pointer geometry",
+                   "pane create/update/disable/enable/delete parameters",
+                   "full native metadata and geometry history",
+                   "final state restored"
+               ]
+}

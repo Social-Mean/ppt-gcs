@@ -16,21 +16,23 @@ $projectPath = Join-Path $projectRoot 'src\PptGcs.AddIn\PptGcs.AddIn.csproj'
 & $msbuildPath $projectPath /restore /m /nologo /verbosity:minimal "/p:Configuration=$Configuration" "/p:OutDir=$outputDirectory\" "/p:RestorePackagesPath=$packageDirectory"
 if ($LASTEXITCODE -ne 0) { throw "Build failed with exit code $LASTEXITCODE." }
 
-foreach ($testName in @('CoreTests', 'IdentityTests')) {
+foreach ($testName in @('CoreTests', 'IdentityTests', 'NativeConstraintStoreTests', 'PaneTests', 'RadialTests')) {
     $testPath = Join-Path $projectRoot "tests\$testName.cs"
     $referenceDirectory = Join-Path $packageDirectory 'microsoft.netframework.referenceassemblies.net48\1.0.3\build\.NETFramework\v4.8'
-    $referenceNames = @('mscorlib', 'System', 'System.Core', 'System.Xml', 'System.Xml.Linq')
+    $referenceNames = @('mscorlib', 'System', 'System.Core', 'System.Xml', 'System.Xml.Linq', 'System.Drawing', 'System.Windows.Forms', 'System.Web.Extensions')
     $compilerArguments = @('/nologo', '/noconfig', '/nostdlib+', '/langversion:7.3', '/target:exe', "/out:$outputDirectory\$testName.exe")
     foreach ($referenceName in $referenceNames) {
         $compilerArguments += '/reference:' + (Join-Path $referenceDirectory "$referenceName.dll")
     }
     $compilerArguments += "/reference:$outputDirectory\PptGcs.Core.dll"
     $compilerArguments += "/reference:$outputDirectory\MathNet.Numerics.dll"
-    if ($testName -eq 'IdentityTests') { $compilerArguments += "/reference:$outputDirectory\PptGcs.AddIn.dll" }
+    if ($testName -ne 'CoreTests') { $compilerArguments += "/reference:$outputDirectory\PptGcs.AddIn.dll" }
     $compilerArguments += $testPath
     & $compilerPath @compilerArguments
     if ($LASTEXITCODE -ne 0) { throw "$testName compilation failed with exit code $LASTEXITCODE." }
     & (Join-Path $outputDirectory "$testName.exe")
     if ($LASTEXITCODE -ne 0) { throw "$testName failed with exit code $LASTEXITCODE." }
 }
+& (Join-Path $PSScriptRoot 'BuildPaneHost.ps1')
+if ($LASTEXITCODE -ne 0) { throw 'Native task pane host build failed.' }
 Write-Output "Built $outputDirectory\PptGcs.AddIn.dll"

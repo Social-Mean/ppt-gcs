@@ -1,0 +1,73 @@
+﻿{
+    "Utc":  "2026-11-16T06:55:02.6358551Z",
+    "ProcessId":  [
+                      632
+                  ],
+    "State":  {
+                  "Path":  "D:\\code\\ppt-gcs\\artifacts\\v3-command-validation\\run-20261116T065458723\\commands.pptx",
+                  "PresentationTags":  [
+                                           {
+                                               "Name":  "PPTGCS_CONSTRAINTS",
+                                               "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2231414535384136452D463433312D344146312D423243372D3842373841413642453837412220736C69646549643D2232353622206B696E643D2253616D655769647468223E3C73686170652069643D2242443635433346312D393032332D343843452D414243382D43323935443942393535443622202F3E3C73686170652069643D2233304236384439372D433143362D343944372D394138392D46463838353839453445384322202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2231363432353045362D344133312D343936412D383833372D3046394143383438353939382220736C69646549643D2232353622206B696E643D2246697865645769647468222076616C75653D22313830223E3C73686170652069643D2242443635433346312D393032332D343843452D414243382D43323935443942393535443622202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_DOCUMENT",
+                                               "Value":  "5F21DFF8-A810-4D67-8352-D9DB8FCE1924"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_TEST",
+                                               "Value":  "V3"
+                                           }
+                                       ],
+                  "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"1AE58A6E-F431-4AF1-B2C7-8B78AA6BE87A\" slideId=\"256\" kind=\"SameWidth\"\u003e\u003cshape id=\"BD65C3F1-9023-48CE-ABC8-C295D9B955D6\" /\u003e\u003cshape id=\"30B68D97-C1C6-49D7-9A89-FF88589E4E8C\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"164250E6-4A31-496A-8837-0F9AC8485998\" slideId=\"256\" kind=\"FixedWidth\" value=\"180\"\u003e\u003cshape id=\"BD65C3F1-9023-48CE-ABC8-C295D9B955D6\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                  "Slides":  [
+                                 {
+                                     "Id":  256,
+                                     "Name":  "CommandHistory",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "History_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "BD65C3F1-9023-48CE-ABC8-C295D9B955D6"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "5F21DFF8-A810-4D67-8352-D9DB8FCE1924/256/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  140,
+                                                        "Width":  180,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "History_B",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "30B68D97-C1C6-49D7-9A89-FF88589E4E8C"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "5F21DFF8-A810-4D67-8352-D9DB8FCE1924/256/3"
+                                                                     }
+                                                                 ],
+                                                        "Left":  450,
+                                                        "Top":  240,
+                                                        "Width":  180,
+                                                        "Height":  110,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 }
+                             ]
+              }
+}

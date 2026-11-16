@@ -45,6 +45,20 @@ internal static class CoreTests
         Run("no-constraint edit affects only its driver", FreeEdit);
         Run("readback residual detects every constraint kind", Residual);
         Run("ignore float writeback noise but retain actual changes", Tolerance);
+        Run("align right bottom and centers without resizing followers", EdgeAndCenterAlignment);
+        Run("normalize fixed dimensions and propagate proportional components", FixedDimensions);
+        Run("fixed position normalization and driver conflict", FixedPosition);
+        Run("aspect ratio side handles preserve opposite edge and orthogonal center", RatioSides);
+        Run("aspect ratio corners project pointer dimensions and preserve opposite corner", RatioCorners);
+        Run("aspect ratio bounds enforce the minimum on every linked dimension", RatioMinimum);
+        Run("mixed ratio and equal-size chains propagate and detect inconsistent cycles", RatioChains);
+        Run("fixed signed edge gaps keep unequal sizes and drive either end", FixedGaps);
+        Run("ordered two-axis offsets are bidirectional", Offsets);
+        Run("vertical and horizontal reflection preserve full bounding-box symmetry", Symmetry);
+        Run("disabled missing-object relations do not block unrelated edits", DisabledRelations);
+        Run("parameter and member validation covers every new kind", ParameterValidation);
+        Run("normalization without a driver minimizes dimensions and positions", NeutralNormalization);
+        Run("new relation residuals detect changed constrained geometry", NewResiduals);
         Console.WriteLine("PASS: " + passed + " core tests");
     }
 
@@ -56,6 +70,19 @@ internal static class CoreTests
         serial++;
         return new LayoutConstraint(serial.ToString("x8") + "-0000-0000-0000-000000000001", 256, kind, shapes);
     }
+
+    private static LayoutConstraint Parameter(ConstraintKind kind, double value, double? second, params string[] shapes)
+    {
+        serial++;
+        return new LayoutConstraint(serial.ToString("x8") + "-0000-0000-0000-000000000001", 256, kind, shapes, value, second);
+    }
+
+    private static Dictionary<string, ShapeGeometry> Normalize(IEnumerable<ShapeGeometry> input, params LayoutConstraint[] relations)
+    { return LayoutSolver.Normalize(input, relations).ToDictionary(s => s.Id); }
+
+    private static Dictionary<string, ShapeGeometry> Edit(IEnumerable<ShapeGeometry> input,
+        IEnumerable<LayoutConstraint> relations, ShapeGeometry target, GeometryEditMode mode)
+    { return LayoutSolver.Solve(input, relations, target.Id, target, mode).ToDictionary(s => s.Id); }
 
     private static Dictionary<string, ShapeGeometry> Solve(IEnumerable<ShapeGeometry> input,
         IEnumerable<LayoutConstraint> constraints, ShapeGeometry target)
@@ -88,11 +115,14 @@ internal static class CoreTests
         try
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
-            var all = Enum.GetValues(typeof(ConstraintKind)).Cast<ConstraintKind>()
-                .Select(kind => Constraint(kind, C, A, B)).ToArray();
+            var all = Enum.GetValues(typeof(ConstraintKind)).Cast<ConstraintKind>().Select(kind => {
+                int maximum = LayoutConstraint.GetMaximumShapeCount(kind), parameters = LayoutConstraint.GetParameterCount(kind);
+                string[] members = new[] { C, A, B }.Take(Math.Min(maximum, 3)).ToArray();
+                return parameters == 0 ? Constraint(kind, members) : Parameter(kind, 12.375, parameters == 2 ? (double?)-8.25 : null, members);
+            }).ToArray();
             var source = new ConstraintDocument(all);
             var result = ConstraintDocument.Parse(source.ToXml());
-            Assert(result.Constraints.Count == 6);
+            Assert(result.Constraints.Count == 20);
             Assert(result.Constraints[5].ShapeIds.SequenceEqual(new[] { C, A, B }.Select(ShapeIdentity.Normalize)));
             Assert(source.ToXml() == result.ToXml());
             Assert(ConstraintDocument.Parse(new ConstraintDocument(new LayoutConstraint[0]).ToXml()).Constraints.Count == 0);
@@ -354,5 +384,239 @@ internal static class CoreTests
         Assert(!LayoutSolver.NeedsUpdate(Shape(A, 123.000001), Shape(A, 123)));
         Assert(LayoutSolver.NeedsUpdate(Shape(A, 123), Shape(A, 123.02)));
         Assert(LayoutSolver.NeedsUpdate(Shape(A), Shape(A, 0, 0, 20.02)));
+    }
+
+    private static void EdgeAndCenterAlignment()
+    {
+        var initial = new[] { Shape(A, 10, 20, 40, 30), Shape(B, 100, 80, 70, 50) };
+        foreach (var kind in new[] { ConstraintKind.RightAligned, ConstraintKind.BottomAligned,
+            ConstraintKind.CenterXAligned, ConstraintKind.CenterYAligned, ConstraintKind.CentersCoincident })
+        foreach (var driver in initial)
+        {
+            var target = Shape(driver.Id, 65, 95, driver.Width + 12, driver.Height + 8);
+            var relation = Constraint(kind, A, B);
+            var result = Solve(initial, new[] { relation }, target);
+            Same(Get(result, driver.Id), target);
+            var follower = Get(result, driver.Id == initial[0].Id ? B : A);
+            var old = initial.Single(s => s.Id == follower.Id);
+            Near(follower.Width, old.Width); Near(follower.Height, old.Height);
+            if (kind == ConstraintKind.RightAligned) Near(follower.Left + follower.Width, target.Left + target.Width);
+            if (kind == ConstraintKind.BottomAligned) Near(follower.Top + follower.Height, target.Top + target.Height);
+            if (kind == ConstraintKind.CenterXAligned || kind == ConstraintKind.CentersCoincident)
+                Near(follower.Left + follower.Width / 2, target.Left + target.Width / 2);
+            if (kind == ConstraintKind.CenterYAligned || kind == ConstraintKind.CentersCoincident)
+                Near(follower.Top + follower.Height / 2, target.Top + target.Height / 2);
+            Near(LayoutSolver.MaxResidual(result.Values, new[] { relation }), 0);
+        }
+    }
+
+    private static void FixedDimensions()
+    {
+        var initial = new[] { Shape(A, 10, 20, 40, 30), Shape(B, 100, 80, 90, 70) };
+        var relations = new[] { Parameter(ConstraintKind.FixedWidth, 80, null, A),
+            Parameter(ConstraintKind.FixedHeight, 45, null, A), Constraint(ConstraintKind.SameWidth, A, B),
+            Parameter(ConstraintKind.AspectRatio, 2, null, B) };
+        var result = Normalize(initial, relations);
+        Near(Get(result, A).Width, 80); Near(Get(result, A).Height, 45);
+        Near(Get(result, B).Width, 80); Near(Get(result, B).Height, 40);
+        foreach (var old in initial) { Near(Get(result, old.Id).Left, old.Left); Near(Get(result, old.Id).Top, old.Top); }
+        Near(LayoutSolver.MaxResidual(result.Values, relations), 0);
+        Throws<ConstraintConflictException>(() => Edit(result.Values, relations, Shape(A, 10, 20, 90, 45), GeometryEditMode.ResizeE));
+    }
+
+    private static void FixedPosition()
+    {
+        var pin = Parameter(ConstraintKind.FixedPosition, 40, -25, A);
+        var initial = new[] { Shape(A, 10, 20), Shape(B, 200, 70) };
+        var result = Normalize(initial, pin, Constraint(ConstraintKind.SameX, A, B));
+        Near(Get(result, A).Left, 40); Near(Get(result, A).Top, -25); Near(Get(result, B).Left, 40);
+        Near(Get(result, B).Top, 70);
+        Throws<ConstraintConflictException>(() => Edit(result.Values, new[] { pin }, Shape(A, 41, -25), GeometryEditMode.Move));
+        var resized = Edit(result.Values, new[] { pin }, Shape(A, 40, -25, 60, 30), GeometryEditMode.ResizeE);
+        Near(Get(resized, A).Width, 60); Near(Get(resized, A).Left, 40);
+    }
+
+    private static void RatioSides()
+    {
+        var initial = new[] { Shape(A, 10, 20, 100, 50), Shape(B, 200, 300, 100, 50) };
+        var relations = new[] { Parameter(ConstraintKind.AspectRatio, 2, null, A), Constraint(ConstraintKind.SameWidth, A, B) };
+        var targets = new[] { Shape(A, 10, 20, 160, 50), Shape(A, -50, 20, 160, 50),
+            Shape(A, 10, 20, 100, 80), Shape(A, 10, -10, 100, 80) };
+        var modes = new[] { GeometryEditMode.ResizeE, GeometryEditMode.ResizeW, GeometryEditMode.ResizeS, GeometryEditMode.ResizeN };
+        var expected = new[] { Shape(A, 10, 5, 160, 80), Shape(A, -50, 5, 160, 80),
+            Shape(A, -20, 20, 160, 80), Shape(A, -20, -10, 160, 80) };
+        for (int i = 0; i < modes.Length; i++)
+        {
+            var result = Edit(initial, relations, targets[i], modes[i]);
+            Same(Get(result, A), expected[i]);
+            Same(Get(result, B), Shape(B, 200, 300, 160, 50));
+            Near(LayoutSolver.MaxResidual(result.Values, relations), 0);
+        }
+    }
+
+    private static void RatioCorners()
+    {
+        var initial = new[] { Shape(A, 10, 20, 100, 50) };
+        var relation = Parameter(ConstraintKind.AspectRatio, 2, null, A);
+        var modes = new[] { GeometryEditMode.ResizeSE, GeometryEditMode.ResizeNE, GeometryEditMode.ResizeSW, GeometryEditMode.ResizeNW };
+        foreach (var mode in modes)
+        {
+            var result = Edit(initial, new[] { relation }, Shape(A, 0, 0, 140, 100), mode);
+            var shape = Get(result, A);
+            Near(shape.Width, 152); Near(shape.Height, 76);
+            Near(shape.Left, mode == GeometryEditMode.ResizeSW || mode == GeometryEditMode.ResizeNW ? -42 : 10);
+            Near(shape.Top, mode == GeometryEditMode.ResizeNE || mode == GeometryEditMode.ResizeNW ? -6 : 20);
+            Near(LayoutSolver.MaxResidual(result.Values, new[] { relation }), 0);
+        }
+        // Without a ratio, an ordinary corner still reaches both pointer dimensions.
+        var free = Edit(initial, new LayoutConstraint[0], Shape(A, 10, 20, 140, 100), GeometryEditMode.ResizeSE);
+        Same(Get(free, A), Shape(A, 10, 20, 140, 100));
+    }
+
+    private static void RatioMinimum()
+    {
+        var relation = Parameter(ConstraintKind.AspectRatio, 10, null, A);
+        var result = Normalize(new[] { Shape(A, 0, 0, 1, 1) }, relation);
+        Near(Get(result, A).Width, 10); Near(Get(result, A).Height, 1);
+        var corner = Edit(result.Values, new[] { relation }, Shape(A, 0, 0, 1, 1), GeometryEditMode.ResizeSE);
+        Near(Get(corner, A).Width, 10); Near(Get(corner, A).Height, 1);
+        Throws<ConstraintConflictException>(() => Edit(result.Values, new[] { relation }, Shape(A, 0, 0, 1, 1), GeometryEditMode.ResizeE));
+    }
+
+    private static void RatioChains()
+    {
+        var initial = new[] { Shape(A, 0, 0, 100, 50), Shape(B, 200, 0, 100, 25), Shape(C, 400, 0, 50, 25) };
+        var relations = new[] { Parameter(ConstraintKind.AspectRatio, 2, null, A),
+            Parameter(ConstraintKind.AspectRatio, 4, null, B), Constraint(ConstraintKind.SameWidth, A, B),
+            Constraint(ConstraintKind.SameHeight, B, C) };
+        var result = Edit(initial, relations, Shape(A, 0, 0, 160, 50), GeometryEditMode.ResizeE);
+        Near(Get(result, A).Height, 80); Near(Get(result, B).Width, 160); Near(Get(result, B).Height, 40);
+        Near(Get(result, C).Height, 40); Near(Get(result, C).Width, 50);
+        Near(LayoutSolver.MaxResidual(result.Values, relations), 0);
+        Throws<ConstraintConflictException>(() => Normalize(initial, relations.Concat(new[] { Constraint(ConstraintKind.SameHeight, A, B) }).ToArray()));
+    }
+
+    private static void FixedGaps()
+    {
+        foreach (bool horizontal in new[] { true, false })
+        foreach (double distance in new[] { 17.5, -8.0 })
+        {
+            var relation = Parameter(horizontal ? ConstraintKind.FixedHorizontalGap : ConstraintKind.FixedVerticalGap, distance, null, A, B, C);
+            var normalized = Normalize(Row(), relation);
+            Near(LayoutSolver.MaxResidual(normalized.Values, new[] { relation }), 0);
+            foreach (string driver in new[] { A, C })
+            {
+                ShapeGeometry old = Get(normalized, driver);
+                var target = Shape(driver, old.Left + (horizontal ? 23 : 0), old.Top + (horizontal ? 0 : 23), old.Width, old.Height);
+                var result = Edit(normalized.Values, new[] { relation }, target, GeometryEditMode.Move);
+                foreach (var shape in normalized.Values)
+                {
+                    var actual = Get(result, shape.Id);
+                    Near(horizontal ? actual.Left : actual.Top, (horizontal ? shape.Left : shape.Top) + 23);
+                    Near(actual.Width, shape.Width); Near(actual.Height, shape.Height);
+                }
+                Near(LayoutSolver.MaxResidual(result.Values, new[] { relation }), 0);
+            }
+        }
+    }
+
+    private static void Offsets()
+    {
+        var relation = Parameter(ConstraintKind.Offset, 100, 30, A, B);
+        var baseline = Normalize(new[] { Shape(A, 10, 10), Shape(B, 120, 40) }, relation);
+        Near(Get(baseline, A).Left, 15); Near(Get(baseline, B).Left, 115);
+        var fromB = Edit(baseline.Values, new[] { relation }, Shape(B, 150, 70), GeometryEditMode.Move);
+        Same(Get(fromB, A), Shape(A, 50, 40));
+        var fromA = Edit(baseline.Values, new[] { relation }, Shape(A, -30, -20), GeometryEditMode.Move);
+        Same(Get(fromA, B), Shape(B, 70, 10));
+        Near(LayoutSolver.MaxResidual(fromA.Values, new[] { relation }), 0);
+    }
+
+    private static void Symmetry()
+    {
+        foreach (bool vertical in new[] { true, false })
+        {
+            var relation = Parameter(vertical ? ConstraintKind.SymmetricVertical : ConstraintKind.SymmetricHorizontal, 150, null, A, B);
+            var baseline = Normalize(new[] { Shape(A, 10, 20, 40, 20), Shape(B, 220, 200, 60, 40) }, relation);
+            Near(Get(baseline, A).Width, 50); Near(Get(baseline, A).Height, 30);
+            Near(LayoutSolver.MaxResidual(baseline.Values, new[] { relation }), 0);
+            foreach (string driver in new[] { A, B })
+            {
+                var target = Shape(driver, 35, 55, 70, 40);
+                var result = Solve(baseline.Values, new[] { relation }, target);
+                Same(Get(result, driver), target);
+                var follower = Get(result, driver == A ? B : A);
+                Same(follower, Shape(follower.Id, vertical ? 195 : 35, vertical ? 55 : 205, 70, 40));
+                Near(LayoutSolver.MaxResidual(result.Values, new[] { relation }), 0);
+            }
+        }
+    }
+
+    private static void DisabledRelations()
+    {
+        var source = Constraint(ConstraintKind.SameX, A, B);
+        var disabled = new LayoutConstraint(source.Id, source.SlideId, source.Kind, source.ShapeIds, enabled: false);
+        var state = new[] { Shape(A) };
+        Same(Get(Edit(state, new[] { disabled }, Shape(A, 40), GeometryEditMode.Move), A), Shape(A, 40));
+        Same(Get(Normalize(state, disabled), A), state[0]);
+        Near(LayoutSolver.MaxResidual(state, new[] { disabled }), 0);
+        Throws<ArgumentException>(() => Normalize(state, source));
+        var document = new ConstraintDocument(new[] { disabled });
+        Assert(!ConstraintDocument.Parse(document.ToXml()).Constraints[0].Enabled);
+        Assert(document.ToXml() == ConstraintDocument.Parse(document.ToXml()).ToXml());
+    }
+
+    private static void ParameterValidation()
+    {
+        Throws<ArgumentException>(() => Constraint(ConstraintKind.FixedWidth, A));
+        Throws<ArgumentException>(() => Parameter(ConstraintKind.FixedWidth, 20, null, A, B));
+        Throws<ArgumentException>(() => Parameter(ConstraintKind.Offset, 20, 30, A, B, C));
+        Throws<ArgumentException>(() => Parameter(ConstraintKind.SymmetricVertical, 10, null, A));
+        Throws<ArgumentException>(() => Parameter(ConstraintKind.SameWidth, 20, null, A, B));
+        Throws<ArgumentException>(() => Parameter(ConstraintKind.FixedPosition, 20, null, A));
+        Throws<ArgumentOutOfRangeException>(() => Parameter(ConstraintKind.FixedHeight, 0.5, null, A));
+        Throws<ArgumentOutOfRangeException>(() => Parameter(ConstraintKind.AspectRatio, 0, null, A));
+        Throws<ArgumentOutOfRangeException>(() => Parameter(ConstraintKind.AspectRatio, Double.PositiveInfinity, null, A));
+        string xml = new ConstraintDocument(new[] { Parameter(ConstraintKind.FixedWidth, 20.5, null, A) }).ToXml();
+        foreach (string value in new[] { "NaN", "Infinity", "1,5", "", "0" })
+            Throws<FormatException>(() => ConstraintDocument.Parse(xml.Replace("value=\"20.5\"", "value=\"" + value + "\"")));
+        Throws<FormatException>(() => ConstraintDocument.Parse(xml.Replace("<constraint ", "<constraint enabled=\"False\" ")));
+        Throws<FormatException>(() => ConstraintDocument.Parse(xml.Replace("<constraint ", "<constraint secondaryValue=\"5\" ")));
+        var offset = Parameter(ConstraintKind.Offset, 20, 30, A, B);
+        Assert(new ConstraintDocument(new[] { offset, Parameter(ConstraintKind.Offset, -20, -30, B, A) }).Constraints.Count == 2);
+    }
+
+    private static void NeutralNormalization()
+    {
+        var initial = new[] { Shape(A, 0, 20, 20, 30), Shape(B, 100, 80, 40, 50), Shape(C, 300, 400, 80, 90) };
+        var result = Normalize(initial, Constraint(ConstraintKind.SameX, A, B), Constraint(ConstraintKind.SameWidth, A, B));
+        Near(Get(result, A).Left, 50); Near(Get(result, B).Left, 50);
+        Near(Get(result, A).Width, 30); Near(Get(result, B).Width, 30);
+        Near(Get(result, A).Top, 20); Near(Get(result, B).Top, 80);
+        Same(Get(result, C), initial[2]);
+        Assert(LayoutSolver.Normalize(new ShapeGeometry[0], new LayoutConstraint[0]).Count == 0);
+        var fixedOne = Parameter(ConstraintKind.FixedWidth, 20, null, A);
+        var fixedTwo = Parameter(ConstraintKind.FixedWidth, 30, null, A);
+        Throws<ConstraintConflictException>(() => Normalize(initial, fixedOne, fixedTwo));
+    }
+
+    private static void NewResiduals()
+    {
+        var initial = new[] { Shape(A, 10, 20, 40, 30), Shape(B, 100, 80, 70, 50) };
+        var relations = new[] { Constraint(ConstraintKind.RightAligned, A, B), Constraint(ConstraintKind.BottomAligned, A, B),
+            Constraint(ConstraintKind.CenterXAligned, A, B), Constraint(ConstraintKind.CenterYAligned, A, B),
+            Constraint(ConstraintKind.CentersCoincident, A, B), Parameter(ConstraintKind.FixedPosition, 40, 60, A),
+            Parameter(ConstraintKind.FixedWidth, 80, null, A), Parameter(ConstraintKind.FixedHeight, 60, null, A),
+            Parameter(ConstraintKind.AspectRatio, 2, null, A), Parameter(ConstraintKind.FixedHorizontalGap, 20, null, A, B),
+            Parameter(ConstraintKind.FixedVerticalGap, 20, null, A, B), Parameter(ConstraintKind.Offset, 120, 60, A, B),
+            Parameter(ConstraintKind.SymmetricVertical, 200, null, A, B), Parameter(ConstraintKind.SymmetricHorizontal, 200, null, A, B) };
+        foreach (var relation in relations)
+        {
+            var result = Normalize(initial, relation);
+            Near(LayoutSolver.MaxResidual(result.Values, new[] { relation }), 0);
+            var altered = result.Values.Select(s => s.Id == ShapeIdentity.Normalize(A)
+                ? Shape(s.Id, s.Left + 2, s.Top + 3, s.Width + 5, s.Height + 7) : s).ToArray();
+            Assert(LayoutSolver.MaxResidual(altered, new[] { relation }) > 0.1);
+        }
     }
 }

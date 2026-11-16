@@ -1,0 +1,529 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  false,
+    "Cases":  [
+                  {
+                      "Kind":  "SameX",
+                      "ConstraintId":  "18283C8C-68F3-407B-970F-598B869ADC06",
+                      "Members":  [
+                                      "28B2127F-3899-4C97-8216-9D40F165353B",
+                                      "F5F0911A-5A26-418A-B2F7-AF2A450057DF"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "28B2127F-3899-4C97-8216-9D40F165353B",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "F5F0911A-5A26-418A-B2F7-AF2A450057DF",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  0,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SameY",
+                      "ConstraintId":  "E1011A39-26E2-420A-8C07-5502B5A6D228",
+                      "Members":  [
+                                      "AA708809-6373-47B8-AD4B-B1BB04F69F78",
+                                      "D3BB3388-D699-471E-B2B9-E9106272192F"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "AA708809-6373-47B8-AD4B-B1BB04F69F78",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "D3BB3388-D699-471E-B2B9-E9106272192F",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  0,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SameWidth",
+                      "ConstraintId":  "B788FE14-EA61-4CB3-9D9F-D3089DCC93A7",
+                      "Members":  [
+                                      "BECF71AA-8965-4FD6-BD0D-36F0BC44FE12",
+                                      "246484C7-DE62-4F04-80A7-D927D97987DA"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "BECF71AA-8965-4FD6-BD0D-36F0BC44FE12",
+                                          "Mode":  "ResizeE",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "246484C7-DE62-4F04-80A7-D927D97987DA",
+                                          "Mode":  "ResizeE",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  0,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SameHeight",
+                      "ConstraintId":  "209C8BAD-BC50-4F26-AB82-601AFB28C9CE",
+                      "Members":  [
+                                      "4841EA73-873B-4BC4-AC1A-39636F9D9A06",
+                                      "16922695-3DD8-47D1-9DC0-2D055069F80F"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "4841EA73-873B-4BC4-AC1A-39636F9D9A06",
+                                          "Mode":  "ResizeS",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "16922695-3DD8-47D1-9DC0-2D055069F80F",
+                                          "Mode":  "ResizeS",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  0,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "EqualHorizontalGap",
+                      "ConstraintId":  "0DE3377A-58BD-41D9-A7A1-B9AC818A9FEC",
+                      "Members":  [
+                                      "DD89D865-3303-474C-BCEE-00158A64B0E4",
+                                      "1BE125A6-3262-4CFC-8197-0FAA405A604E",
+                                      "DC2222B4-C740-4034-840C-8105145D48FC"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "DD89D865-3303-474C-BCEE-00158A64B0E4",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "DC2222B4-C740-4034-840C-8105145D48FC",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  9.155273437E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "EqualVerticalGap",
+                      "ConstraintId":  "FC22CA8A-938A-4785-AFA0-D311CBFB2100",
+                      "Members":  [
+                                      "AC1B1D6A-AE62-4247-B16E-610CD7EF6796",
+                                      "7216110A-1186-4DDB-BDB8-0ADC1286E672",
+                                      "65D5F282-6B9E-47B2-AF82-7A96ED42A67F"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "AC1B1D6A-AE62-4247-B16E-610CD7EF6796",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "65D5F282-6B9E-47B2-AF82-7A96ED42A67F",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  9.155273437E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "RightAligned",
+                      "ConstraintId":  "14CF29B5-EA53-46DB-BEFA-AC199F5C4F75",
+                      "Members":  [
+                                      "CC66E7ED-8F75-4E15-ABCF-4A035F0C85AB",
+                                      "36B42E59-BBAF-47A9-83A9-53A863EF9352"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "CC66E7ED-8F75-4E15-ABCF-4A035F0C85AB",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "36B42E59-BBAF-47A9-83A9-53A863EF9352",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "BottomAligned",
+                      "ConstraintId":  "C9EFEDAA-7718-4822-8B81-7CA1CE68E85B",
+                      "Members":  [
+                                      "9A005F7B-7590-44C1-B98E-EE1DD392BF6A",
+                                      "76EF1D56-EEF9-4473-971A-1EF6FFE88111"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "9A005F7B-7590-44C1-B98E-EE1DD392BF6A",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "76EF1D56-EEF9-4473-971A-1EF6FFE88111",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "CenterXAligned",
+                      "ConstraintId":  "C546F585-A0B9-46B7-917A-4CF8E5CE5BC1",
+                      "Members":  [
+                                      "E395099C-8D9C-4618-8478-718FF9D11D67",
+                                      "0008A9DA-3B5A-46A4-83B4-865250631B1A"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "E395099C-8D9C-4618-8478-718FF9D11D67",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "0008A9DA-3B5A-46A4-83B4-865250631B1A",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "CenterYAligned",
+                      "ConstraintId":  "00E3E5C2-059F-4F1C-B2CF-73DD80EE3A7F",
+                      "Members":  [
+                                      "47DEFEBE-DD8C-422A-953D-43569297F842",
+                                      "179568B0-C709-4A65-91B7-C0B99D5532EB"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "47DEFEBE-DD8C-422A-953D-43569297F842",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "179568B0-C709-4A65-91B7-C0B99D5532EB",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "CentersCoincident",
+                      "ConstraintId":  "048051AB-89E5-4224-B385-FB9BFC957586",
+                      "Members":  [
+                                      "AC732A71-F2BF-4AF1-AF04-F8767A1789A9",
+                                      "460A392F-C4CB-42F8-8FD1-B5992B32BC2D"
+                                  ],
+                      "Parameters":  {
+
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "AC732A71-F2BF-4AF1-AF04-F8767A1789A9",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "460A392F-C4CB-42F8-8FD1-B5992B32BC2D",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedWidth",
+                      "ConstraintId":  "8F4247A3-6117-4CF9-9E58-EF919DC97384",
+                      "Members":  [
+                                      "6E5D8B47-0159-4EAA-B96D-7095AC9EC4F9"
+                                  ],
+                      "Parameters":  {
+                                         "value":  180
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "6E5D8B47-0159-4EAA-B96D-7095AC9EC4F9",
+                                          "Mode":  "ResizeS",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedHeight",
+                      "ConstraintId":  "BF0436A4-358C-475C-AD91-B8D712FE5C68",
+                      "Members":  [
+                                      "CEC4110F-93FB-4D78-A193-4F678A23D47D"
+                                  ],
+                      "Parameters":  {
+                                         "value":  130
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "CEC4110F-93FB-4D78-A193-4F678A23D47D",
+                                          "Mode":  "ResizeE",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedPosition",
+                      "ConstraintId":  "2321C121-6B8A-4BD8-8E0B-A5848FABC541",
+                      "Members":  [
+                                      "A782F417-0ED9-48CD-AE81-F1E0D3EE8ACD"
+                                  ],
+                      "Parameters":  {
+                                         "value":  170,
+                                         "second":  190
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "A782F417-0ED9-48CD-AE81-F1E0D3EE8ACD",
+                                          "Mode":  "ResizeE",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  3.051757812E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "AspectRatio",
+                      "ConstraintId":  "A2655D45-4FB6-4DFE-ABBA-1DA036419FB4",
+                      "Members":  [
+                                      "9C1CEF66-CF41-4570-AF5A-E4F882B9DC02"
+                                  ],
+                      "Parameters":  {
+                                         "value":  1.6
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "9C1CEF66-CF41-4570-AF5A-E4F882B9DC02",
+                                          "Mode":  "ResizeE",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  4.577636719E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedHorizontalGap",
+                      "ConstraintId":  "DAC79345-0C4C-4268-96F4-DF1773A90184",
+                      "Members":  [
+                                      "5D587B90-CF53-452F-8BA8-C40EFA016E3A",
+                                      "E9E69713-6E6F-4BD4-9261-3588DE953342",
+                                      "FD82814A-3774-4002-99E4-C9A9DC21F0CD"
+                                  ],
+                      "Parameters":  {
+                                         "value":  35
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "5D587B90-CF53-452F-8BA8-C40EFA016E3A",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "FD82814A-3774-4002-99E4-C9A9DC21F0CD",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  6.103515625E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "FixedVerticalGap",
+                      "ConstraintId":  "277EC30F-829E-48F5-AF91-0371DFF505B7",
+                      "Members":  [
+                                      "111C3E2B-0BE3-4FCB-9F49-C605BDF657F0",
+                                      "727AB60C-AF2C-4912-B716-00699822D410",
+                                      "3A997786-43C1-4711-ADB4-EC877B270FB3"
+                                  ],
+                      "Parameters":  {
+                                         "value":  30
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "111C3E2B-0BE3-4FCB-9F49-C605BDF657F0",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "3A997786-43C1-4711-ADB4-EC877B270FB3",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  6.103515625E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "Offset",
+                      "ConstraintId":  "19B5B483-1D10-4B9E-BD65-5990045A2CAC",
+                      "Members":  [
+                                      "5CA4F6A6-295B-463F-8A37-A0335F8BA2F1",
+                                      "3EA92F56-B55A-4F27-908B-318575D9589D"
+                                  ],
+                      "Parameters":  {
+                                         "value":  260,
+                                         "second":  70
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "5CA4F6A6-295B-463F-8A37-A0335F8BA2F1",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "3EA92F56-B55A-4F27-908B-318575D9589D",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  6.103515625E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SymmetricVertical",
+                      "ConstraintId":  "765A1697-F23B-40AD-821A-28770A288FC4",
+                      "Members":  [
+                                      "757C99F1-CA02-4FD5-BB2E-742B9F2A0E58",
+                                      "2BD3BF53-509B-4EE7-9B36-31FEAF148221"
+                                  ],
+                      "Parameters":  {
+                                         "value":  480
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "757C99F1-CA02-4FD5-BB2E-742B9F2A0E58",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "2BD3BF53-509B-4EE7-9B36-31FEAF148221",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  6.103515625E-05,
+                      "Passed":  true
+                  },
+                  {
+                      "Kind":  "SymmetricHorizontal",
+                      "ConstraintId":  "5F3DE5B0-1D9D-40E5-AEA9-16AD52638507",
+                      "Members":  [
+                                      "9439F5F1-D5CF-4B6B-825B-CC886363C90D",
+                                      "50EBF2B8-5BBD-42F8-8DAE-946ADBBF51F0"
+                                  ],
+                      "Parameters":  {
+                                         "value":  270
+                                     },
+                      "Drivers":  [
+                                      {
+                                          "DriverId":  "9439F5F1-D5CF-4B6B-825B-CC886363C90D",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      },
+                                      {
+                                          "DriverId":  "50EBF2B8-5BBD-42F8-8DAE-946ADBBF51F0",
+                                          "Mode":  "Move",
+                                          "NativeUndo":  true,
+                                          "NativeRedo":  true
+                                      }
+                                  ],
+                      "MaximumResidualPt":  6.103515625E-05,
+                      "Passed":  true
+                  }
+              ],
+    "ExpectedCases":  20,
+    "CompletedCases":  20,
+    "Failure":  null,
+    "Directory":  "D:\\code\\ppt-gcs\\artifacts\\v3-constraint-validation\\run-20261116T081512592",
+    "Utc":  "2026-11-16T08:15:38.4608301Z"
+}

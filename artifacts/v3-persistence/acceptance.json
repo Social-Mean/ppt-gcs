@@ -1,0 +1,52 @@
+﻿{
+    "Passed":  true,
+    "ReadOnly":  true,
+    "PhysicalMouseInput":  false,
+    "Path":  "D:\\code\\ppt-gcs\\artifacts\\v3-constraint-validation\\run-20261116T071635507\\twenty-constraints.pptx",
+    "BeforeProcessId":  [
+                            35736
+                        ],
+    "AfterProcessId":  [
+                           57128
+                       ],
+    "GeometryTolerancePt":  0.01,
+    "MetadataExact":  true,
+    "ConstraintCheck":  {
+                            "Kinds":  [
+                                          "SameX",
+                                          "SameY",
+                                          "SameWidth",
+                                          "SameHeight",
+                                          "EqualHorizontalGap",
+                                          "EqualVerticalGap",
+                                          "RightAligned",
+                                          "BottomAligned",
+                                          "CenterXAligned",
+                                          "CenterYAligned",
+                                          "CentersCoincident",
+                                          "FixedWidth",
+                                          "FixedHeight",
+                                          "FixedPosition",
+                                          "AspectRatio",
+                                          "FixedHorizontalGap",
+                                          "FixedVerticalGap",
+                                          "Offset",
+                                          "SymmetricVertical",
+                                          "SymmetricHorizontal"
+                                      ],
+                            "Constraints":  20,
+                            "Enabled":  20,
+                            "MaximumResidualPt":  6.103515625E-05,
+                            "TaggedShapes":  40
+                        },
+    "Checks":  [
+                   "different PowerPoint process",
+                   "all twenty constraint kinds effective",
+                   "independent relation formulas",
+                   "all native IDs and shape names",
+                   "GUIDs and ownership tags",
+                   "all PPTGCS tags",
+                   "authoritative XML exact",
+                   "geometry within 0.01 pt"
+               ]
+}

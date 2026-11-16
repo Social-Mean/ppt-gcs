@@ -1,0 +1,1048 @@
+﻿{
+    "Utc":  "2026-11-16T07:11:43.1954551Z",
+    "ProcessId":  [
+                      35736
+                  ],
+    "State":  {
+                  "PresentationTags":  [
+                                           {
+                                               "Name":  "PPTGCS_CONSTRAINTS",
+                                               "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2237434444363633342D393833452D343935322D413841382D4141393137433145353038372220736C69646549643D2232353622206B696E643D2253616D6558223E3C73686170652069643D2230414542384139372D414442392D343241442D413633302D30444530303134353635444422202F3E3C73686170652069643D2236384639413046302D384145372D344233362D423743302D45344336363834354239463922202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2233354441414335362D304646382D343036312D423043412D4434333944464439343135372220736C69646549643D2232353722206B696E643D2253616D6559223E3C73686170652069643D2242353534424435422D424438392D344638332D394134442D35343036464346454330433322202F3E3C73686170652069643D2233384637334135362D333946412D344135312D423731432D39393735444635363134343422202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2245363536313230302D443130362D344539432D413744352D3839354246423833363539422220736C69646549643D2232353822206B696E643D2253616D655769647468223E3C73686170652069643D2246433146443542322D374436342D343541442D423237362D38443141373837463143424322202F3E3C73686170652069643D2239303433393834352D374545392D343844342D383939372D39453945344644383735304222202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2245353941354137362D443337362D344237432D423430412D3631313832413544304137312220736C69646549643D2232353922206B696E643D2253616D65486569676874223E3C73686170652069643D2244413646463432372D453535312D344645302D424442432D33414135383239373130364222202F3E3C73686170652069643D2232323539314541352D363536332D343843412D383746452D43324631313631364232363822202F3E3C2F636F6E73747261696E743E3C636F6E73747261696E742069643D2241443630313744392D343439322D343230462D413139302D3237453839364635303643332220736C69646549643D2232363022206B696E643D22457175616C486F72697A6F6E74616C476170223E3C73686170652069643D2237384330353230372D384432392D343444392D383431392D31434346394539384344434622202F3E3C73686170652069643D2234444238373630352D313135312D343434342D393034372D36443142334541354533313122202F3E3C73686170652069643D2246343337433333382D414233432D344631302D383641322D32303031363537393634313722202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_DOCUMENT",
+                                               "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_TEST",
+                                               "Value":  "V3"
+                                           }
+                                       ],
+                  "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"7CDD6634-983E-4952-A8A8-AA917C1E5087\" slideId=\"256\" kind=\"SameX\"\u003e\u003cshape id=\"0AEB8A97-ADB9-42AD-A630-0DE0014565DD\" /\u003e\u003cshape id=\"68F9A0F0-8AE7-4B36-B7C0-E4C66845B9F9\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"35DAAC56-0FF8-4061-B0CA-D439DFD94157\" slideId=\"257\" kind=\"SameY\"\u003e\u003cshape id=\"B554BD5B-BD89-4F83-9A4D-5406FCFEC0C3\" /\u003e\u003cshape id=\"38F73A56-39FA-4A51-B71C-9975DF561444\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"E6561200-D106-4E9C-A7D5-895BFB83659B\" slideId=\"258\" kind=\"SameWidth\"\u003e\u003cshape id=\"FC1FD5B2-7D64-45AD-B276-8D1A787F1CBC\" /\u003e\u003cshape id=\"90439845-7EE9-48D4-8997-9E9E4FD8750B\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"E59A5A76-D376-4B7C-B40A-61182A5D0A71\" slideId=\"259\" kind=\"SameHeight\"\u003e\u003cshape id=\"DA6FF427-E551-4FE0-BDBC-3AA58297106B\" /\u003e\u003cshape id=\"22591EA5-6563-48CA-87FE-C2F11616B268\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"AD6017D9-4492-420F-A190-27E896F506C3\" slideId=\"260\" kind=\"EqualHorizontalGap\"\u003e\u003cshape id=\"78C05207-8D29-44D9-8419-1CCF9E98CDCF\" /\u003e\u003cshape id=\"4DB87605-1151-4444-9047-6D1B3EA5E311\" /\u003e\u003cshape id=\"F437C338-AB3C-4F10-86A2-200165796417\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                  "Slides":  [
+                                 {
+                                     "Id":  256,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_SameX_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "0AEB8A97-ADB9-42AD-A630-0DE0014565DD"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/256/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  260,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_SameX_B",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "68F9A0F0-8AE7-4B36-B7C0-E4C66845B9F9"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/256/3"
+                                                                     }
+                                                                 ],
+                                                        "Left":  260,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  257,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_SameY_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "B554BD5B-BD89-4F83-9A4D-5406FCFEC0C3"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/257/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  205,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_SameY_B",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "38F73A56-39FA-4A51-B71C-9975DF561444"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/257/3"
+                                                                     }
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  205,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  258,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_SameWidth_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "FC1FD5B2-7D64-45AD-B276-8D1A787F1CBC"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/258/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  130,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_SameWidth_B",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "90439845-7EE9-48D4-8997-9E9E4FD8750B"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/258/3"
+                                                                     }
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  130,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  259,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_SameHeight_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "DA6FF427-E551-4FE0-BDBC-3AA58297106B"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/259/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  85,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_SameHeight_B",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "22591EA5-6563-48CA-87FE-C2F11616B268"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/259/3"
+                                                                     }
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  85,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  260,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_EqualHorizontalGap_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "78C05207-8D29-44D9-8419-1CCF9E98CDCF"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/260/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  135.6589,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_EqualHorizontalGap_B",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "4DB87605-1151-4444-9047-6D1B3EA5E311"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/260/3"
+                                                                     }
+                                                                 ],
+                                                        "Left":  393.3333,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_EqualHorizontalGap_C",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "F437C338-AB3C-4F10-86A2-200165796417"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "EC283C0A-3BB5-4DA6-AAF7-AA518E394C1E/260/4"
+                                                                     }
+                                                                 ],
+                                                        "Left":  691.0077,
+                                                        "Top":  200,
+                                                        "Width":  95,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  261,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_EqualVerticalGap_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_EqualVerticalGap_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_EqualVerticalGap_C",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  700,
+                                                        "Top":  200,
+                                                        "Width":  95,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  262,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_RightAligned_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_RightAligned_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  263,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_BottomAligned_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_BottomAligned_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  264,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_CenterXAligned_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_CenterXAligned_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  265,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_CenterYAligned_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_CenterYAligned_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  266,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_CentersCoincident_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_CentersCoincident_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  267,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_FixedWidth_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  268,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_FixedHeight_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  269,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_FixedPosition_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  270,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_AspectRatio_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  271,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_FixedHorizontalGap_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_FixedHorizontalGap_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_FixedHorizontalGap_C",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  700,
+                                                        "Top":  200,
+                                                        "Width":  95,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  272,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_FixedVerticalGap_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_FixedVerticalGap_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  4,
+                                                        "Name":  "Case_FixedVerticalGap_C",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  700,
+                                                        "Top":  200,
+                                                        "Width":  95,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  273,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_Offset_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_Offset_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  274,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_SymmetricVertical_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_SymmetricVertical_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 },
+                                 {
+                                     "Id":  275,
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "Case_SymmetricHorizontal_A",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  130,
+                                                        "Width":  110,
+                                                        "Height":  70,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "Case_SymmetricHorizontal_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  420,
+                                                        "Top":  280,
+                                                        "Width":  150,
+                                                        "Height":  100,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 }
+                             ],
+                  "Snapshot":  {
+                                   "presentation":  "D:\\code\\ppt-gcs\\artifacts\\v3-constraint-validation\\run-20261116T071134429\\twenty-constraints.pptx",
+                                   "storage":  "presentation-tags",
+                                   "constraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"7CDD6634-983E-4952-A8A8-AA917C1E5087\" slideId=\"256\" kind=\"SameX\"\u003e\u003cshape id=\"0AEB8A97-ADB9-42AD-A630-0DE0014565DD\" /\u003e\u003cshape id=\"68F9A0F0-8AE7-4B36-B7C0-E4C66845B9F9\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"35DAAC56-0FF8-4061-B0CA-D439DFD94157\" slideId=\"257\" kind=\"SameY\"\u003e\u003cshape id=\"B554BD5B-BD89-4F83-9A4D-5406FCFEC0C3\" /\u003e\u003cshape id=\"38F73A56-39FA-4A51-B71C-9975DF561444\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"E6561200-D106-4E9C-A7D5-895BFB83659B\" slideId=\"258\" kind=\"SameWidth\"\u003e\u003cshape id=\"FC1FD5B2-7D64-45AD-B276-8D1A787F1CBC\" /\u003e\u003cshape id=\"90439845-7EE9-48D4-8997-9E9E4FD8750B\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"E59A5A76-D376-4B7C-B40A-61182A5D0A71\" slideId=\"259\" kind=\"SameHeight\"\u003e\u003cshape id=\"DA6FF427-E551-4FE0-BDBC-3AA58297106B\" /\u003e\u003cshape id=\"22591EA5-6563-48CA-87FE-C2F11616B268\" /\u003e\u003c/constraint\u003e\u003cconstraint id=\"AD6017D9-4492-420F-A190-27E896F506C3\" slideId=\"260\" kind=\"EqualHorizontalGap\"\u003e\u003cshape id=\"78C05207-8D29-44D9-8419-1CCF9E98CDCF\" /\u003e\u003cshape id=\"4DB87605-1151-4444-9047-6D1B3EA5E311\" /\u003e\u003cshape id=\"F437C338-AB3C-4F10-86A2-200165796417\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                                   "slides":  [
+                                                  {
+                                                      "slideId":  256,
+                                                      "name":  "SameX",
+                                                      "kind":  "SameX",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "0AEB8A97-ADB9-42AD-A630-0DE0014565DD",
+                                                                           "Name":  "Case_SameX_A",
+                                                                           "Left":  260,
+                                                                           "Top":  130,
+                                                                           "Width":  110,
+                                                                           "Height":  70
+                                                                       },
+                                                                       {
+                                                                           "Id":  "68F9A0F0-8AE7-4B36-B7C0-E4C66845B9F9",
+                                                                           "Name":  "Case_SameX_B",
+                                                                           "Left":  260,
+                                                                           "Top":  280,
+                                                                           "Width":  150,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "7CDD6634-983E-4952-A8A8-AA917C1E5087",
+                                                                              "SlideId":  256,
+                                                                              "Kind":  "SameX",
+                                                                              "ShapeIds":  [
+                                                                                               "0AEB8A97-ADB9-42AD-A630-0DE0014565DD",
+                                                                                               "68F9A0F0-8AE7-4B36-B7C0-E4C66845B9F9"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  257,
+                                                      "name":  "SameY",
+                                                      "kind":  "SameY",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "B554BD5B-BD89-4F83-9A4D-5406FCFEC0C3",
+                                                                           "Name":  "Case_SameY_A",
+                                                                           "Left":  100,
+                                                                           "Top":  205,
+                                                                           "Width":  110,
+                                                                           "Height":  70
+                                                                       },
+                                                                       {
+                                                                           "Id":  "38F73A56-39FA-4A51-B71C-9975DF561444",
+                                                                           "Name":  "Case_SameY_B",
+                                                                           "Left":  420,
+                                                                           "Top":  205,
+                                                                           "Width":  150,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "35DAAC56-0FF8-4061-B0CA-D439DFD94157",
+                                                                              "SlideId":  257,
+                                                                              "Kind":  "SameY",
+                                                                              "ShapeIds":  [
+                                                                                               "B554BD5B-BD89-4F83-9A4D-5406FCFEC0C3",
+                                                                                               "38F73A56-39FA-4A51-B71C-9975DF561444"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  258,
+                                                      "name":  "SameWidth",
+                                                      "kind":  "SameWidth",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "FC1FD5B2-7D64-45AD-B276-8D1A787F1CBC",
+                                                                           "Name":  "Case_SameWidth_A",
+                                                                           "Left":  100,
+                                                                           "Top":  130,
+                                                                           "Width":  130,
+                                                                           "Height":  70
+                                                                       },
+                                                                       {
+                                                                           "Id":  "90439845-7EE9-48D4-8997-9E9E4FD8750B",
+                                                                           "Name":  "Case_SameWidth_B",
+                                                                           "Left":  420,
+                                                                           "Top":  280,
+                                                                           "Width":  130,
+                                                                           "Height":  100
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "E6561200-D106-4E9C-A7D5-895BFB83659B",
+                                                                              "SlideId":  258,
+                                                                              "Kind":  "SameWidth",
+                                                                              "ShapeIds":  [
+                                                                                               "FC1FD5B2-7D64-45AD-B276-8D1A787F1CBC",
+                                                                                               "90439845-7EE9-48D4-8997-9E9E4FD8750B"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  259,
+                                                      "name":  "SameHeight",
+                                                      "kind":  "SameHeight",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "DA6FF427-E551-4FE0-BDBC-3AA58297106B",
+                                                                           "Name":  "Case_SameHeight_A",
+                                                                           "Left":  100,
+                                                                           "Top":  130,
+                                                                           "Width":  110,
+                                                                           "Height":  85
+                                                                       },
+                                                                       {
+                                                                           "Id":  "22591EA5-6563-48CA-87FE-C2F11616B268",
+                                                                           "Name":  "Case_SameHeight_B",
+                                                                           "Left":  420,
+                                                                           "Top":  280,
+                                                                           "Width":  150,
+                                                                           "Height":  85
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "E59A5A76-D376-4B7C-B40A-61182A5D0A71",
+                                                                              "SlideId":  259,
+                                                                              "Kind":  "SameHeight",
+                                                                              "ShapeIds":  [
+                                                                                               "DA6FF427-E551-4FE0-BDBC-3AA58297106B",
+                                                                                               "22591EA5-6563-48CA-87FE-C2F11616B268"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  260,
+                                                      "name":  "EqualHorizontalGap",
+                                                      "kind":  "EqualHorizontalGap",
+                                                      "geometry":  [
+                                                                       {
+                                                                           "Id":  "78C05207-8D29-44D9-8419-1CCF9E98CDCF",
+                                                                           "Name":  "Case_EqualHorizontalGap_A",
+                                                                           "Left":  135.65890502929688,
+                                                                           "Top":  130,
+                                                                           "Width":  110,
+                                                                           "Height":  70
+                                                                       },
+                                                                       {
+                                                                           "Id":  "4DB87605-1151-4444-9047-6D1B3EA5E311",
+                                                                           "Name":  "Case_EqualHorizontalGap_B",
+                                                                           "Left":  393.33331298828125,
+                                                                           "Top":  280,
+                                                                           "Width":  150,
+                                                                           "Height":  100
+                                                                       },
+                                                                       {
+                                                                           "Id":  "F437C338-AB3C-4F10-86A2-200165796417",
+                                                                           "Name":  "Case_EqualHorizontalGap_C",
+                                                                           "Left":  691.0076904296875,
+                                                                           "Top":  200,
+                                                                           "Width":  95,
+                                                                           "Height":  80
+                                                                       }
+                                                                   ],
+                                                      "constraints":  [
+                                                                          {
+                                                                              "Id":  "AD6017D9-4492-420F-A190-27E896F506C3",
+                                                                              "SlideId":  260,
+                                                                              "Kind":  "EqualHorizontalGap",
+                                                                              "ShapeIds":  [
+                                                                                               "78C05207-8D29-44D9-8419-1CCF9E98CDCF",
+                                                                                               "4DB87605-1151-4444-9047-6D1B3EA5E311",
+                                                                                               "F437C338-AB3C-4F10-86A2-200165796417"
+                                                                                           ],
+                                                                              "Value":  null,
+                                                                              "SecondaryValue":  null,
+                                                                              "Enabled":  true
+                                                                          }
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  261,
+                                                      "name":  "EqualVerticalGap",
+                                                      "kind":  "EqualVerticalGap",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  262,
+                                                      "name":  "RightAligned",
+                                                      "kind":  "RightAligned",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  263,
+                                                      "name":  "BottomAligned",
+                                                      "kind":  "BottomAligned",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  264,
+                                                      "name":  "CenterXAligned",
+                                                      "kind":  "CenterXAligned",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  265,
+                                                      "name":  "CenterYAligned",
+                                                      "kind":  "CenterYAligned",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  266,
+                                                      "name":  "CentersCoincident",
+                                                      "kind":  "CentersCoincident",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  267,
+                                                      "name":  "FixedWidth",
+                                                      "kind":  "FixedWidth",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  268,
+                                                      "name":  "FixedHeight",
+                                                      "kind":  "FixedHeight",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  269,
+                                                      "name":  "FixedPosition",
+                                                      "kind":  "FixedPosition",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  270,
+                                                      "name":  "AspectRatio",
+                                                      "kind":  "AspectRatio",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  271,
+                                                      "name":  "FixedHorizontalGap",
+                                                      "kind":  "FixedHorizontalGap",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  272,
+                                                      "name":  "FixedVerticalGap",
+                                                      "kind":  "FixedVerticalGap",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  273,
+                                                      "name":  "Offset",
+                                                      "kind":  "Offset",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  274,
+                                                      "name":  "SymmetricVertical",
+                                                      "kind":  "SymmetricVertical",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  },
+                                                  {
+                                                      "slideId":  275,
+                                                      "name":  "SymmetricHorizontal",
+                                                      "kind":  "SymmetricHorizontal",
+                                                      "geometry":  [
+
+                                                                   ],
+                                                      "constraints":  [
+
+                                                                      ]
+                                                  }
+                                              ]
+                               }
+              }
+}

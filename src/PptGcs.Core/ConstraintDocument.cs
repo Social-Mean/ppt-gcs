@@ -27,7 +27,21 @@ namespace PptGcs.Core
         SameWidth,
         SameHeight,
         EqualHorizontalGap,
-        EqualVerticalGap
+        EqualVerticalGap,
+        RightAligned,
+        BottomAligned,
+        CenterXAligned,
+        CenterYAligned,
+        CentersCoincident,
+        FixedWidth,
+        FixedHeight,
+        FixedPosition,
+        AspectRatio,
+        FixedHorizontalGap,
+        FixedVerticalGap,
+        Offset,
+        SymmetricVertical,
+        SymmetricHorizontal
     }
 
     public sealed class LayoutConstraint
@@ -36,22 +50,71 @@ namespace PptGcs.Core
         public int SlideId { get; private set; }
         public ConstraintKind Kind { get; private set; }
         public ReadOnlyCollection<string> ShapeIds { get; private set; }
+        public double? Value { get; private set; }
+        public double? SecondaryValue { get; private set; }
+        public bool Enabled { get; private set; }
 
-        public LayoutConstraint(string id, int slideId, ConstraintKind kind, IEnumerable<string> shapeIds)
+        public LayoutConstraint(string id, int slideId, ConstraintKind kind, IEnumerable<string> shapeIds,
+            double? value = null, double? secondaryValue = null, bool enabled = true)
         {
             Id = ShapeIdentity.Normalize(id);
             if (slideId <= 0) throw new ArgumentOutOfRangeException("slideId");
             if (!Enum.IsDefined(typeof(ConstraintKind), kind)) throw new ArgumentOutOfRangeException("kind");
             if (shapeIds == null) throw new ArgumentNullException("shapeIds");
             var ids = shapeIds.Select(ShapeIdentity.Normalize).ToList();
-            int minimum = kind == ConstraintKind.EqualHorizontalGap || kind == ConstraintKind.EqualVerticalGap ? 3 : 2;
-            if (ids.Count < minimum) throw new ArgumentException("This constraint requires at least " + minimum + " shapes.", "shapeIds");
+            int minimum = GetMinimumShapeCount(kind), maximum = GetMaximumShapeCount(kind);
+            if (ids.Count < minimum || ids.Count > maximum)
+                throw new ArgumentException(minimum == maximum ? "This constraint requires exactly " + minimum + " shapes." :
+                    "This constraint requires at least " + minimum + " shapes.", "shapeIds");
             if (ids.Distinct(StringComparer.Ordinal).Count() != ids.Count)
                 throw new ArgumentException("A constraint cannot reference a shape more than once.", "shapeIds");
+            int parameters = GetParameterCount(kind);
+            if (value.HasValue != (parameters >= 1) || secondaryValue.HasValue != (parameters == 2))
+                throw new ArgumentException("This constraint requires " + parameters + " numeric parameters.", "value");
+            if ((value.HasValue && !Finite(value.Value)) || (secondaryValue.HasValue && !Finite(secondaryValue.Value)))
+                throw new ArgumentOutOfRangeException("value", "Constraint parameters must be finite.");
+            if ((kind == ConstraintKind.FixedWidth || kind == ConstraintKind.FixedHeight) && value.Value < LayoutSolver.MinimumSize)
+                throw new ArgumentOutOfRangeException("value", "A fixed dimension must be at least 1 point.");
+            if (kind == ConstraintKind.AspectRatio && value.Value <= 0)
+                throw new ArgumentOutOfRangeException("value", "An aspect ratio must be positive.");
             SlideId = slideId;
             Kind = kind;
             ShapeIds = ids.AsReadOnly();
+            Value = value; SecondaryValue = secondaryValue; Enabled = enabled;
         }
+
+        public static int GetMinimumShapeCount(ConstraintKind kind)
+        {
+            if (!Enum.IsDefined(typeof(ConstraintKind), kind)) throw new ArgumentOutOfRangeException("kind");
+            if (kind == ConstraintKind.FixedWidth || kind == ConstraintKind.FixedHeight ||
+                kind == ConstraintKind.FixedPosition || kind == ConstraintKind.AspectRatio) return 1;
+            return kind == ConstraintKind.EqualHorizontalGap || kind == ConstraintKind.EqualVerticalGap ? 3 : 2;
+        }
+
+        public static int GetMaximumShapeCount(ConstraintKind kind)
+        {
+            int minimum = GetMinimumShapeCount(kind);
+            if (minimum == 1) return 1;
+            return kind == ConstraintKind.Offset || kind == ConstraintKind.SymmetricVertical ||
+                kind == ConstraintKind.SymmetricHorizontal ? 2 : Int32.MaxValue;
+        }
+
+        public static int GetParameterCount(ConstraintKind kind)
+        {
+            GetMinimumShapeCount(kind);
+            if (kind == ConstraintKind.FixedPosition || kind == ConstraintKind.Offset) return 2;
+            return kind == ConstraintKind.FixedWidth || kind == ConstraintKind.FixedHeight || kind == ConstraintKind.AspectRatio ||
+                kind == ConstraintKind.FixedHorizontalGap || kind == ConstraintKind.FixedVerticalGap ||
+                kind == ConstraintKind.SymmetricVertical || kind == ConstraintKind.SymmetricHorizontal ? 1 : 0;
+        }
+
+        public static bool PreservesOrder(ConstraintKind kind)
+        {
+            return kind == ConstraintKind.EqualHorizontalGap || kind == ConstraintKind.EqualVerticalGap ||
+                kind == ConstraintKind.FixedHorizontalGap || kind == ConstraintKind.FixedVerticalGap || kind == ConstraintKind.Offset;
+        }
+
+        private static bool Finite(double value) { return !Double.IsNaN(value) && !Double.IsInfinity(value); }
     }
 
     public sealed class ConstraintDocument
@@ -70,7 +133,7 @@ namespace PptGcs.Core
             {
                 if (item == null) throw new ArgumentException("A constraint cannot be null.", "constraints");
                 if (!ids.Add(item.Id)) throw new ArgumentException("Duplicate constraint ID: " + item.Id);
-                bool ordered = item.Kind == ConstraintKind.EqualHorizontalGap || item.Kind == ConstraintKind.EqualVerticalGap;
+                bool ordered = LayoutConstraint.PreservesOrder(item.Kind);
                 IEnumerable<string> members = ordered ? item.ShapeIds.AsEnumerable() : item.ShapeIds.OrderBy(id => id, StringComparer.Ordinal);
                 string key = item.SlideId.ToString(CultureInfo.InvariantCulture) + ":" + item.Kind + ":" + String.Join(",", members);
                 if (!relations.Add(key)) throw new ArgumentException("Duplicate " + item.Kind + " relation on slide " + item.SlideId + ".");
@@ -85,6 +148,9 @@ namespace PptGcs.Core
                     new XAttribute("id", item.Id),
                     new XAttribute("slideId", item.SlideId.ToString(CultureInfo.InvariantCulture)),
                     new XAttribute("kind", item.Kind.ToString()),
+                    item.Value.HasValue ? new XAttribute("value", item.Value.Value.ToString("R", CultureInfo.InvariantCulture)) : null,
+                    item.SecondaryValue.HasValue ? new XAttribute("secondaryValue", item.SecondaryValue.Value.ToString("R", CultureInfo.InvariantCulture)) : null,
+                    item.Enabled ? null : new XAttribute("enabled", "false"),
                     item.ShapeIds.Select(id => new XElement(Ns + "shape", new XAttribute("id", id))))))
                 .ToString(SaveOptions.DisableFormatting);
         }
@@ -113,7 +179,7 @@ namespace PptGcs.Core
                 foreach (var element in root.Elements())
                 {
                     if (element.Name != Ns + "constraint") throw new FormatException("Unsupported constraint element: " + element.Name);
-                    CheckAttributes(element, new[] { "id", "slideId", "kind" });
+                    CheckAttributes(element, new[] { "id", "slideId", "kind", "value", "secondaryValue", "enabled" });
                     CheckText(element);
                     int slideId;
                     if (!Int32.TryParse((string)element.Attribute("slideId"), NumberStyles.None, CultureInfo.InvariantCulture, out slideId))
@@ -130,12 +196,25 @@ namespace PptGcs.Core
                         CheckText(shape);
                         shapeIds.Add((string)shape.Attribute("id"));
                     }
-                    constraints.Add(new LayoutConstraint((string)element.Attribute("id"), slideId, kind, shapeIds));
+                    string enabled = (string)element.Attribute("enabled");
+                    if (enabled != null && enabled != "true" && enabled != "false") throw new FormatException("Invalid enabled flag.");
+                    constraints.Add(new LayoutConstraint((string)element.Attribute("id"), slideId, kind, shapeIds,
+                        ReadNumber(element, "value"), ReadNumber(element, "secondaryValue"), enabled != "false"));
                 }
                 return new ConstraintDocument(constraints);
             }
             catch (XmlException exception) { throw new FormatException("Invalid constraint XML.", exception); }
             catch (ArgumentException exception) { throw new FormatException("Invalid constraint data: " + exception.Message, exception); }
+        }
+
+        private static double? ReadNumber(XElement element, string name)
+        {
+            string value = (string)element.Attribute(name);
+            if (value == null) return null;
+            double number;
+            if (!Double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out number) ||
+                Double.IsNaN(number) || Double.IsInfinity(number)) throw new FormatException("Invalid numeric parameter: " + name);
+            return number;
         }
 
         private static void CheckAttributes(XElement element, string[] allowed)

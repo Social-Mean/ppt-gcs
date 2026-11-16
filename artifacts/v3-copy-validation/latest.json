@@ -1,0 +1,22 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  false,
+    "Checks":  [
+                   "copies get new GUIDs; original geometry, tags and relations unchanged",
+                   "metadata-only relation references only copies",
+                   "undo-link",
+                   "undo-copy",
+                   "redo-copy",
+                   "redo-link"
+               ],
+    "CopyIds":  [
+                    "9CD666F2-42AE-4769-AA83-2A5B3F12AEE3",
+                    "447960F2-44C0-426E-A377-6D40493D1D47"
+                ],
+    "NativeUndoSteps":  2,
+    "NativeRedoSteps":  2,
+    "MetadataOnlyLink":  true,
+    "Directory":  "D:\\code\\ppt-gcs\\artifacts\\v3-copy-validation\\run-20261116T075410883",
+    "Failure":  null,
+    "Utc":  "2026-11-16T07:54:13.8901648Z"
+}

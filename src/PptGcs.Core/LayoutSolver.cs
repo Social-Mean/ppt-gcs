@@ -10,30 +10,47 @@ namespace PptGcs.Core
         public ConstraintConflictException(string message) : base(message) { }
     }
 
-    // Equal dimensions propagate through their equality groups. With sizes known,
-    // position constraints are linear. Orthogonal projection preserves all unused
-    // degrees of freedom and minimizes the sum of squared position changes.
+    public enum GeometryEditMode { Exact, Move, ResizeNW, ResizeN, ResizeNE, ResizeE, ResizeSE, ResizeS, ResizeSW, ResizeW }
+
+    // Dimensions are proportional equality components (same-size, ratio, fixed
+    // values). Positions then form linear equations, solved by least movement.
+    // Keeping these stages separate prevents alignment from resizing a follower.
     public static class LayoutSolver
     {
         public const double PositionTolerance = 0.01;
         public const double MinimumSize = 1.0;
         public const double ResidualTolerance = 0.00001;
 
+        public static IReadOnlyList<ShapeGeometry> Normalize(IEnumerable<ShapeGeometry> initial,
+            IEnumerable<LayoutConstraint> constraints)
+        {
+            return SolveCore(initial, constraints, null, null, GeometryEditMode.Exact);
+        }
+
         public static IReadOnlyList<ShapeGeometry> Solve(IEnumerable<ShapeGeometry> initial,
-            IEnumerable<LayoutConstraint> constraints, string driverId, ShapeGeometry target)
+            IEnumerable<LayoutConstraint> constraints, string driverId, ShapeGeometry target,
+            GeometryEditMode mode = GeometryEditMode.Exact)
+        {
+            if (target == null) throw new ArgumentNullException("target");
+            if (!Enum.IsDefined(typeof(GeometryEditMode), mode)) throw new ArgumentOutOfRangeException("mode");
+            string driver = ShapeIdentity.Normalize(driverId);
+            if (target.Id != driver) throw new ArgumentException("Target and driver identities differ.", "target");
+            return SolveCore(initial, constraints, driver, target, mode);
+        }
+
+        private static IReadOnlyList<ShapeGeometry> SolveCore(IEnumerable<ShapeGeometry> initial,
+            IEnumerable<LayoutConstraint> constraints, string driver, ShapeGeometry target, GeometryEditMode mode)
         {
             if (initial == null) throw new ArgumentNullException("initial");
             if (constraints == null) throw new ArgumentNullException("constraints");
-            if (target == null) throw new ArgumentNullException("target");
             var baseline = initial.ToList();
             var byId = Index(baseline);
-            var relations = constraints.ToList();
+            var relations = Active(constraints);
             ValidateReferences(relations, byId);
-            string driver = ShapeIdentity.Normalize(driverId);
-            if (!byId.ContainsKey(driver)) throw new ArgumentException("The driver is not in the geometry snapshot.", "driverId");
-            if (target.Id != driver) throw new ArgumentException("Target and driver identities differ.", "target");
-
-            var connected = new HashSet<string>(StringComparer.Ordinal) { driver };
+            if (driver != null && !byId.ContainsKey(driver))
+                throw new ArgumentException("The driver is not in the geometry snapshot.", "driverId");
+            var connected = driver == null ? new HashSet<string>(byId.Keys, StringComparer.Ordinal) :
+                new HashSet<string>(StringComparer.Ordinal) { driver };
             bool expanded;
             do
             {
@@ -46,10 +63,18 @@ namespace PptGcs.Core
             var active = relations.Where(relation => connected.Contains(relation.ShapeIds[0])).ToList();
             var indices = component.Select((shape, index) => new { shape.Id, Index = index })
                 .ToDictionary(item => item.Id, item => item.Index, StringComparer.Ordinal);
-            var widths = ResolveSizes(component, active, driver, target.Width, ConstraintKind.SameWidth, shape => shape.Width);
-            var heights = ResolveSizes(component, active, driver, target.Height, ConstraintKind.SameHeight, shape => shape.Height);
-            var xs = ResolvePositions(component, active, indices, widths, driver, target.Left, true);
-            var ys = ResolvePositions(component, active, indices, heights, driver, target.Top, false);
+            double[] dimensions = ResolveDimensions(component, active, indices, driver, target, mode);
+            double[] widths = Enumerable.Range(0, component.Count).Select(i => dimensions[2 * i]).ToArray();
+            double[] heights = Enumerable.Range(0, component.Count).Select(i => dimensions[2 * i + 1]).ToArray();
+            double? x = null, y = null;
+            if (driver != null)
+            {
+                int index = indices[driver];
+                var anchor = DrivenPosition(component[index], target, widths[index], heights[index], mode);
+                x = anchor[0]; y = anchor[1];
+            }
+            var xs = ResolvePositions(component, active, indices, widths, driver, x, true);
+            var ys = ResolvePositions(component, active, indices, heights, driver, y, false);
             var solved = new Dictionary<string, ShapeGeometry>(StringComparer.Ordinal);
             for (int i = 0; i < component.Count; i++)
                 solved.Add(component[i].Id, new ShapeGeometry(component[i].Id, xs[i], ys[i], widths[i], heights[i]));
@@ -74,27 +99,65 @@ namespace PptGcs.Core
             if (geometries == null) throw new ArgumentNullException("geometries");
             if (constraints == null) throw new ArgumentNullException("constraints");
             var byId = Index(geometries);
-            var relations = constraints.ToList();
+            var relations = Active(constraints);
             ValidateReferences(relations, byId);
             double largest = 0;
             foreach (var relation in relations)
             {
                 var shapes = relation.ShapeIds.Select(id => byId[id]).ToList();
-                if (relation.Kind == ConstraintKind.EqualHorizontalGap || relation.Kind == ConstraintKind.EqualVerticalGap)
+                ShapeGeometry first = shapes[0];
+                switch (relation.Kind)
                 {
-                    bool horizontal = relation.Kind == ConstraintKind.EqualHorizontalGap;
-                    double first = Gap(shapes[0], shapes[1], horizontal);
-                    for (int i = 2; i < shapes.Count; i++)
-                        largest = Math.Max(largest, Math.Abs(Gap(shapes[i - 1], shapes[i], horizontal) - first));
-                }
-                else
-                {
-                    double first = Attribute(shapes[0], relation.Kind);
-                    for (int i = 1; i < shapes.Count; i++)
-                        largest = Math.Max(largest, Math.Abs(Attribute(shapes[i], relation.Kind) - first));
+                    case ConstraintKind.EqualHorizontalGap:
+                    case ConstraintKind.EqualVerticalGap:
+                    case ConstraintKind.FixedHorizontalGap:
+                    case ConstraintKind.FixedVerticalGap:
+                        bool horizontal = relation.Kind == ConstraintKind.EqualHorizontalGap || relation.Kind == ConstraintKind.FixedHorizontalGap;
+                        double gap = relation.Value ?? Gap(first, shapes[1], horizontal);
+                        for (int i = 1; i < shapes.Count; i++) largest = Max(largest, Gap(shapes[i - 1], shapes[i], horizontal) - gap);
+                        break;
+                    case ConstraintKind.FixedWidth: largest = Max(largest, first.Width - relation.Value.Value); break;
+                    case ConstraintKind.FixedHeight: largest = Max(largest, first.Height - relation.Value.Value); break;
+                    case ConstraintKind.FixedPosition:
+                        largest = Max(largest, first.Left - relation.Value.Value, first.Top - relation.SecondaryValue.Value); break;
+                    case ConstraintKind.AspectRatio:
+                        largest = Max(largest, first.Width - relation.Value.Value * first.Height); break;
+                    case ConstraintKind.Offset:
+                        largest = Max(largest, shapes[1].Left - first.Left - relation.Value.Value,
+                            shapes[1].Top - first.Top - relation.SecondaryValue.Value); break;
+                    case ConstraintKind.SymmetricVertical:
+                    case ConstraintKind.SymmetricHorizontal:
+                        ShapeGeometry second = shapes[1];
+                        largest = Max(largest, first.Width - second.Width, first.Height - second.Height);
+                        largest = relation.Kind == ConstraintKind.SymmetricVertical
+                            ? Max(largest, first.Top - second.Top, first.Left + first.Width / 2 + second.Left + second.Width / 2 - 2 * relation.Value.Value)
+                            : Max(largest, first.Left - second.Left, first.Top + first.Height / 2 + second.Top + second.Height / 2 - 2 * relation.Value.Value);
+                        break;
+                    case ConstraintKind.CentersCoincident:
+                        foreach (var shape in shapes.Skip(1))
+                            largest = Max(largest, shape.Left + shape.Width / 2 - first.Left - first.Width / 2,
+                                shape.Top + shape.Height / 2 - first.Top - first.Height / 2);
+                        break;
+                    default:
+                        foreach (var shape in shapes.Skip(1)) largest = Max(largest, Attribute(shape, relation.Kind) - Attribute(first, relation.Kind));
+                        break;
                 }
             }
             return largest;
+        }
+
+        private static double Max(double initial, params double[] differences)
+        { return differences.Aggregate(initial, (largest, difference) => Math.Max(largest, Math.Abs(difference))); }
+
+        private static List<LayoutConstraint> Active(IEnumerable<LayoutConstraint> constraints)
+        {
+            var result = new List<LayoutConstraint>();
+            foreach (var relation in constraints)
+            {
+                if (relation == null) throw new ArgumentException("A constraint cannot be null.");
+                if (relation.Enabled) result.Add(relation);
+            }
+            return result;
         }
 
         private static Dictionary<string, ShapeGeometry> Index(IEnumerable<ShapeGeometry> shapes)
@@ -112,52 +175,170 @@ namespace PptGcs.Core
         private static void ValidateReferences(IEnumerable<LayoutConstraint> relations, IDictionary<string, ShapeGeometry> shapes)
         {
             foreach (var relation in relations)
-            {
-                if (relation == null) throw new ArgumentException("A constraint cannot be null.");
                 foreach (var id in relation.ShapeIds)
                     if (!shapes.ContainsKey(id)) throw new ArgumentException("A constraint references a missing shape: " + id);
-            }
         }
 
-        private static double[] ResolveSizes(IList<ShapeGeometry> component, IList<LayoutConstraint> relations,
-            string driver, double requestedSize, ConstraintKind kind, Func<ShapeGeometry, double> size)
+        private static double[] ResolveDimensions(IList<ShapeGeometry> shapes, IList<LayoutConstraint> relations,
+            IDictionary<string, int> indices, string driver, ShapeGeometry target, GeometryEditMode mode)
         {
-            var groups = new DisjointSets(component.Select(shape => shape.Id));
-            foreach (var relation in relations.Where(item => item.Kind == kind))
-                for (int i = 1; i < relation.ShapeIds.Count; i++) groups.Join(relation.ShapeIds[0], relation.ShapeIds[i]);
-            var chosen = new Dictionary<string, double>(StringComparer.Ordinal);
-            foreach (var shape in component)
+            int count = shapes.Count * 2;
+            var edges = Enumerable.Range(0, count).Select(i => (IList<SizeEdge>)new List<SizeEdge>()).ToArray();
+            var fixedValues = new List<SizeValue>();
+            var preferred = new List<SizeValue>();
+            foreach (var relation in relations)
             {
-                string root = groups.Find(shape.Id);
-                if (!chosen.ContainsKey(root)) chosen.Add(root, size(shape));
+                int first = indices[relation.ShapeIds[0]] * 2;
+                bool symmetric = relation.Kind == ConstraintKind.SymmetricVertical || relation.Kind == ConstraintKind.SymmetricHorizontal;
+                if (relation.Kind == ConstraintKind.SameWidth || relation.Kind == ConstraintKind.SameHeight || symmetric)
+                    for (int i = 1; i < relation.ShapeIds.Count; i++)
+                    {
+                        int second = indices[relation.ShapeIds[i]] * 2;
+                        if (relation.Kind != ConstraintKind.SameHeight) JoinSize(edges, first, second, 1);
+                        if (relation.Kind != ConstraintKind.SameWidth) JoinSize(edges, first + 1, second + 1, 1);
+                    }
+                else if (relation.Kind == ConstraintKind.AspectRatio) JoinSize(edges, first + 1, first, relation.Value.Value);
+                else if (relation.Kind == ConstraintKind.FixedWidth) fixedValues.Add(new SizeValue(first, relation.Value.Value));
+                else if (relation.Kind == ConstraintKind.FixedHeight) fixedValues.Add(new SizeValue(first + 1, relation.Value.Value));
             }
-            chosen[groups.Find(driver)] = requestedSize;
-            return component.Select(shape => chosen[groups.Find(shape.Id)]).ToArray();
+            if (driver != null)
+            {
+                int at = indices[driver] * 2;
+                if (mode == GeometryEditMode.Exact || mode == GeometryEditMode.Move)
+                {
+                    ShapeGeometry requested = mode == GeometryEditMode.Move ? shapes[indices[driver]] : target;
+                    fixedValues.Add(new SizeValue(at, requested.Width));
+                    fixedValues.Add(new SizeValue(at + 1, requested.Height));
+                }
+                else if (mode == GeometryEditMode.ResizeE || mode == GeometryEditMode.ResizeW)
+                    fixedValues.Add(new SizeValue(at, target.Width));
+                else if (mode == GeometryEditMode.ResizeN || mode == GeometryEditMode.ResizeS)
+                    fixedValues.Add(new SizeValue(at + 1, target.Height));
+                else
+                {
+                    // With a ratio there is only one dimension DOF. Project a
+                    // corner's two requested dimensions onto that required line.
+                    preferred.Add(new SizeValue(at, target.Width));
+                    preferred.Add(new SizeValue(at + 1, target.Height));
+                }
+            }
+            var baseline = shapes.SelectMany(shape => new[] { shape.Width, shape.Height }).ToArray();
+            var factors = new double[count];
+            var visited = new bool[count];
+            var output = new double[count];
+            for (int root = 0; root < count; root++)
+            {
+                if (visited[root]) continue;
+                var members = new List<int>();
+                var queue = new Queue<int>();
+                queue.Enqueue(root); visited[root] = true; factors[root] = 1;
+                while (queue.Count > 0)
+                {
+                    int current = queue.Dequeue(); members.Add(current);
+                    foreach (var edge in edges[current])
+                    {
+                        double factor = factors[current] * edge.Factor;
+                        if (!Finite(factor) || factor <= 0)
+                            throw new ConstraintConflictException("Dimension ratios exceed the supported numerical range.");
+                        if (!visited[edge.To])
+                        { factors[edge.To] = factor; visited[edge.To] = true; queue.Enqueue(edge.To); }
+                        else if (Math.Abs(factors[edge.To] - factor) > 1e-9 * Math.Max(factors[edge.To], factor))
+                            throw new ConstraintConflictException("Dimension equality and ratio constraints are inconsistent.");
+                    }
+                }
+                double scale = members.Max(i => factors[i]);
+                foreach (int member in members) factors[member] /= scale;
+                var memberSet = new HashSet<int>(members);
+                var required = fixedValues.Where(value => memberSet.Contains(value.Index)).ToList();
+                var requested = preferred.Where(value => memberSet.Contains(value.Index)).ToList();
+                double lower = members.Max(i => MinimumSize / factors[i]);
+                double chosen;
+                if (required.Count > 0)
+                {
+                    chosen = required[0].Value / factors[required[0].Index];
+                    if (required.Any(value => Math.Abs(factors[value.Index] * chosen - value.Value) > ResidualTolerance))
+                        throw new ConstraintConflictException("The requested size conflicts with fixed dimensions, equal sizes or aspect ratios.");
+                    if (chosen < lower - ResidualTolerance)
+                        throw new ConstraintConflictException("The requested size would make a linked dimension smaller than one point.");
+                }
+                else if (requested.Count > 0)
+                    chosen = requested.Sum(value => factors[value.Index] * value.Value) /
+                        requested.Sum(value => factors[value.Index] * factors[value.Index]);
+                else chosen = members.Sum(i => factors[i] * baseline[i]) / members.Sum(i => factors[i] * factors[i]);
+                chosen = Math.Max(chosen, lower);
+                if (!Finite(chosen)) throw new ConstraintConflictException("Dimension constraints exceed the supported numerical range.");
+                foreach (int member in members)
+                {
+                    output[member] = Math.Max(MinimumSize, factors[member] * chosen);
+                    if (!Finite(output[member])) throw new ConstraintConflictException("Dimension constraints exceed the supported numerical range.");
+                }
+            }
+            return output;
+        }
+
+        private static void JoinSize(IList<SizeEdge>[] edges, int from, int to, double factor)
+        { edges[from].Add(new SizeEdge(to, factor)); edges[to].Add(new SizeEdge(from, 1 / factor)); }
+
+        private static double[] DrivenPosition(ShapeGeometry start, ShapeGeometry target, double width, double height, GeometryEditMode mode)
+        {
+            if (mode == GeometryEditMode.Exact || mode == GeometryEditMode.Move) return new[] { target.Left, target.Top };
+            bool west = mode == GeometryEditMode.ResizeW || mode == GeometryEditMode.ResizeNW || mode == GeometryEditMode.ResizeSW;
+            bool north = mode == GeometryEditMode.ResizeN || mode == GeometryEditMode.ResizeNW || mode == GeometryEditMode.ResizeNE;
+            bool verticalOnly = mode == GeometryEditMode.ResizeN || mode == GeometryEditMode.ResizeS;
+            bool horizontalOnly = mode == GeometryEditMode.ResizeE || mode == GeometryEditMode.ResizeW;
+            return new[] {
+                verticalOnly ? start.Left + (start.Width - width) / 2 : west ? start.Left + start.Width - width : start.Left,
+                horizontalOnly ? start.Top + (start.Height - height) / 2 : north ? start.Top + start.Height - height : start.Top
+            };
         }
 
         private static double[] ResolvePositions(IList<ShapeGeometry> component, IList<LayoutConstraint> relations,
-            IDictionary<string, int> indices, double[] sizes, string driver, double requestedPosition, bool horizontal)
+            IDictionary<string, int> indices, double[] sizes, string driver, double? requestedPosition, bool horizontal)
         {
             int count = component.Count;
             var rows = new List<double[]>();
             var values = new List<double>();
-            ConstraintKind alignment = horizontal ? ConstraintKind.SameX : ConstraintKind.SameY;
-            ConstraintKind spacing = horizontal ? ConstraintKind.EqualHorizontalGap : ConstraintKind.EqualVerticalGap;
             foreach (var relation in relations)
             {
-                if (relation.Kind == alignment)
+                int first = indices[relation.ShapeIds[0]];
+                double? edge = AlignmentEdge(relation.Kind, horizontal);
+                if (edge.HasValue)
                 {
-                    int first = indices[relation.ShapeIds[0]];
                     for (int i = 1; i < relation.ShapeIds.Count; i++)
                     {
-                        var row = new double[count]; row[indices[relation.ShapeIds[i]]] = 1; row[first] = -1;
-                        rows.Add(row); values.Add(0);
+                        int second = indices[relation.ShapeIds[i]];
+                        var row = new double[count]; row[second] = 1; row[first] = -1;
+                        rows.Add(row); values.Add(edge.Value * (sizes[first] - sizes[second]));
                     }
                 }
-                else if (relation.Kind == spacing)
+                else if (relation.Kind == ConstraintKind.FixedPosition)
                 {
-                    // p[i+1] - p[i] - size[i] = p[1] - p[0] - size[0].
-                    int first = indices[relation.ShapeIds[0]], second = indices[relation.ShapeIds[1]];
+                    var row = new double[count]; row[first] = 1;
+                    rows.Add(row); values.Add(horizontal ? relation.Value.Value : relation.SecondaryValue.Value);
+                }
+                else if (relation.Kind == ConstraintKind.Offset)
+                {
+                    var row = new double[count]; row[indices[relation.ShapeIds[1]]] = 1; row[first] = -1;
+                    rows.Add(row); values.Add(horizontal ? relation.Value.Value : relation.SecondaryValue.Value);
+                }
+                else if (relation.Kind == (horizontal ? ConstraintKind.SymmetricVertical : ConstraintKind.SymmetricHorizontal))
+                {
+                    int second = indices[relation.ShapeIds[1]];
+                    var row = new double[count]; row[first] = 1; row[second] = 1;
+                    rows.Add(row); values.Add(2 * relation.Value.Value - (sizes[first] + sizes[second]) / 2);
+                }
+                else if (relation.Kind == (horizontal ? ConstraintKind.FixedHorizontalGap : ConstraintKind.FixedVerticalGap))
+                {
+                    for (int i = 1; i < relation.ShapeIds.Count; i++)
+                    {
+                        int left = indices[relation.ShapeIds[i - 1]], right = indices[relation.ShapeIds[i]];
+                        var row = new double[count]; row[right] = 1; row[left] = -1;
+                        rows.Add(row); values.Add(sizes[left] + relation.Value.Value);
+                    }
+                }
+                else if (relation.Kind == (horizontal ? ConstraintKind.EqualHorizontalGap : ConstraintKind.EqualVerticalGap))
+                {
+                    int second = indices[relation.ShapeIds[1]];
                     for (int i = 1; i < relation.ShapeIds.Count - 1; i++)
                     {
                         int left = indices[relation.ShapeIds[i]], right = indices[relation.ShapeIds[i + 1]];
@@ -167,22 +348,37 @@ namespace PptGcs.Core
                     }
                 }
             }
-
-            // Eliminate the driven coordinate rather than making it a soft target.
-            // The remaining solution is the least movement needed for this edit.
-            int driverIndex = indices[driver];
+            int driverIndex = driver == null ? -1 : indices[driver];
             var baseline = component.Select(shape => horizontal ? shape.Left : shape.Top).ToArray();
-            baseline[driverIndex] = requestedPosition;
+            if (driverIndex >= 0) baseline[driverIndex] = requestedPosition.Value;
             if (rows.Count == 0) return baseline;
             var free = Enumerable.Range(0, count).Where(index => index != driverIndex).ToArray();
+            var rhs = Vector<double>.Build.Dense(rows.Count, row => values[row] -
+                (driverIndex < 0 ? 0 : rows[row][driverIndex] * requestedPosition.Value));
+            if (free.Length == 0)
+            {
+                if (rhs.AbsoluteMaximum() > ResidualTolerance) throw PositionConflict(horizontal);
+                return baseline;
+            }
             var a = Matrix<double>.Build.Dense(rows.Count, free.Length, (row, column) => rows[row][free[column]]);
-            var rhs = Vector<double>.Build.Dense(rows.Count, row => values[row] - rows[row][driverIndex] * requestedPosition);
             var start = Vector<double>.Build.Dense(free.Length, column => baseline[free[column]]);
             Vector<double> result = start + a.PseudoInverse() * (rhs - a * start);
-            if ((a * result - rhs).AbsoluteMaximum() > ResidualTolerance)
-                throw new ConstraintConflictException("The requested edit conflicts with the " + (horizontal ? "horizontal" : "vertical") + " constraints.");
+            if ((a * result - rhs).AbsoluteMaximum() > ResidualTolerance) throw PositionConflict(horizontal);
             for (int i = 0; i < free.Length; i++) baseline[free[i]] = result[i];
             return baseline;
+        }
+
+        private static ConstraintConflictException PositionConflict(bool horizontal)
+        { return new ConstraintConflictException("The requested edit conflicts with the " + (horizontal ? "horizontal" : "vertical") + " constraints."); }
+
+        private static double? AlignmentEdge(ConstraintKind kind, bool horizontal)
+        {
+            if (kind == ConstraintKind.CentersCoincident) return 0.5;
+            if (kind == (horizontal ? ConstraintKind.SameX : ConstraintKind.SameY) ||
+                kind == (horizontal ? ConstraintKind.SymmetricHorizontal : ConstraintKind.SymmetricVertical)) return 0;
+            if (kind == (horizontal ? ConstraintKind.RightAligned : ConstraintKind.BottomAligned)) return 1;
+            if (kind == (horizontal ? ConstraintKind.CenterXAligned : ConstraintKind.CenterYAligned)) return 0.5;
+            return null;
         }
 
         private static double Attribute(ShapeGeometry shape, ConstraintKind kind)
@@ -193,25 +389,26 @@ namespace PptGcs.Core
                 case ConstraintKind.SameY: return shape.Top;
                 case ConstraintKind.SameWidth: return shape.Width;
                 case ConstraintKind.SameHeight: return shape.Height;
+                case ConstraintKind.RightAligned: return shape.Left + shape.Width;
+                case ConstraintKind.BottomAligned: return shape.Top + shape.Height;
+                case ConstraintKind.CenterXAligned: return shape.Left + shape.Width / 2;
+                case ConstraintKind.CenterYAligned: return shape.Top + shape.Height / 2;
                 default: throw new ArgumentOutOfRangeException("kind");
             }
         }
 
         private static double Gap(ShapeGeometry left, ShapeGeometry right, bool horizontal)
+        { return horizontal ? right.Left - left.Left - left.Width : right.Top - left.Top - left.Height; }
+        private static bool Finite(double value) { return !Double.IsNaN(value) && !Double.IsInfinity(value); }
+        private sealed class SizeEdge
         {
-            return horizontal ? right.Left - left.Left - left.Width : right.Top - left.Top - left.Height;
+            public readonly int To; public readonly double Factor;
+            public SizeEdge(int to, double factor) { To = to; Factor = factor; }
         }
-
-        private sealed class DisjointSets
+        private sealed class SizeValue
         {
-            private readonly Dictionary<string, string> parent;
-            public DisjointSets(IEnumerable<string> ids) { parent = ids.ToDictionary(id => id, id => id, StringComparer.Ordinal); }
-            public string Find(string id)
-            {
-                if (parent[id] != id) parent[id] = Find(parent[id]);
-                return parent[id];
-            }
-            public void Join(string a, string b) { parent[Find(b)] = Find(a); }
+            public readonly int Index; public readonly double Value;
+            public SizeValue(int index, double value) { Index = index; Value = value; }
         }
     }
 }

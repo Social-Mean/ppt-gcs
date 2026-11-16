@@ -1,5 +1,7 @@
 # 复制矩形编号修复
 
+本文件记录 v0.2 阶段的实现与验证。文中发现的“新增/移除约束元数据不进入原生撤销”问题，已在 v0.3 改用原生标签存储后修复。相同的“复制 → 新增副本关系 → Undo 关系 → Undo 复制 → Redo 复制 → Redo 关系”链现已在实际 PowerPoint 中完整通过，见 [v0.3 复制历史报告](../artifacts/v3-copy-validation/latest.json) 和 [v0.3 验证记录](validation-v3.md)。下方当时的失败记录继续保留，不代表当前版本状态。
+
 日期：2026-11-16。Windows 桌面 PowerPoint 16.0；约束存储仍为 `urn:ppt-gcs:v2`。
 
 ## 原因与行为

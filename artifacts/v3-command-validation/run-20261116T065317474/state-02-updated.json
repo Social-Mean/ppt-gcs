@@ -1,0 +1,66 @@
+﻿{
+    "Utc":  "2026-11-16T06:53:18.8282044Z",
+    "ProcessId":  [
+                      28836
+                  ],
+    "State":  {
+                  "Path":  "D:\\code\\ppt-gcs\\artifacts\\v3-command-validation\\run-20261116T065317474\\commands.pptx",
+                  "PresentationTags":  [
+                                           {
+                                               "Name":  "PPTGCS_CONSTRAINTS",
+                                               "Value":  "3C636F6E73747261696E747320786D6C6E733D2275726E3A7070742D6763733A7632223E3C636F6E73747261696E742069643D2237393443433030322D454237392D343630442D413338302D3436384134424532303042332220736C69646549643D2232353622206B696E643D2246697865645769647468222076616C75653D22323230223E3C73686170652069643D2237314346464234302D323534452D343232462D394538352D35323531303538374539423222202F3E3C2F636F6E73747261696E743E3C2F636F6E73747261696E74733E"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_DOCUMENT",
+                                               "Value":  "431BB4E0-B84B-43AE-B9D0-F1375FF8E61B"
+                                           },
+                                           {
+                                               "Name":  "PPTGCS_TEST",
+                                               "Value":  "V3"
+                                           }
+                                       ],
+                  "ConstraintXml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"794CC002-EB79-460D-A380-468A4BE200B3\" slideId=\"256\" kind=\"FixedWidth\" value=\"220\"\u003e\u003cshape id=\"71CFFB40-254E-422F-9E85-52510587E9B2\" /\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+                  "Slides":  [
+                                 {
+                                     "Id":  256,
+                                     "Name":  "CommandHistory",
+                                     "Tags":  [
+
+                                              ],
+                                     "Shapes":  [
+                                                    {
+                                                        "NativeId":  2,
+                                                        "Name":  "History_A",
+                                                        "Tags":  [
+                                                                     {
+                                                                         "Name":  "PPTGCS_ID",
+                                                                         "Value":  "71CFFB40-254E-422F-9E85-52510587E9B2"
+                                                                     },
+                                                                     {
+                                                                         "Name":  "PPTGCS_OWNER",
+                                                                         "Value":  "431BB4E0-B84B-43AE-B9D0-F1375FF8E61B/256/2"
+                                                                     }
+                                                                 ],
+                                                        "Left":  100,
+                                                        "Top":  140,
+                                                        "Width":  220,
+                                                        "Height":  80,
+                                                        "Rotation":  0
+                                                    },
+                                                    {
+                                                        "NativeId":  3,
+                                                        "Name":  "History_B",
+                                                        "Tags":  [
+
+                                                                 ],
+                                                        "Left":  450,
+                                                        "Top":  240,
+                                                        "Width":  150,
+                                                        "Height":  110,
+                                                        "Rotation":  0
+                                                    }
+                                                ]
+                                 }
+                             ]
+              }
+}

@@ -46,7 +46,7 @@ internal static class IdentityTests
         var p = Fixture();
         var manager = new ShapeIdentityManager();
         manager.Normalize(p);
-        string xml = p.CustomXMLParts[1].XML;
+        string xml = NativeConstraintStore.Read(p).ToXml();
         var original = p.Slides[1].Shapes[1];
         var other = p.Slides[1].Shapes[2];
         string originalOwner = original.Tags[ShapeIdentityManager.OwnerTagName];
@@ -57,7 +57,7 @@ internal static class IdentityTests
         Assert(Id(original) == A && Id(other) == B, "An original GUID changed.");
         Assert(original.Tags[ShapeIdentityManager.OwnerTagName] == originalOwner, "Original ownership changed.");
         Assert(Id(copy) != A && Id(copy) != B, "Copy retained an existing GUID.");
-        Assert(p.CustomXMLParts[1].XML == xml, "Constraint XML changed.");
+        Assert(NativeConstraintStore.Read(p).ToXml() == xml, "Constraint XML changed.");
         Assert(Geometry(p) == geometry, "Identity repair changed shape geometry.");
         AssertOwner(p, p.Slides[1], copy);
         Unique(p);
@@ -134,9 +134,9 @@ internal static class IdentityTests
         var original = p.Slides[1].Shapes[1];
         p.Slides[1].Shapes.Add(original.Copy(6));
         p.Slides[1].Shapes.Add(original.Copy(7));
-        string xml = p.CustomXMLParts[1].XML;
+        string xml = NativeConstraintStore.Read(p).ToXml();
         Assert(new ShapeIdentityManager().Normalize(p) == 2);
-        Assert(Id(original) == A && p.CustomXMLParts[1].XML == xml);
+        Assert(Id(original) == A && NativeConstraintStore.Read(p).ToXml() == xml);
         Unique(p);
     }
 
@@ -170,12 +170,12 @@ internal static class IdentityTests
             var copy = p.Slides[1].Shapes[1].Copy(6);
             p.Slides[1].Shapes.Add(copy);
             string before = Tags(p);
-            string xml = p.CustomXMLParts[1].XML;
+            string xml = NativeConstraintStore.Read(p).ToXml();
             copy.Tags.FailNextAddName = ShapeIdentityManager.OwnerTagName;
             copy.Tags.FailAfterAdd = afterWrite;
             Throws(() => new ShapeIdentityManager().Normalize(p));
             Assert(Tags(p) == before, "Partial identity changes survived a failed tag write.");
-            Assert(p.CustomXMLParts[1].XML == xml);
+            Assert(NativeConstraintStore.Read(p).ToXml() == xml);
             Assert(new ShapeIdentityManager().Normalize(p) == 1, "Repair was not retryable after rollback.");
             Unique(p);
         }
@@ -235,13 +235,13 @@ internal static class IdentityTests
 }
 
 // Public types let the production DLL's dynamic binder use the same surface as
-// the Office object model. The fixture intentionally exposes no XML mutation API.
+// the Office object model. Native tags are the only constraint storage surface.
 public sealed class IdentityPresentation
 {
     public IdentityTags Tags { get; private set; } = new IdentityTags();
     public IdentityItems<IdentitySlide> Slides { get; private set; } = new IdentityItems<IdentitySlide>();
-    public IdentityXmlParts CustomXMLParts { get; private set; }
-    public IdentityPresentation(string xml) { CustomXMLParts = new IdentityXmlParts(xml); }
+    public IdentityXmlParts CustomXMLParts { get; private set; } = new IdentityXmlParts();
+    public IdentityPresentation(string xml) { Tags.Seed(NativeConstraintStore.TagName, NativeConstraintStore.EncodeXml(xml)); }
 }
 
 public sealed class IdentitySlide
@@ -277,6 +277,7 @@ public sealed class IdentityTags
     public string FailNextAddName { get; set; }
     public bool FailAfterAdd { get; set; }
     public string this[string name] { get { return values.TryGetValue(name, out string value) ? value : ""; } }
+    public void Seed(string name, string value) { values[name.ToUpperInvariant()] = value.ToUpperInvariant(); }
     public void Add(string name, string value)
     {
         bool fail = String.Equals(name, FailNextAddName, StringComparison.OrdinalIgnoreCase);
@@ -310,18 +311,9 @@ public sealed class IdentityItems<T> : IEnumerable<T>
     IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 }
 
-public sealed class IdentityXmlPart
-{
-    public string XML { get; private set; }
-    public IdentityXmlPart(string xml) { XML = xml; }
-}
-
 public sealed class IdentityXmlParts
 {
-    private readonly IdentityXmlPart part;
-    public int Count { get { return 1; } }
-    public IdentityXmlPart this[int index] { get { if (index != 1) throw new IndexOutOfRangeException(); return part; } }
-    public IdentityXmlParts(string xml) { part = new IdentityXmlPart(xml); }
+    public int Count { get { return 0; } }
     public IdentityXmlParts SelectByNamespace(string value)
     {
         if (value != ConstraintDocument.NamespaceUri) throw new InvalidOperationException("Unexpected XML namespace.");

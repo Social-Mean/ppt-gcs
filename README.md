@@ -1,14 +1,14 @@
 # PPT GCS
 
-Windows 桌面 PowerPoint 的几何约束插件原型。v0.2 支持同 X、同 Y、同宽、同高，以及水平、垂直等间距；关系可组合，编辑任意成员都会求解它所在的约束连通分量。
+Windows 桌面 PowerPoint 的矩形排版约束插件。v0.3 支持 20 种约束、原生可停靠的“对象与约束”窗格、中键八向轮盘，以及约束新增、修改、启停、删除和几何编辑的原生撤销/重做。
 
-**v0.2 已在本机通过真实鼠标端到端验收。** 六种约束分别由两个不同成员驱动，共 13 次移动/缩放、567 次鼠标按住期间的几何更新；每帧约束和独立端点检查通过。13 次原生 Undo、13 次 Redo 逐步恢复完整布局，保存并重启 PowerPoint 后几何、GUID 和约束 XML 一致。结果见 [验收报告](artifacts/layout-v2-validation/acceptance.json) 和 [验证记录](docs/validation-v2.md)。这些日志记录实际几何写回，不是渲染 FPS。
+**v0.3 已通过本机程序化、代表性真实鼠标交互及新进程保存重开验收。** 20 类约束、36 次程序化驱动通过独立几何公式和原生 Undo/Redo；真实中键轮盘创建了同宽和水平等间距，窗格完成宽高比参数及启停/删除操作，6 次受约束手势记录了 349 帧鼠标按住期间的更新。完整 14 步 Undo/Redo、新进程重开后的 20 类关系，以及复制后建立关系的原生历史链均通过。详情见 [v0.3 验证记录](docs/validation-v3.md)，其中区分全部类型的程序化覆盖和代表路径的物理鼠标覆盖。
 
-编译、28 项核心测试、交互几何和消息队列检查也已通过。额外的 [程序化回放](artifacts/layout-v2-replay/report.json) 覆盖 12 个主用例（36 帧）、每例额外 15 px 释放端点变化，以及 14 次原生 Undo 和 14 次 Redo（含两步历史链）；它是补充证据，不计入上面的真实鼠标帧数。v0.1 顶部联动结果保留在 [历史记录](docs/validation.md)。
+历史版本的真实鼠标结果保留在 [v0.2 记录](docs/validation-v2.md) 和 [v0.1 记录](docs/validation.md)。当前真实操作报告见 [v0.3 交互验收](artifacts/v3-interaction/acceptance.json)。几何日志记录实际写回采样，不代表渲染 FPS。
 
 ## 构建与安装
 
-当前仅面向 **Windows + 64 位桌面 PowerPoint**。开发机需要 Visual Studio 的 MSBuild、Roslyn 编译器，以及已安装的 Microsoft Office / Office PIA。项目使用 .NET Framework 4.8 原生 COM 加载项，不依赖 VSTO 项目模板或 .NET SDK。
+当前仅面向 **Windows + 64 位桌面 PowerPoint**。开发机需要 Visual Studio 的 MSBuild、Roslyn 编译器、C++ x64 工具、Windows SDK、ATL，以及已安装的 Microsoft Office / Office PIA。项目使用 .NET Framework 4.8 原生 COM 加载项，不依赖 VSTO 项目模板或 .NET SDK。
 
 关闭 PowerPoint 后，在项目根目录的 64 位 PowerShell 中运行：
 
@@ -17,43 +17,62 @@ Windows 桌面 PowerPoint 的几何约束插件原型。v0.2 支持同 X、同 Y
 .\scripts\Install.ps1
 ```
 
-`Build.ps1` 编译两个项目并运行核心测试，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`；无需在系统中安装 net48 targeting pack。MathNet 使用 MIT 许可证，项目引用其 net48 程序集。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
+`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行核心、编号、存储、窗格和轮盘的 98 项检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`；无需在系统中安装 net48 targeting pack。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
 
-`Install.ps1` 只写入当前用户的 COM 类与 PowerPoint 加载项注册表项，不需要管理员权限。重新打开 PowerPoint 后应出现 **PPT GCS** 功能区。注册指向本项目的 `bin/PptGcs.AddIn.dll`；移动项目目录后需重新运行安装脚本。重新构建前请关闭 PowerPoint，避免加载中的 DLL 被占用。
+`Install.ps1` 注册当前用户的加载项和 `PptGcs.ConstraintPaneHost` 原生控件，不需要管理员权限。重新打开 PowerPoint 后应出现 **PPT GCS** 功能区。注册指向本项目的 DLL；移动项目目录后需重新运行安装脚本。重新构建前请关闭 PowerPoint，避免加载中的 DLL 被占用。
 
 也可以用 Visual Studio 打开 `PptGcs.sln` 编辑源码。安装脚本使用的统一输出目录由 `Build.ps1` 生成。
 
 ## 建立与编辑约束
+
+v0.3 提供 20 种关系：左边、右边、顶部、底部、水平中心、垂直中心对齐和中心重合；同宽、同高、固定宽度、固定高度、固定宽高比、固定位置；水平/垂直等间距、固定水平/垂直间距；相对 X/Y 偏移；关于固定水平轴/垂直轴对称。
 
 1. 在同一页选中至少两个未旋转、未分组的普通矩形，点击 **同 X（左边对齐）**、**同 Y（顶部对齐）**、**同宽** 或 **同高**。
 2. 建立等间距时至少选中三个矩形，点击 **水平等间距** 或 **垂直等间距**。建立时按对应坐标排序，之后始终按这个已记录的成员顺序计算。
 3. 从矩形内部拖动可以移动它；先选中一个矩形，再拖动原生选择框的八个缩放点，可以调整大小。拖动西侧、北侧或角点时，以相对一侧为锚点计算新几何。
 4. 同宽或同高关系会传播对应尺寸。位置和间距约束根据更新后的尺寸重新求解，其余位置尽量少移动。
 5. 选中关系中的对象，点击 **移除选中对象的约束** 可移除相关关系；**状态** 显示当前载入情况和日志路径。
-6. **新建六组演示** 会生成六页测试文稿，每页写有操作说明，也可打开 [layout-v2.pptx](artifacts/layout-v2.pptx)。
+6. **新建六组演示** 会生成使用新存储的基础测试文稿，每页写有操作说明，也可打开 [v0.3 交互测试文稿](artifacts/v3-validation/layout-v3.pptx)。
 
 X、Y 分别指矩形的左侧、顶部坐标。间距按相邻矩形的边缘计算，不是中心间距。等间距的数值没有固定，也没有固定首尾：拖动目标按编辑位置确定，其他位置采用最小平方位移解。
 
-间距是**有符号的边缘间距**，允许变为负数而出现重叠；这项约束不等于“不重叠”或“固定间距”。拖动过程中不重新排序成员。
+间距是**有符号的边缘间距**，允许变为负数而出现重叠。等间距的数值可以变化；固定间距还要求等于输入的值。拖动过程中不重新排序成员。固定位置表示左侧 X 和顶部 Y 不变，仍允许兼容的尺寸编辑；宽高比为“宽 / 高”；偏移为第二个对象相对第一个对象的 X/Y 差；轴对称是两个等尺寸矩形关于输入坐标轴的完整镜像。坐标和尺寸单位为磅（pt）。
+
+## 对象与约束窗格
+
+点击 **PPT GCS → 对象与约束** 打开右侧可停靠窗格。它是独立 Office 自定义任务窗格，不改写内置选择窗格。对象列表和关系列表支持“当前页全部 / 仅所选对象”过滤，点击对象或关系会同步选中画布成员。
+
+关系列表显示类型、成员顺序、参数及已满足、未满足、已禁用或对象缺失状态。可以创建关系、修改数值、启用/停用，以及只删除选中的一条关系。等间距保持一条多成员关系。Ribbon、窗格和轮盘共用同一套命令，提交前先求解，冲突时保持原状态。
+
+## 中键轮盘
+
+先选中对象，再在幻灯片画布中按住中键，向目标扇区移动，松开确认；回到中心释放或按 Esc 取消。八个固定扇区为左边对齐、顶部对齐、同宽、同高、水平等距、垂直等距、更多约束、查看约束。
+
+对象数量不足的命令置灰，预览不写入文稿，确认后才创建关系。“更多约束”打开窗格编辑器，数值约束在窗格中输入。中键仅在 PowerPoint 幻灯片画布接管，滚轮滚动仍交给 PowerPoint。
+
+## 适用范围与复制
 
 普通鼠标拖动和缩放由插件接管。按住 Ctrl、Alt 或 Shift 时保留 PowerPoint 原生手势，该手势不会由插件维持约束；键盘微移、位置/尺寸面板编辑和多选拖动的联动尚未纳入当前实现。
 
 复制已标记的矩形时，副本会自动获得新的唯一编号，不继承原件的约束；可以选中副本建立独立关系。支持同页复制、复制副本，以及跨页、跨文稿粘贴。原件编号与已有约束保持不变，详见 [复制编号修复与验证](docs/copy-identity-validation.md)。
 
-原生撤销/重做已覆盖复制和受约束的拖动、缩放。**新增或移除约束本身的 XML 更新尚未纳入 PowerPoint 原生撤销。** 因此新增约束后按撤销可能直接回退更早的形状操作；不要将此前的几何历史验收理解为约束创建/删除历史也已支持。
+原生撤销/重做现在覆盖约束新增、修改、启停、删除，以及受约束的几何编辑。此前仅更新 CustomXMLParts 导致的元数据历史缺口已修复；“复制 → 新建副本关系 → 撤销关系 → 撤销复制 → 重做复制 → 重做关系”链也已在实际 PowerPoint 中通过，见 [复制历史报告](artifacts/v3-copy-validation/latest.json)。历史失败证据仍保留。
+
+当前支持同页未旋转、未分组普通矩形，不是通用 CAD 曲线求解器。任意旋转、相切曲线、三维配合、不重叠不等式及完整自由度诊断不在当前范围；已有关系满足不意味着对象已无移动自由度。
 
 ## 数据与验证
 
-- `PptGcs.Core`：不依赖 Office 的约束模型、XML 校验、同尺寸分组传播，以及使用 MathNet SVD 的线性位置约束求解。每次只修改被编辑对象所在的约束连通分量；新增约束会先试算，冲突时不写入几何。
+- `PptGcs.Core`：不依赖 Office 的约束模型、XML 校验、比例尺寸组，以及使用 MathNet 的线性位置约束求解。几何编辑只传播到相关连通分量，参数修改可以进行无驱动对象的归一化求解。
 - `PptGcs.AddIn`：PowerPoint COM 接入、功能区、鼠标移动与八方向缩放、原生 Undo 边界及文档存储。
-- 约束保存在演示文稿的 `CustomXMLParts`，命名空间为 `urn:ppt-gcs:v2`；矩形通过 `PPTGCS_ID` GUID 标签关联。文件仍是普通 `.pptx`。
+- `ConstraintCommands` 提供三个 UI 入口共用的原子命令；`NativeConstraintStore` 将权威 XML 用 UTF-8 转大写 HEX 存入演示文稿 `PPTGCS_CONSTRAINTS` 标签，随几何进入原生历史。XML 上限为 1 MiB UTF-8，语义命名空间仍为 `urn:ppt-gcs:v2`。
 - `ShapeIdentityManager` 用文稿令牌、Slide ID 和原生 Shape ID 记录编号归属；复制后的对象分配新 GUID，原件的关系引用不变。编号处理只更新标签，不改写几何或约束 XML。
-- v0.2 不读取或迁移 v0.1 约束格式。旧 [two-rectangles.pptx](artifacts/two-rectangles.pptx) 和对应验收证据是历史归档，当前演示请使用六页 v0.2 文稿。
-- 日志写入 `%LOCALAPPDATA%/PptGcs/layout-v2.log`。实际验收快照保存在 `artifacts/layout-v2-validation/`。
+- `PptGcs.PaneHost` 为原生 ATL ActiveX 宿主，承载托管 WinForms 窗格内容。
+- v0.3 不保留旧 `CustomXMLParts` 或 v0.1 的运行时兼容路径，不自动迁移。当前会话的用户文稿已在备份后一次性保留全部 14 条原关系并另存为新存储工作副本；私人文稿和备份不进入仓库。旧文稿与验证记录作为历史证据保留。
+- 日志仍写入 `%LOCALAPPDATA%/PptGcs/layout-v2.log`，v0.3 验收目录和报告见 [验证记录](docs/validation-v3.md)。
 
-`scripts/TestLayoutDocument.ps1` 需通过 Windows PowerShell 5.1 运行，用于六页测试文稿的创建、选页、保存、重开和快照。写入和关闭前会核对六页的测试标记。
+当前程序化验收脚本需通过 Windows PowerShell 5.1 运行：`TestV3Commands.ps1 -CheckPane` 检查事务和窗格，`TestV3Constraints.ps1` 检查 20 类关系，`TestV3CopyHistory.ps1` 检查复制及新关系的连续历史，`TestV3Persistence.ps1` 以 Capture/Verify 两阶段核对新进程重开。命令和复制脚本只创建和关闭自己的测试文稿；持久化脚本只读当前指定的测试文稿，重启由调用者执行。
 
-`python scripts/VerifyLayoutEvidence.py` 核对已有的真实操作日志、每一步撤销/重做快照，以及重启前后的文档状态。缺少任何必需证据都会失败；它不会自动控制 PowerPoint 或生成鼠标拖动数据。
+旧 `TestLayoutDocument.ps1` 和 `VerifyLayoutEvidence.py` 对应历史六类约束证据，不能作为当前版本全部功能的通过证明。
 
 ## 卸载
 
@@ -63,4 +82,4 @@ X、Y 分别指矩形的左侧、顶部坐标。间距按相邻矩形的边缘�
 .\scripts\Uninstall.ps1
 ```
 
-脚本只删除该插件的当前用户注册表项。PPT 文件与其中的约束数据保留；未加载插件时，矩形仍按普通 PowerPoint 形状显示。
+脚本删除插件和原生窗格宿主的当前用户注册项。PPT 文件与其中的约束数据保留；未加载插件时，矩形仍按普通 PowerPoint 形状显示。
