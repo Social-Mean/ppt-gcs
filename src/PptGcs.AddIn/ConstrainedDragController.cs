@@ -18,6 +18,7 @@ namespace PptGcs.AddIn
         private const double HandleRadius = 8.0;
         private readonly dynamic application;
         private readonly Action<string, string> log;
+        private readonly Action normalizeIdentities;
         private readonly uint uiThreadId;
         private readonly MouseHook hookDelegate;
         private readonly KeyboardHook keyboardDelegate;
@@ -29,12 +30,14 @@ namespace PptGcs.AddIn
 
         public bool IsDragging { get { return gesture != null; } }
 
-        public ConstrainedDragController(object application, Action<string, string> log)
+        public ConstrainedDragController(object application, Action<string, string> log, Action normalizeIdentities)
         {
             if (application == null) throw new ArgumentNullException("application");
             if (log == null) throw new ArgumentNullException("log");
+            if (normalizeIdentities == null) throw new ArgumentNullException("normalizeIdentities");
             this.application = application;
             this.log = log;
+            this.normalizeIdentities = normalizeIdentities;
             uiThreadId = GetCurrentThreadId();
             hookDelegate = OnMouse;
             hook = SetWindowsHookEx(WhMouse, hookDelegate, IntPtr.Zero, uiThreadId);
@@ -124,6 +127,7 @@ namespace PptGcs.AddIn
             if (offsets == null || offsets.Length < 2 || offsets.Any(p => p == null || p.Length != 2 ||
                 p.Any(v => Double.IsNaN(v) || Double.IsInfinity(v))))
                 throw new ArgumentException("Supply motion offsets followed by a release offset.", "offsets");
+            normalizeIdentities();
             LayoutContext context = PowerPointLayout.Read((object)application);
             driverId = ShapeIdentity.Normalize(driverId);
             ShapeGeometry driver = context.Geometry.Single(g => g.Id == driverId);
@@ -362,6 +366,7 @@ namespace PptGcs.AddIn
 
             // Resolve the active document at mouse-down; never carry a cached
             // slide ID or COM object into a different presentation window.
+            normalizeIdentities();
             LayoutContext context = PowerPointLayout.Read((object)application);
             if (context.Constraints.Count == 0)
             { LogRoute(mouse, messageKind, "native-unconstrained", ReadSelection(window)); return false; }

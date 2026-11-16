@@ -19,6 +19,11 @@ namespace PptGcs.AddIn
         private dynamic app;
         private Timer timer;
         private ConstrainedDragController controller;
+        private ShapeIdentityManager identities;
+        private bool repairingIdentities;
+        private Action<object> selectionChanged, presentationOpened;
+        // EApplication event interface and DISPIDs from Office's MSPPT.OLB.
+        private static readonly Guid ApplicationEvents = new Guid("914934C2-5A91-11CF-8700-00AA0060263B");
         private bool busy;
         private DateTime nextRefresh;
         private string activeKey;
@@ -31,7 +36,13 @@ namespace PptGcs.AddIn
         {
             app = application;
             ((dynamic)addIn).Object = this;
-            controller = new ConstrainedDragController(application, Log);
+            identities = new ShapeIdentityManager();
+            controller = new ConstrainedDragController(application, Log, NormalizeActiveIdentities);
+            selectionChanged = selection => OnIdentityEvent(null);
+            presentationOpened = presentation => OnIdentityEvent(presentation);
+            ComEventsHelper.Combine(application, ApplicationEvents, 2001, selectionChanged);
+            ComEventsHelper.Combine(application, ApplicationEvents, 2021, presentationOpened);
+            for (int i = 1; i <= (int)app.Presentations.Count; i++) OnIdentityEvent((object)app.Presentations[i]);
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
@@ -45,6 +56,12 @@ namespace PptGcs.AddIn
         {
             if (timer == null && controller == null) return;
             if (timer != null) { timer.Stop(); timer.Dispose(); timer = null; }
+            if (app != null)
+            {
+                if (selectionChanged != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2001, selectionChanged);
+                if (presentationOpened != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2021, presentationOpened);
+            }
+            selectionChanged = null; presentationOpened = null;
             if (controller != null) { controller.Dispose(); controller = null; }
             Log("disconnected", "{}"); app = null;
         }
@@ -78,6 +95,7 @@ namespace PptGcs.AddIn
         private void LinkSelection(ConstraintKind kind)
         {
             RunCommand(() => {
+                NormalizeActiveIdentities();
                 LayoutContext context = PowerPointLayout.Read((object)app);
                 dynamic selection = ((dynamic)context.Window).Selection;
                 int minimum = IsGap(kind) ? 3 : 2;
@@ -105,15 +123,8 @@ namespace PptGcs.AddIn
             {
                 string existing = (string)((dynamic)shape).Tags[PowerPointLayout.TagName];
                 string id = PowerPointLayout.ReadId(shape) ?? Guid.NewGuid().ToString("D").ToUpperInvariant();
-                dynamic slide = context.Slide;
-                for (int i=1; i <= (int)slide.Shapes.Count; i++)
-                {
-                    dynamic other = slide.Shapes[i];
-                    if ((int)other.Id != (int)((dynamic)shape).Id && PowerPointLayout.ReadId((object)other) == id)
-                        throw new InvalidOperationException("此页存在重复的矩形标识，请重新创建复制的矩形后再建立约束。");
-                }
                 if (ids.Contains(id) || (context.Shapes.ContainsKey(id) && (int)((dynamic)context.Shapes[id]).Id != (int)((dynamic)shape).Id))
-                    throw new InvalidOperationException("矩形 GUID 重复，请先移除复制对象的标识或重新创建矩形。");
+                    throw new InvalidOperationException("矩形编号未能唯一识别，约束未更改。");
                 ids.Add(id); savedTags.Add(shape, existing);
                 if (!context.Shapes.ContainsKey(id))
                 {
@@ -139,6 +150,7 @@ namespace PptGcs.AddIn
                 var readback = PowerPointLayout.Snapshot(context);
                 if (LayoutSolver.MaxResidual(readback, relations) > LayoutSolver.PositionTolerance)
                     throw new InvalidOperationException("PowerPoint 的自动尺寸设置阻止了约束写回。");
+                NormalizeIdentities(context.Presentation);
                 activeKey = null;
                 Log("constraint-added", json.Serialize(new { id = relation.Id, kind = kind.ToString(), slideId = context.SlideId, shapeIds = ids }));
             }
@@ -159,6 +171,7 @@ namespace PptGcs.AddIn
         public void UnlinkSelected(object control)
         {
             RunCommand(() => {
+                NormalizeActiveIdentities();
                 dynamic window = app.ActiveWindow;
                 dynamic selection = window.Selection;
                 if ((int)selection.Type != 2) throw new InvalidOperationException("请先选中矩形。");
@@ -282,6 +295,45 @@ namespace PptGcs.AddIn
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 
+        private void NormalizeActiveIdentities()
+        {
+            if (app != null && (int)app.Presentations.Count > 0)
+                NormalizeIdentities((object)app.ActivePresentation);
+        }
+
+        private void NormalizeIdentities(object presentation)
+        {
+            if (repairingIdentities) return;
+            repairingIdentities = true;
+            try
+            {
+                int changed = identities.Normalize(presentation);
+                if (changed > 0)
+                {
+                    activeKey = null;
+                    Log("shape-identities-updated", json.Serialize(new {
+                        presentation = (string)((dynamic)presentation).FullName, changed
+                    }));
+                }
+            }
+            finally { repairingIdentities = false; }
+        }
+
+        private void OnIdentityEvent(object presentation)
+        {
+            if (busy || repairingIdentities || app == null || (controller != null && controller.IsDragging)) return;
+            try
+            {
+                if (presentation == null) NormalizeActiveIdentities();
+                else NormalizeIdentities(presentation);
+            }
+            catch (Exception exception)
+            {
+                lastError = exception.Message;
+                Log("identity-error", json.Serialize(new { error = exception.ToString() }));
+            }
+        }
+
         // Integration harness only: this is programmatic geometry replay, never
         // evidence of real mouse input. Restrict it to the six-case test fixture.
         public string ReplayGestureForTest(string driverId, string mode, string offsetsJson)
@@ -316,13 +368,18 @@ namespace PptGcs.AddIn
                 if ((int)app.Presentations.Count == 0) { activeKey=null;constraintCount=0;return; }
                 dynamic window = app.ActiveWindow;
                 if (window == null || (int)window.ViewType != 9) return;
-                LayoutContext context = PowerPointLayout.Read((object)app);
-                string key = (string)((dynamic)context.Presentation).FullName + "/" + context.SlideId + "/" + context.Document.ToXml();
-                constraintCount = context.Document.Constraints.Count;
+                // Idle status only needs metadata. A queued native paste may
+                // temporarily contain copied tags until SelectionChange arrives;
+                // shape validation belongs to the synchronized edit entry points.
+                dynamic presentation = window.Presentation;
+                int slideId = (int)window.View.Slide.SlideID;
+                ConstraintDocument document = PowerPointLayout.ReadDocument((object)presentation);
+                string key = (string)presentation.FullName + "/" + slideId + "/" + document.ToXml();
+                constraintCount = document.Constraints.Count;
                 if (key != activeKey)
                 {
                     activeKey=key;
-                    Log("document-loaded",json.Serialize(new { presentation=(string)((dynamic)context.Presentation).FullName,slideId=context.SlideId,constraints=constraintCount }));
+                    Log("document-loaded",json.Serialize(new { presentation=(string)presentation.FullName,slideId,constraints=constraintCount }));
                 }
                 lastError=null;
             }

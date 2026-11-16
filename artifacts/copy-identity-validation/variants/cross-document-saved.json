@@ -1,0 +1,36 @@
+﻿{
+    "Utc":  "2026-11-16T05:54:31.5928342Z",
+    "ProcessId":  10544,
+    "Path":  "D:\\code\\ppt-gcs\\artifacts\\copy-identity-validation\\variants\\cross-document.pptx",
+    "DocumentToken":  "FA724697-B735-4522-BBA5-2795560F0C92",
+    "Xml":  [
+
+            ],
+    "Slides":  [
+                   {
+                       "Id":  256,
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "GCS_SameY_A",
+                                          "Guid":  "7762B1CA-66FD-47B6-8E8D-B33ABC34D9D1",
+                                          "Owner":  "FA724697-B735-4522-BBA5-2795560F0C92/256/2",
+                                          "Left":  180,
+                                          "Top":  190,
+                                          "Width":  170,
+                                          "Height":  100
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "GCS_SameY_B",
+                                          "Guid":  "4D6CA525-3431-472A-AC54-02933A6DD406",
+                                          "Owner":  "FA724697-B735-4522-BBA5-2795560F0C92/256/3",
+                                          "Left":  580,
+                                          "Top":  190,
+                                          "Width":  170,
+                                          "Height":  100
+                                      }
+                                  ]
+                   }
+               ]
+}

@@ -1,0 +1,22 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  false,
+    "DocumentPath":  "D:\\code\\ppt-gcs\\artifacts\\copy-identity-validation\\copy-identity.pptx",
+    "BeforeProcessId":  [
+                            10544
+                        ],
+    "AfterProcessId":  [
+                           55248
+                       ],
+    "DifferentProcess":  true,
+    "StateUnchanged":  true,
+    "Checks":  [
+                   "same saved test document",
+                   "different PowerPoint process",
+                   "all slides and native IDs",
+                   "GUIDs and ownership tags",
+                   "geometry",
+                   "constraint XML",
+                   "document identity token"
+               ]
+}

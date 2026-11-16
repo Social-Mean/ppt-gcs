@@ -1,0 +1,16 @@
+﻿{
+    "Passed":  true,
+    "Cases":  [
+                  "copy unique IDs",
+                  "original constraints and geometry retained",
+                  "native copy Undo/Redo preserves IDs",
+                  "new constraint on copies",
+                  "copy resize propagation and native history"
+              ],
+    "PhysicalMouseInput":  false,
+    "ConstraintCreationUndoSupported":  false,
+    "CopyIds":  [
+                    "14F99F3A-28DC-42C1-99E8-5AFF7C7B2011",
+                    "292E41F1-2448-40EB-95CB-D1DADEBD24F0"
+                ]
+}

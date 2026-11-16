@@ -1,0 +1,26 @@
+﻿{
+    "Passed":  true,
+    "PhysicalMouseInput":  false,
+    "ConstraintCreationUndoSupported":  false,
+    "Cases":  [
+                  "second copy drives width and native Undo/Redo",
+                  "original same-Y relation stays independent",
+                  "copy of copy and safe unlink",
+                  "cross-slide Copy/Paste and new same-height relation",
+                  "cross-document independent token and GUIDs"
+              ],
+    "CopyIds":  [
+                    "14F99F3A-28DC-42C1-99E8-5AFF7C7B2011",
+                    "292E41F1-2448-40EB-95CB-D1DADEBD24F0"
+                ],
+    "CopyOfCopyId":  "ED89D252-ED48-4BA5-9887-6712A0E768C5",
+    "CrossSlideIds":  [
+                          "A04D136D-595D-4DE3-896C-44CA723F716F",
+                          "CEE594D3-721D-4C64-ACA7-BC9D383F57C4"
+                      ],
+    "CrossDocumentIds":  [
+                             "7762B1CA-66FD-47B6-8E8D-B33ABC34D9D1",
+                             "4D6CA525-3431-472A-AC54-02933A6DD406"
+                         ],
+    "CrossDocumentToken":  "FA724697-B735-4522-BBA5-2795560F0C92"
+}

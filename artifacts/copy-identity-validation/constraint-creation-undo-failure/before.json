@@ -1,0 +1,298 @@
+﻿{
+    "Utc":  "2026-11-16T05:49:49.7449895Z",
+    "ProcessId":  46812,
+    "DocumentToken":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8",
+    "Xml":  "\u003cconstraints xmlns=\"urn:ppt-gcs:v2\"\u003e\u003cconstraint id=\"558CBFDA-F76F-4074-A9C4-E5881D577D9A\" slideId=\"256\" kind=\"SameY\"\u003e\u003cshape id=\"6630A13F-DCD7-47D1-A48D-5E92ACD93878\"/\u003e\u003cshape id=\"86E23B53-E270-4C56-82D7-3D454103DD86\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"9E4FFF3B-3048-4509-B7CD-60FC5CAE2868\" slideId=\"257\" kind=\"SameX\"\u003e\u003cshape id=\"F8C41819-6B47-4EBD-A34F-7A02032715C0\"/\u003e\u003cshape id=\"C3536EA5-70B6-4330-A50D-4CB3B1C759DC\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"332A7257-4783-42E1-AFA6-40A331ECDEC7\" slideId=\"258\" kind=\"SameWidth\"\u003e\u003cshape id=\"370751C3-A5B0-4F05-BBC7-E37D69D5D2DE\"/\u003e\u003cshape id=\"CADEAE55-17BD-479D-96CC-84246F3EE1BB\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"B493E960-58BC-4F53-85E3-F391F47FA2EC\" slideId=\"259\" kind=\"SameHeight\"\u003e\u003cshape id=\"3B650DAE-C001-4187-98F8-F683C62535BD\"/\u003e\u003cshape id=\"56C85929-68D2-4C92-B63C-E00D70FA558F\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"4C0BBE0F-035E-4E2D-B8CB-2133D8CAA75C\" slideId=\"260\" kind=\"EqualHorizontalGap\"\u003e\u003cshape id=\"3557B584-E365-4BF6-B357-A3406338AFCF\"/\u003e\u003cshape id=\"3ED5775B-8583-43A3-A176-D4140381DB94\"/\u003e\u003cshape id=\"B5C9C842-6D4B-4203-800E-C0C2FA57BD5C\"/\u003e\u003c/constraint\u003e\u003cconstraint id=\"76A8D72F-683D-48D8-A79E-5CF0F7537B62\" slideId=\"261\" kind=\"EqualVerticalGap\"\u003e\u003cshape id=\"0F7B6795-8F47-439C-9353-0CFD2B77DE21\"/\u003e\u003cshape id=\"82BE2A30-7BB8-4388-B43A-26952B2BCC63\"/\u003e\u003cshape id=\"1BB7474D-8E4F-4846-8175-3E8C5ACA2210\"/\u003e\u003c/constraint\u003e\u003c/constraints\u003e",
+    "Slides":  [
+                   {
+                       "Id":  256,
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "TextBox 1",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  18,
+                                          "Width":  900,
+                                          "Height":  36.3515739
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "TextBox 2",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  57,
+                                          "Width":  900,
+                                          "Height":  25.4460621
+                                      },
+                                      {
+                                          "NativeId":  4,
+                                          "Name":  "GCS_SameY_A",
+                                          "Guid":  "6630A13F-DCD7-47D1-A48D-5E92ACD93878",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/256/4",
+                                          "Left":  180,
+                                          "Top":  190,
+                                          "Width":  170,
+                                          "Height":  100
+                                      },
+                                      {
+                                          "NativeId":  5,
+                                          "Name":  "GCS_SameY_B",
+                                          "Guid":  "86E23B53-E270-4C56-82D7-3D454103DD86",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/256/5",
+                                          "Left":  580,
+                                          "Top":  190,
+                                          "Width":  170,
+                                          "Height":  100
+                                      }
+                                  ]
+                   },
+                   {
+                       "Id":  257,
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "TextBox 1",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  18,
+                                          "Width":  900,
+                                          "Height":  36.3515739
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "TextBox 2",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  57,
+                                          "Width":  900,
+                                          "Height":  25.4460621
+                                      },
+                                      {
+                                          "NativeId":  4,
+                                          "Name":  "GCS_SameX_A",
+                                          "Guid":  "F8C41819-6B47-4EBD-A34F-7A02032715C0",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/257/4",
+                                          "Left":  200,
+                                          "Top":  150,
+                                          "Width":  150,
+                                          "Height":  90
+                                      },
+                                      {
+                                          "NativeId":  5,
+                                          "Name":  "GCS_SameX_B",
+                                          "Guid":  "C3536EA5-70B6-4330-A50D-4CB3B1C759DC",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/257/5",
+                                          "Left":  200,
+                                          "Top":  350,
+                                          "Width":  170,
+                                          "Height":  90
+                                      }
+                                  ]
+                   },
+                   {
+                       "Id":  258,
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "TextBox 1",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  18,
+                                          "Width":  900,
+                                          "Height":  36.3515739
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "TextBox 2",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  57,
+                                          "Width":  900,
+                                          "Height":  25.4460621
+                                      },
+                                      {
+                                          "NativeId":  4,
+                                          "Name":  "GCS_SameWidth_A",
+                                          "Guid":  "370751C3-A5B0-4F05-BBC7-E37D69D5D2DE",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/258/4",
+                                          "Left":  180,
+                                          "Top":  200,
+                                          "Width":  160,
+                                          "Height":  100
+                                      },
+                                      {
+                                          "NativeId":  5,
+                                          "Name":  "GCS_SameWidth_B",
+                                          "Guid":  "CADEAE55-17BD-479D-96CC-84246F3EE1BB",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/258/5",
+                                          "Left":  580,
+                                          "Top":  200,
+                                          "Width":  160,
+                                          "Height":  140
+                                      }
+                                  ]
+                   },
+                   {
+                       "Id":  259,
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "TextBox 1",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  18,
+                                          "Width":  900,
+                                          "Height":  36.3515739
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "TextBox 2",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  57,
+                                          "Width":  900,
+                                          "Height":  25.4460621
+                                      },
+                                      {
+                                          "NativeId":  4,
+                                          "Name":  "GCS_SameHeight_A",
+                                          "Guid":  "3B650DAE-C001-4187-98F8-F683C62535BD",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/259/4",
+                                          "Left":  180,
+                                          "Top":  200,
+                                          "Width":  180,
+                                          "Height":  100
+                                      },
+                                      {
+                                          "NativeId":  5,
+                                          "Name":  "GCS_SameHeight_B",
+                                          "Guid":  "56C85929-68D2-4C92-B63C-E00D70FA558F",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/259/5",
+                                          "Left":  580,
+                                          "Top":  200,
+                                          "Width":  220,
+                                          "Height":  100
+                                      }
+                                  ]
+                   },
+                   {
+                       "Id":  260,
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "TextBox 1",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  18,
+                                          "Width":  900,
+                                          "Height":  36.3515739
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "TextBox 2",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  57,
+                                          "Width":  900,
+                                          "Height":  25.4460621
+                                      },
+                                      {
+                                          "NativeId":  4,
+                                          "Name":  "GCS_EqualHorizontalGap_A",
+                                          "Guid":  "3557B584-E365-4BF6-B357-A3406338AFCF",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/260/4",
+                                          "Left":  120,
+                                          "Top":  220,
+                                          "Width":  120,
+                                          "Height":  90
+                                      },
+                                      {
+                                          "NativeId":  5,
+                                          "Name":  "GCS_EqualHorizontalGap_B",
+                                          "Guid":  "3ED5775B-8583-43A3-A176-D4140381DB94",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/260/5",
+                                          "Left":  388,
+                                          "Top":  220,
+                                          "Width":  160,
+                                          "Height":  90
+                                      },
+                                      {
+                                          "NativeId":  6,
+                                          "Name":  "GCS_EqualHorizontalGap_C",
+                                          "Guid":  "B5C9C842-6D4B-4203-800E-C0C2FA57BD5C",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/260/6",
+                                          "Left":  696,
+                                          "Top":  220,
+                                          "Width":  100,
+                                          "Height":  90
+                                      }
+                                  ]
+                   },
+                   {
+                       "Id":  261,
+                       "Shapes":  [
+                                      {
+                                          "NativeId":  2,
+                                          "Name":  "TextBox 1",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  18,
+                                          "Width":  900,
+                                          "Height":  36.3515739
+                                      },
+                                      {
+                                          "NativeId":  3,
+                                          "Name":  "TextBox 2",
+                                          "Guid":  "",
+                                          "Owner":  "",
+                                          "Left":  28,
+                                          "Top":  57,
+                                          "Width":  900,
+                                          "Height":  25.4460621
+                                      },
+                                      {
+                                          "NativeId":  4,
+                                          "Name":  "GCS_EqualVerticalGap_A",
+                                          "Guid":  "0F7B6795-8F47-439C-9353-0CFD2B77DE21",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/261/4",
+                                          "Left":  420,
+                                          "Top":  100,
+                                          "Width":  140,
+                                          "Height":  60
+                                      },
+                                      {
+                                          "NativeId":  5,
+                                          "Name":  "GCS_EqualVerticalGap_B",
+                                          "Guid":  "82BE2A30-7BB8-4388-B43A-26952B2BCC63",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/261/5",
+                                          "Left":  420,
+                                          "Top":  249,
+                                          "Width":  180,
+                                          "Height":  80
+                                      },
+                                      {
+                                          "NativeId":  6,
+                                          "Name":  "GCS_EqualVerticalGap_C",
+                                          "Guid":  "1BB7474D-8E4F-4846-8175-3E8C5ACA2210",
+                                          "Owner":  "6B2C6359-8C7C-4E4D-88F7-2AEB22E2DEE8/261/6",
+                                          "Left":  420,
+                                          "Top":  418,
+                                          "Width":  120,
+                                          "Height":  55
+                                      }
+                                  ]
+                   }
+               ]
+}
