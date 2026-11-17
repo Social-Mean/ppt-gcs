@@ -23,6 +23,8 @@ namespace PptGcs.AddIn
         private ConstraintCommands commands;
         private RadialMenuController radial;
         private OfficeIconProvider officeIcons;
+        private CanvasConstraintOverlay canvasOverlay;
+        private IRibbonUI ribbonUi;
         private ICTPFactory paneFactory;
         private readonly Dictionary<long,PaneInstance> panes = new Dictionary<long,PaneInstance>();
         private bool selectingFromPane;
@@ -54,6 +56,7 @@ namespace PptGcs.AddIn
                 kind=>ExecuteShared(()=>commands.Add(kind,null,null)),
                 more=> {var pane=EnsurePane();pane.Pane.Visible=true;if(more)pane.Control.ShowEditor();},
                 ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
+            canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log);
             controller.AlternateMouseInput=radial.HandleMouse;
             controller.AlternateKeyboardInput=radial.HandleKeyboard;
             controller.AlternateInputActive=()=>radial!=null && radial.IsOpen;
@@ -67,7 +70,7 @@ namespace PptGcs.AddIn
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.5.3", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = "0.6.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -85,6 +88,8 @@ namespace PptGcs.AddIn
                 controller.Dispose();controller=null;
             }
             if(radial!=null){radial.Dispose();radial=null;}
+            if(canvasOverlay!=null){canvasOverlay.Dispose();canvasOverlay=null;}
+            ribbonUi=null;
             foreach(var pane in panes.Values) pane.Dispose();
             panes.Clear(); paneFactory = null;
             if(officeIcons!=null){officeIcons.Dispose();officeIcons=null;}
@@ -99,6 +104,24 @@ namespace PptGcs.AddIn
         }
 
         public string GetCustomUI(string ribbonId) { return RibbonDefinition.CreateXml(); }
+        public void OnRibbonLoad(IRibbonUI ribbon) { ribbonUi=ribbon; }
+        public bool GetCanvasConstraintDisplay(IRibbonControl control)
+        {return (canvasOverlay==null?CanvasConstraintDisplay.Selection:canvasOverlay.Display)==ParseCanvasDisplay(control.Tag);}
+        public void ChangeCanvasConstraintDisplay(IRibbonControl control,bool pressed) { SetCanvasDisplay(control.Tag); }
+        public void SetCanvasDisplay(string display)
+        {
+            if(canvasOverlay==null)throw new InvalidOperationException("画布标记尚未初始化。");
+            canvasOverlay.SetDisplay(ParseCanvasDisplay(display));
+            if(ribbonUi!=null)ribbonUi.Invalidate();
+        }
+        private static CanvasConstraintDisplay ParseCanvasDisplay(string display)
+        {
+            CanvasConstraintDisplay value;
+            if(!Enum.TryParse(display,false,out value) || !Enum.IsDefined(typeof(CanvasConstraintDisplay),value) || value.ToString()!=display)
+                throw new ArgumentException("未知画布标记显示范围。","display");
+            return value;
+        }
+        public string GetCanvasConstraintState() { return json.Serialize(canvasOverlay.GetState()); }
 
         public void CreateConstraint(IRibbonControl control)
         { RunCommand(()=>BeginConstraintCore(control.Tag)); }
@@ -222,7 +245,7 @@ namespace PptGcs.AddIn
             return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.5.3\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v0.6.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 
@@ -310,7 +333,7 @@ namespace PptGcs.AddIn
             if(busy || (controller!=null && controller.IsDragging) || (radial!=null && radial.IsOpen)) throw new InvalidOperationException("请先结束当前操作。");
             busy=true;
             try {command();activeKey=null;lastError=null;}
-            finally {busy=false;RefreshPane();}
+            finally {busy=false;if(canvasOverlay!=null)canvasOverlay.Invalidate();RefreshPane();}
         }
 
         private void InPaneWindow(long owner,Action action)
@@ -329,6 +352,7 @@ namespace PptGcs.AddIn
         private void OnPresentationClosed(object presentation)
         {
             if(stopping)return;
+            if(canvasOverlay!=null)canvasOverlay.HideForContextChange();
             long key=WindowIdentity(presentation);
             foreach(var item in panes.Where(p=>WindowIdentity(p.Value.Presentation)==key).ToList())
             {item.Value.Dispose();panes.Remove(item.Key);}
@@ -390,6 +414,7 @@ namespace PptGcs.AddIn
             {
                 if (presentation == null) NormalizeActiveIdentities();
                 else NormalizeIdentities(presentation);
+                if(canvasOverlay!=null)canvasOverlay.Invalidate();
                 if(!selectingFromPane)RefreshPane();
             }
             catch (Exception exception)
@@ -419,12 +444,14 @@ namespace PptGcs.AddIn
 
         private void Tick(object sender, EventArgs args)
         {
+            if(canvasOverlay!=null)canvasOverlay.CheckVisibility();
             if (busy || refreshing || app == null || stopping) return;
             refreshing = true;
             try
             {
                 controller.Tick();
                 radial.Tick();
+                canvasOverlay.Tick(controller.ActiveGeometry,controller.ActiveDriverId,radial.IsOpen);
                 if (controller.IsDragging || radial.IsOpen || (activeKey != null && DateTime.UtcNow < nextRefresh)) return;
                 nextRefresh = DateTime.UtcNow.AddMilliseconds(200);
                 PrunePanes();
@@ -457,7 +484,7 @@ namespace PptGcs.AddIn
             busy=true;
             try { action(); }
             catch (Exception ex) { Log("command-error",json.Serialize(new { error=ex.ToString() }));MessageBox.Show(ex.Message,"PPT GCS"); }
-            finally { busy=false;activeKey=null;RefreshPane(); }
+            finally { busy=false;activeKey=null;if(canvasOverlay!=null)canvasOverlay.Invalidate();RefreshPane(); }
         }
         private void Log(string type,string data)
         {

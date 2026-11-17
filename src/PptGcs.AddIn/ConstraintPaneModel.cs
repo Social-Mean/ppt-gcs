@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PptGcs.Core;
 
 namespace PptGcs.AddIn
 {
@@ -20,6 +21,7 @@ namespace PptGcs.AddIn
         public bool Selected { get; set; }
         public int RelationCount { get; set; }
         public string UnsupportedReason { get; set; }
+        public ShapeGeometry Geometry { get; set; }
     }
 
     public sealed class ConstraintPaneRelation

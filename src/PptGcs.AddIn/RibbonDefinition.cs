@@ -28,8 +28,10 @@ namespace PptGcs.AddIn
                     ManageButton("ConstraintsPane", "约束窗格", "view", "ShowConstraintPane"),
                     ManageButton("Remove", "移除选中对象的约束", "remove", "UnlinkSelected"),
                     ManageButton("Demo", "新建六组演示", "demo", "CreateDemo"),
-                    ManageButton("Status", "状态", "status", "ShowStatus")));
-            return new XElement(Ns + "customUI", new XElement(Ns + "ribbon", new XElement(Ns + "tabs", tab)))
+                    ManageButton("Status", "状态", "status", "ShowStatus")),
+                new XElement(Ns+"group",new XAttribute("id","CanvasConstraints"),new XAttribute("label","画布标记"),
+                    CanvasDisplayButton("Selection","仅所选对象"),CanvasDisplayButton("All","显示全部"),CanvasDisplayButton("Hidden","隐藏标记")));
+            return new XElement(Ns + "customUI", new XAttribute("onLoad","OnRibbonLoad"),new XElement(Ns + "ribbon", new XElement(Ns + "tabs", tab)))
                 .ToString(SaveOptions.DisableFormatting);
         }
 
@@ -68,6 +70,11 @@ namespace PptGcs.AddIn
         {
             return new XElement(Ns + "button", new XAttribute("id", id), new XAttribute("label", label),
                 new XAttribute("imageMso", OfficeIconProvider.ImageMso(icon)), new XAttribute("onAction", action));
+        }
+        private static XElement CanvasDisplayButton(string mode,string label)
+        {
+            return new XElement(Ns+"toggleButton",new XAttribute("id","CanvasDisplay"+mode),new XAttribute("tag",mode),new XAttribute("label",label),
+                new XAttribute("getPressed","GetCanvasConstraintDisplay"),new XAttribute("onAction","ChangeCanvasConstraintDisplay"));
         }
     }
 }

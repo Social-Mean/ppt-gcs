@@ -47,9 +47,14 @@ internal static class RibbonTests
             .All(button => ((string)button.Attribute("supertip")).Contains("设置参数并确认创建")),
             "numeric constraint tooltips explain explicit parameter confirmation");
         var groups = tab.Elements(ns + "group").ToList();
-        Check(groups.Select(group => (string)group.Attribute("label")).SequenceEqual(new[] {"位置约束","尺寸约束","间距约束","偏移与对称","管理"}) &&
-            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,4}),
-            "constraints are grouped as position, dimensions, spacing and relations with management separate");
+        Check(groups.Select(group => (string)group.Attribute("label")).SequenceEqual(new[] {"位置约束","尺寸约束","间距约束","偏移与对称","管理","画布标记"}) &&
+            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,4,0}),
+            "constraint creation, management and canvas display controls are grouped separately");
+        var displayButtons=tab.Descendants(ns+"toggleButton").ToList();
+        Check(displayButtons.Select(button=>(string)button.Attribute("tag")).SequenceEqual(new[]{"Selection","All","Hidden"}) &&
+            displayButtons.All(button=>(string)button.Attribute("getPressed")=="GetCanvasConstraintDisplay" && (string)button.Attribute("onAction")=="ChangeCanvasConstraintDisplay"),
+            "canvas display exposes mutually exclusive selection, all and hidden modes");
+        Check((string)root.Attribute("onLoad")=="OnRibbonLoad","Office supplies the ribbon instance used to refresh display toggle state");
         var paneButton = buttons.Single(button => (string)button.Attribute("id") == "ConstraintsPane");
         Check((string)paneButton.Attribute("label") == "约束窗格" && (string)paneButton.Attribute("onAction") == "ShowConstraintPane",
             "ribbon opens the renamed constraint pane");

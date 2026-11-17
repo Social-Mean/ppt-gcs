@@ -197,12 +197,15 @@ namespace PptGcs.AddIn
             var model=new ConstraintPaneModel {PageLabel="第 "+(int)slide.SlideIndex+" 页 · "+(string)slide.Name,Options=ConstraintCatalog.Options(defaults)};
             var names=new Dictionary<string,string>(StringComparer.Ordinal);
             var uiKeys=new Dictionary<string,string>(StringComparer.Ordinal);
+            var geometryById=context.Geometry.ToDictionary(s=>s.Id,StringComparer.Ordinal);
             var relations=context.Document.Constraints.Where(r=>r.SlideId==context.SlideId).ToList();
             for(int i=1;i<=(int)slide.Shapes.Count;i++)
             {
                 dynamic shape=slide.Shapes[i]; string id=PowerPointLayout.ReadId((object)shape);
                 string uiKey=UiKey(context.SlideId,(int)shape.Id);
+                ShapeGeometry geometry;
                 model.Objects.Add(new ConstraintPaneObject {Id=uiKey,Name=(string)shape.Name,Selected=selectedNative.Contains((int)shape.Id),
+                    Geometry=id!=null && geometryById.TryGetValue(id,out geometry)?geometry:null,
                     UnsupportedReason=ShapeCapabilities.UnsupportedReason((object)shape),
                     RelationCount=id==null?0:relations.Count(r=>r.ShapeIds.Contains(id))});
                 if(id!=null) {names[id]=(string)shape.Name;uiKeys[id]=uiKey;}

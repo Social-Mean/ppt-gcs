@@ -29,6 +29,8 @@ namespace PptGcs.AddIn
         private Point? queuedMotion, queuedRelease;
 
         public bool IsDragging { get { return gesture != null; } }
+        internal IReadOnlyList<ShapeGeometry> ActiveGeometry { get { return gesture==null?null:gesture.LastGeometry; } }
+        internal string ActiveDriverId { get { return gesture==null?null:gesture.Driver.Id; } }
         public Func<int,int,int,IntPtr,bool> AlternateMouseInput { get; set; }
         public Func<int,bool,bool> AlternateKeyboardInput { get; set; }
         public Func<bool> AlternateInputActive { get; set; }

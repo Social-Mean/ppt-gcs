@@ -1,6 +1,8 @@
 # PPT GCS
 
-Windows 桌面 PowerPoint 的形状排版约束插件。v0.5.3 支持自选图形、文本框、图片、SVG 图标、自由曲线和组合整体，提供 20 种布局约束、原生可停靠的“约束”窗格、中键八向轮盘，以及约束新增、修改、启停、删除和几何编辑的原生撤销/重做。功能区、轮盘和窗格使用 Office 图标资源。
+Windows 桌面 PowerPoint 的形状排版约束插件。v0.6.0 支持自选图形、文本框、图片、SVG 图标、自由曲线和组合整体，提供 20 种布局约束、画布约束标记、原生可停靠的“约束”窗格、中键八向轮盘，以及约束新增、修改、启停、删除和几何编辑的原生撤销/重做。功能区、轮盘和窗格使用 Office 图标资源。
+
+选中对象时，画布旁显示相关约束的图标、名称与细引导线。功能区“画布标记”可切换“仅所选对象／显示全部／隐藏标记”。标记跟随拖动、缩放和滚动；编辑文字、打开轮盘或离开幻灯片编辑区域时隐藏。它们是鼠标穿透的编辑辅助层，放映和导出使用原有幻灯片内容。实现与验收范围见 [画布标记验证](docs/validation-canvas.md)。
 
 “固定宽高比”使用 PowerPoint 的“幻灯片大小”图标。“中心重合”使用指定的 `DiagramTargetInsertClassic` 内置图标，见 [图标验证](docs/validation-center-icon.md)。约束窗格保留独立停靠方式，窗格堆叠研究已结束，见 [窗格说明](docs/pane-integration.md)。
 
@@ -23,7 +25,7 @@ v0.3 的矩形约束、轮盘和窗格真实鼠标结果见 [v0.3 验证记录](
 .\scripts\Install.ps1
 ```
 
-`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行核心、编号、存储、窗格、轮盘、形状支持、图标、文本指针、Ribbon 和透明渲染的 232 项自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`；无需在系统中安装 net48 targeting pack。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
+`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行核心、编号、存储、窗格、轮盘、形状支持、图标、文本指针、Ribbon、透明渲染和画布标记的 254 项自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`；无需在系统中安装 net48 targeting pack。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
 
 `Install.ps1` 注册当前用户的加载项和 `PptGcs.ConstraintPaneHost` 原生控件，不需要管理员权限。重新打开 PowerPoint 后应出现 **PPT GCS** 功能区。注册指向本项目的 DLL；移动项目目录后需重新运行安装脚本。重新构建前请关闭 PowerPoint，避免加载中的 DLL 被占用。
 
