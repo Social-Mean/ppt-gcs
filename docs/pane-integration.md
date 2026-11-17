@@ -1,6 +1,6 @@
 # 图标选择与原生窗格切换区
 
-日期：2026-11-16；当前版本 v0.5.2。
+日期：2026-11-16 至 2026-11-17；当前版本 v0.5.2。
 
 ## 指定的 Office 图标
 
@@ -10,14 +10,20 @@ v0.5.1 只核对了 `GetLabelMso` 名称和图标加载，未验证图形匹配�
 
 只替换图标资源，约束名称、参数和执行逻辑保持原意，不执行被借用图标的 PowerPoint 命令。布局渲染脚本将历史图标样本绑定到采集时的真实 ImageMso 标识，避免把旧宽高比样本误当作新图标。
 
-## 图示右侧垂直切换区的能力边界
+## 窗格研究结论
 
-微软将这个宿主界面称为 [Tabbed Panes](https://learn.microsoft.com/en-us/officeupdates/semi-annual-enterprise-channel-archived)。当前插件使用 COM `CustomTaskPane`；公开接口没有提供将自定义窗格注册进原生切换条、设置该条图标或指定与某个原生窗格共用堆叠分组的扩展点。
+用户已决定放弃窗格堆叠方案，停止网页窗格接入和未公开原生入组实验。正式插件继续使用独立的 COM `CustomTaskPane`，通过功能区或轮盘打开，支持现有的停靠、浮动和关闭重开行为。本轮研究没有接入生产约束功能。
 
-- [`CustomTaskPane` 完整成员](https://learn.microsoft.com/en-us/office/vba/api/overview/library-reference/customtaskpane-members-office) 提供 DockPosition、DockPositionRestrict、Visible、Width、Height、Window 等属性和相关事件。
-- [`ICTPFactory.CreateCTP`](https://learn.microsoft.com/en-us/office/vba/api/office.ictpfactory.createctp) 的参数只有 ActiveX 控件标识、标题和父窗口。
-- Office.js 的 [`TaskpaneId`](https://learn.microsoft.com/en-us/javascript/api/manifest/action?view=common-js-preview) 用于复用插件自身的容器；`SupportsPinning` 属于 Outlook，也不能作为加入 PowerPoint 原生切换条的接口。
+网页最小原型曾在本机 PowerPoint 中通过宿主验证：用户确认“约束窗格测试”“选择”“设置形状格式”在同一内容区切换，关闭后也能正常重开。这只证明了网页任务窗格的宿主行为，完整约束界面及其通信桥没有生产集成。测试服务和开发注册已撤回。
 
-因此，当前实现保留公开支持的独立停靠/浮动窗格，由 Ribbon 和轮盘打开。本次没有通过私有窗口重挂接模拟原生堆叠。
+纯原生实验能让约束窗格进入管理器分组并出现图标，但切换会回跳。临时保留窗口后可以切离约束；切回时即使管理器已选中约束，窗格仍未显示。因此，可靠的双向原生切换没有达成，不能把管理器状态或临时窗口取用当作生产方案。没有继续调用缺乏显示依据的通知，也没有通过改写状态位或强制显示窗口掩盖问题。
 
-这个结论限定为“没有可指定该行为的公开 API”。文档没有承诺自定义 COM 窗格会自动进入原生切换条；本次也未对所有 Office 版本的宿主自动归组行为做实机验证，不据此断言任何版本都绝不可能自动收纳。
+## 已恢复独立窗格
+
+研究结束后，仅通过公开接口关闭并重开已保存的自有测试文稿，由现有插件重建独立窗格。所有打开的 PPTX 均先生成备份，原 `working.pptx` 未关闭或保存。重建后右侧停靠属性正常；使用 PowerPoint 的“选择窗格”命令后，一秒后采样显示选择与约束窗格均可见，未再出现此前的回跳结果。临时诊断加载项注册和消息观察已清理，主插件保持连接。
+
+恢复核验覆盖几何、旋转、保存约束的 presentation Tags 和 Saved 状态：40 个形状的几何差小于 `10^-4 pt`，旋转差为零，3 条 presentation Tags 值一致，Saved 与备份清单一致。审计还记录了 24 处形状名称差异，未判定原因；文本、格式、媒体及 slide/shape Tags 不在该比较范围，不能据此声称文稿全部属性逐项相同。
+
+## 研究文件归档
+
+网页原型、运行日志和诊断中间产物已移出 Git 工作区，保存在本机私有测试会话归档中。仓库仅保留这份结论，不保留未采用的实验代码、临时网页服务或一系列诊断 JSON。
