@@ -1,240 +1,225 @@
-{
-  "Passed": true,
-  "Version": "0.5.2",
-  "LoadedIcons": 25,
-  "CenterFramed": true,
-  "RibbonCallback": "GetCentersCoincidentImage",
-  "Slides": 7,
-  "TaggedShapes": 26,
-  "PreservedConstraints": 16,
-  "GeometryAndIdentityPreserved": true,
-  "ConstraintXmlPreserved": true,
-  "Icons": [
-    {
-      "command": "SameX",
-      "imageMso": "ObjectsAlignLeftSmart",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "RightAligned",
-      "imageMso": "ObjectsAlignRightSmart",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "CenterXAligned",
-      "imageMso": "ObjectsAlignCenterHorizontalSmart",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "SameY",
-      "imageMso": "ObjectsAlignTopSmart",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "BottomAligned",
-      "imageMso": "ObjectsAlignBottomSmart",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "CenterYAligned",
-      "imageMso": "ObjectsAlignMiddleVerticalSmart",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "CentersCoincident",
-      "imageMso": "ThemeEffectsGallery",
-      "framed": true,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "SameWidth",
-      "imageMso": "TableColumnsDistribute",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "SameHeight",
-      "imageMso": "TableRowsDistribute",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "EqualHorizontalGap",
-      "imageMso": "AlignDistributeHorizontally",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "EqualVerticalGap",
-      "imageMso": "AlignDistributeVertically",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "FixedWidth",
-      "imageMso": "ObjectSizeAndPositionDialog",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "FixedHeight",
-      "imageMso": "ObjectSizeAndPositionDialog",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "FixedPosition",
-      "imageMso": "LockObject",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "AspectRatio",
-      "imageMso": "PowerPointPageSetup",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "FixedHorizontalGap",
-      "imageMso": "AlignDistributeHorizontally",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "FixedVerticalGap",
-      "imageMso": "AlignDistributeVertically",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "Offset",
-      "imageMso": "ObjectSizeAndPositionDialog",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "SymmetricVertical",
-      "imageMso": "ObjectFlipHorizontal",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "SymmetricHorizontal",
-      "imageMso": "ObjectFlipVertical",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "more",
-      "imageMso": "ObjectAlignMenu",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "view",
-      "imageMso": "SelectionPane",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "remove",
-      "imageMso": "Clear",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "demo",
-      "imageMso": "SlideNew",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    },
-    {
-      "command": "status",
-      "imageMso": "FileProperties",
-      "framed": false,
-      "loaded": true,
-      "width": 24,
-      "height": 24,
-      "error": null
-    }
-  ],
-  "ScreenCaptureVerified": false
+﻿{
+    "Passed":  true,
+    "Version":  "0.5.3",
+    "LoadedIcons":  25,
+    "CenterImageMso":  "DiagramTargetInsertClassic",
+    "RibbonImageMso":  "DiagramTargetInsertClassic",
+    "CustomImageCallback":  false,
+    "Slides":  7,
+    "TaggedShapes":  26,
+    "LoadedConstraints":  16,
+    "SourceFileHashPreserved":  true,
+    "PresentationSaved":  -1,
+    "PaneDock":  "msoCTPDockPositionRight",
+    "AutomaticChecksPassed":  232,
+    "ComponentRenderWidths":  [
+                                  380,
+                                  250
+                              ],
+    "ScreenCaptureVerified":  false,
+    "Icons":  {
+                  "value":  [
+                                {
+                                    "command":  "SameX",
+                                    "imageMso":  "ObjectsAlignLeftSmart",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "RightAligned",
+                                    "imageMso":  "ObjectsAlignRightSmart",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "CenterXAligned",
+                                    "imageMso":  "ObjectsAlignCenterHorizontalSmart",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "SameY",
+                                    "imageMso":  "ObjectsAlignTopSmart",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "BottomAligned",
+                                    "imageMso":  "ObjectsAlignBottomSmart",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "CenterYAligned",
+                                    "imageMso":  "ObjectsAlignMiddleVerticalSmart",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "CentersCoincident",
+                                    "imageMso":  "DiagramTargetInsertClassic",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "SameWidth",
+                                    "imageMso":  "TableColumnsDistribute",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "SameHeight",
+                                    "imageMso":  "TableRowsDistribute",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "EqualHorizontalGap",
+                                    "imageMso":  "AlignDistributeHorizontally",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "EqualVerticalGap",
+                                    "imageMso":  "AlignDistributeVertically",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "FixedWidth",
+                                    "imageMso":  "ObjectSizeAndPositionDialog",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "FixedHeight",
+                                    "imageMso":  "ObjectSizeAndPositionDialog",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "FixedPosition",
+                                    "imageMso":  "LockObject",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "AspectRatio",
+                                    "imageMso":  "PowerPointPageSetup",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "FixedHorizontalGap",
+                                    "imageMso":  "AlignDistributeHorizontally",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "FixedVerticalGap",
+                                    "imageMso":  "AlignDistributeVertically",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "Offset",
+                                    "imageMso":  "ObjectSizeAndPositionDialog",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "SymmetricVertical",
+                                    "imageMso":  "ObjectFlipHorizontal",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "SymmetricHorizontal",
+                                    "imageMso":  "ObjectFlipVertical",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "more",
+                                    "imageMso":  "ObjectAlignMenu",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "view",
+                                    "imageMso":  "SelectionPane",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "remove",
+                                    "imageMso":  "Clear",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "demo",
+                                    "imageMso":  "SlideNew",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                },
+                                {
+                                    "command":  "status",
+                                    "imageMso":  "FileProperties",
+                                    "loaded":  true,
+                                    "width":  24,
+                                    "height":  24,
+                                    "error":  null
+                                }
+                            ],
+                  "Count":  25
+              }
 }

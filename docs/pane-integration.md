@@ -1,12 +1,12 @@
 # 图标选择与原生窗格切换区
 
-日期：2026-11-16 至 2026-11-17；当前版本 v0.5.2。
+日期：2026-11-16 至 2026-11-17；当前版本 v0.5.3。
 
 ## 指定的 Office 图标
 
-“固定宽高比”使用 `PowerPointPageSetup`。“中心重合”以 `ThemeEffectsGallery` 为基础添加矩形外框。标识取自 [微软当前 PowerPoint 控件清单](https://github.com/OfficeDev/office-fluent-ui-command-identifiers/blob/main/Microsoft%20365/Current%20Channel/powerpointcontrols.xlsx)，分别对应设计选项卡中的“幻灯片大小”和“变体 → 效果”。
+“固定宽高比”使用 `PowerPointPageSetup`（幻灯片大小）。“中心重合”按用户指定使用 `DiagramTargetInsertClassic`。标识可在[微软 ImageMso 附表](https://learn.microsoft.com/en-us/openspecs/office_standards/ms-customui/fe2124a1-5aaa-4adf-b285-5d58da9d5e2a)核对。
 
-v0.5.1 只核对了 `GetLabelMso` 名称和图标加载，未验证图形匹配。本机导出的 `ThemeEffectsGallery` 只有圆形，缺少用户要求的矩形外框。v0.5.2 补齐外框，并让功能区和窗格共用同一图像；236 项检查通过，实际资源、组件渲染和加载诊断见 [修正验证](validation-center-icon.md)。
+v0.5.3 移除此前的 `ThemeEffectsGallery` 补框逻辑和专用图片回传。功能区直接使用 `imageMso`，窗格和轮盘按尺寸加载同一个内置标识；232 项检查通过，实际资源、组件渲染和加载诊断见 [图标验证](validation-center-icon.md)。
 
 只替换图标资源，约束名称、参数和执行逻辑保持原意，不执行被借用图标的 PowerPoint 命令。布局渲染脚本将历史图标样本绑定到采集时的真实 ImageMso 标识，避免把旧宽高比样本误当作新图标。
 

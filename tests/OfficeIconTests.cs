@@ -37,27 +37,6 @@ internal static class OfficeIconTests
                 try{provider.Get("SameX",15);}catch(ArgumentOutOfRangeException){rejected=true;}
                 Check(rejected,"Office image size bounds are enforced");
             }
-            using(var app=new FakeIconApplication())
-            using(var provider=new OfficeIconProvider(app,null))
-            {
-                var framed=(Bitmap)provider.Get("CentersCoincident",32);
-                Color frame=framed.GetPixel(framed.Width/2,0);
-                Check(frame.A==255 && frame.R==98 && frame.G==108 && frame.B==129,
-                    "center icon has the requested visible rectangular outline");
-                Check(framed.GetPixel(4,4).A==0,
-                    "empty space between the center glyph and its frame stays transparent");
-                object picture=provider.GetCentersCoincidentPicture();
-                var copy=typeof(OfficeIconProvider).GetMethod("CopyPicture",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
-                using(var roundTrip=(Bitmap)copy.Invoke(null,new[]{picture}))
-                {
-                    bool identical=roundTrip.Size==framed.Size;
-                    for(int y=0;y<framed.Height;y++)for(int x=0;x<framed.Width;x++)
-                        identical &= roundTrip.GetPixel(x,y).ToArgb()==framed.GetPixel(x,y).ToArgb();
-                    Check(identical,"Ribbon IPictureDisp preserves the exact framed image and alpha used by the pane");
-                }
-                Check(ReferenceEquals(picture,provider.GetCentersCoincidentPicture()),
-                    "repeated Ribbon callbacks reuse the owning picture instead of leaking handles");
-            }
             int errors=0;
             using(var app=new FakeIconApplication {CommandBars={Fail=true}})
             using(var provider=new OfficeIconProvider(app,(id,error)=>errors++))

@@ -67,7 +67,7 @@ namespace PptGcs.AddIn
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.5.2", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = "0.5.3", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -222,7 +222,7 @@ namespace PptGcs.AddIn
             return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.5.2\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v0.5.3\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 
@@ -230,7 +230,6 @@ namespace PptGcs.AddIn
         public string GetPaneState() { return json.Serialize(commands.BuildModel()); }
         public string GetRadialState() { return radial.GetState(); }
         public string GetOfficeIconDiagnostics() { return json.Serialize(officeIcons.Diagnostics()); }
-        public object GetCentersCoincidentImage(IRibbonControl control) { return officeIcons.GetCentersCoincidentPicture(); }
         public string AddConstraintCommand(string kind,string parameters)
         {
             string id=null;var values=ReadParameters(parameters);
