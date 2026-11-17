@@ -27,7 +27,7 @@ namespace PptGcs.AddIn
             {"CentersCoincident", "DiagramTargetInsertClassic"},
             {"SameWidth", "TableColumnsDistribute"}, {"SameHeight", "TableRowsDistribute"},
             {"EqualHorizontalGap", "AlignDistributeHorizontally"}, {"EqualVerticalGap", "AlignDistributeVertically"},
-            {"FixedWidth", "ObjectSizeAndPositionDialog"}, {"FixedHeight", "ObjectSizeAndPositionDialog"},
+            {"FixedWidth", "ShapeWidth"}, {"FixedHeight", "ObjectSizeAndPositionDialog"},
             {"FixedPosition", "LockObject"}, {"AspectRatio", "PowerPointPageSetup"},
             {"FixedHorizontalGap", "AlignDistributeHorizontally"}, {"FixedVerticalGap", "AlignDistributeVertically"},
             {"Offset", "ObjectSizeAndPositionDialog"},
