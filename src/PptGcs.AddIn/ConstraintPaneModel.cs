@@ -23,6 +23,7 @@ namespace PptGcs.AddIn
         public int RelationCount { get; set; }
         public string UnsupportedReason { get; set; }
         public ShapeGeometry Geometry { get; set; }
+        public GeometryFreedom Freedom { get; set; }
         internal RectangleF? CanvasBounds { get; set; }
     }
 
@@ -67,5 +68,6 @@ namespace PptGcs.AddIn
         public Action<string, bool> SetEnabled { get; set; }
         public Action<string> Delete { get; set; }
         public Action Refresh { get; set; }
+        public Action<ConstraintCommands.DraftConflict,IReadOnlyList<string>> ResolveConflict { get; set; }
     }
 }

@@ -113,6 +113,10 @@ internal static class PaneTests
         var relationHandle = relations.Handle;
 
         var model = Model("第 1 页", "shape:256/");
+        string driver="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA";
+        var geometry=new[]{new ShapeGeometry(driver,20,30,72,30)};
+        var lockedWidth=new[]{new LayoutConstraint("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",256,ConstraintKind.FixedWidth,new[]{driver},72)};
+        model.Objects[0].Freedom=LayoutDiagnostics.AnalyzeShape(geometry,lockedWidth,driver);
         string[] selection = null;
         int selectionCalls = 0;
         string addKind = null, updatedId = null, deletedId = null;
@@ -130,6 +134,9 @@ internal static class PaneTests
         Check(objects.Items.Count == 3 && relations.Items.Count == 2,
             "objects and multi-member relations render");
         Check(selectionCalls == 0, "render does not trigger document selection callbacks");
+        var freedom=Find<Label>(pane,"所选对象可编辑方向");
+        Check(freedom.Visible && freedom.Text.Contains("横向可移动") && freedom.Text.Contains("宽度固定") && !freedom.Text.Contains("矩形 B"),
+            "pane reports editable directions and fixed dimensions for the selected object");
 
         pane.ShowEditor("FixedWidth");
         number.Value = 72;

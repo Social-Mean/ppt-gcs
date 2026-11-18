@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using PptGcs.Core;
 
 namespace PptGcs.AddIn
 {
@@ -15,6 +16,8 @@ namespace PptGcs.AddIn
         private const int OptionColumns = 4;
         private readonly Label pageLabel = new Label();
         private readonly Label messageLabel = new Label();
+        private readonly Label freedomLabel = new Label();
+        private readonly ConstraintConflictControl conflictControl = new ConstraintConflictControl();
         private readonly ComboBox scopeBox = new ComboBox();
         private readonly ListView objects = new ListView();
         private readonly ListView relations = new ListView();
@@ -83,6 +86,9 @@ namespace PptGcs.AddIn
             refresh.AccessibleName = "刷新对象和约束";
             toolbar.Controls.Add(refresh);
             content.Controls.Add(toolbar);
+            conflictControl.Retry+=RetryConflict;
+            conflictControl.Cancel+=()=>{conflictControl.ClearDraft();ShowMessage("已取消本次提交。");};
+            content.Controls.Add(conflictControl);
 
             content.Controls.Add(SectionLabel("对象"));
             ConfigureList(objects, true, 122, "当前页对象");
@@ -90,6 +96,12 @@ namespace PptGcs.AddIn
             objects.Columns.Add("关系", 52);
             objects.SelectedIndexChanged += ObjectsSelected;
             content.Controls.Add(objects);
+            freedomLabel.AutoSize=true;
+            freedomLabel.Dock=DockStyle.Fill;
+            freedomLabel.Margin=new Padding(0,6,0,0);
+            freedomLabel.AccessibleName="所选对象可编辑方向";
+            freedomLabel.Visible=false;
+            content.Controls.Add(freedomLabel);
 
             content.Controls.Add(SectionLabel("约束 · 点击可定位参与对象"));
             ConfigureList(relations, false, 186, "对象之间的约束");
@@ -178,6 +190,7 @@ namespace PptGcs.AddIn
                 selectedRelationId = null;
                 editor.Visible = false;
                 operationMessage = null;
+                conflictControl.ClearDraft();
                 listSignature = null;
                 selectionGeneration++;
                 selectionQueued = false;
@@ -185,6 +198,8 @@ namespace PptGcs.AddIn
             model = snapshot;
             int selected = model.Objects.Count(item => item.Selected);
             pageLabel.Text = (model.PageLabel ?? "当前页") + " · 已选 " + selected;
+            freedomLabel.Text=String.Join(Environment.NewLine,model.Objects.Where(item=>item.Selected).Select(DescribeFreedom));
+            freedomLabel.Visible=selected>0;
             RefreshMessage();
             if (editingId != null && !model.Relations.Any(item => item.Id == editingId))
             { editor.Visible = false; editingId = null; }
@@ -195,9 +210,17 @@ namespace PptGcs.AddIn
         // The wheel's "more constraints" action can open this exact editor.
         public string EditorKind { get { return editor.Visible ? selectedKind : null; } }
         internal string SelectedRelationId { get { return selectedRelationId; } }
+        internal bool HasConflict { get { return conflictControl.Draft!=null; } }
+
+        public void ShowConflict(ConstraintCommands.DraftConflict conflict)
+        {
+            conflictControl.ShowDraft(conflict);
+            ScrollControlIntoView(conflictControl);
+        }
 
         public void ShowEditor(string kind = null)
         {
+            conflictControl.ClearDraft();
             operationMessage = null;
             RefreshMessage();
             editingId = null;
@@ -230,6 +253,26 @@ namespace PptGcs.AddIn
 
         private void RefreshMessage()
         { messageLabel.Text = operationMessage ?? model.Message ?? String.Empty; }
+
+        private static string DescribeFreedom(ConstraintPaneObject item)
+        {
+            var freedom=item.Freedom;
+            if(freedom==null)return item.Name+" · "+(item.UnsupportedReason??"当前约束状态无法计算可编辑方向。");
+            string horizontal=freedom.Horizontal?"横向可移动":"横向固定";
+            string vertical=freedom.Vertical?"纵向可移动":"纵向固定";
+            string proportional=freedom.Proportional?" · 宽高联动":String.Empty;
+            return item.Name+" · "+horizontal+"，"+vertical+"，宽度"+SizeStatus(freedom.Width)+"，高度"+SizeStatus(freedom.Height)+proportional;
+        }
+
+        private static string SizeStatus(SizeFreedom freedom)
+        {
+            switch(freedom)
+            {
+                case SizeFreedom.Fixed:return "固定";
+                case SizeFreedom.Increase:return "仅可增大";
+                default:return "可调整";
+            }
+        }
 
         private void BuildEditor()
         {
@@ -377,6 +420,7 @@ namespace PptGcs.AddIn
         private void EditRelation(ConstraintPaneRelation relation)
         {
             if (!HasEditableParameters(relation)) return;
+            conflictControl.ClearDraft();
             operationMessage = null;
             RefreshMessage();
             editingId = relation.Id;
@@ -524,6 +568,16 @@ namespace PptGcs.AddIn
             ApplyEditor();
         }
 
+        private void RetryConflict(IReadOnlyList<string> disabled)
+        {
+            var draft=conflictControl.Draft;
+            if(draft==null || actions?.ResolveConflict==null)return;
+            if(!InvokeCommand(()=>actions.ResolveConflict(draft,disabled)))return;
+            conflictControl.ClearDraft();
+            editor.Visible=false;
+            editingId=null;
+        }
+
         private void ToggleSelected()
         {
             var relation = SelectedRelation();
@@ -548,7 +602,7 @@ namespace PptGcs.AddIn
                 // Host commands refresh the model in their finally blocks and
                 // the idle timer renders it again. Keep this failure separate
                 // from normal page status until the next deliberate operation.
-                operationMessage = exception.Message;
+                operationMessage = exception is ConstraintCommands.DraftConflict && conflictControl.Draft==exception ? null : exception.Message;
                 RefreshMessage();
                 return false;
             }
@@ -564,6 +618,7 @@ namespace PptGcs.AddIn
 
         private void ResizeColumns()
         {
+            freedomLabel.MaximumSize=new Size(Math.Max(150,ClientSize.Width-Padding.Horizontal-18),0);
             if (objects.Columns.Count > 1) objects.Columns[0].Width = Math.Max(120, objects.ClientSize.Width - 64);
             if (relations.Columns.Count > 2) relations.Columns[1].Width = Math.Max(80, relations.ClientSize.Width - 176);
         }

@@ -95,7 +95,11 @@ namespace PptGcs.AddIn
                 if(actualGroups.Count!=GroupIds.Count || actualGroups.Select(group=>group.Id).Distinct().Count()!=GroupIds.Count ||
                     actualGroups.Any(group=>!GroupIds.Contains(group.Id)))
                     throw new InvalidOperationException("The native members changed root group ownership.");
-                var solved=LayoutSolver.Solve(Initial.Geometry,constraints,actualGroups.Select(group=>new GeometryEdit(group,GeometryEditMode.Exact)));
+                var edits=actualGroups.Select(group=>new GeometryEdit(group,GeometryEditMode.Exact)).ToList();
+                IReadOnlyList<ShapeGeometry> solved;
+                try {solved=LayoutSolver.Solve(Initial.Geometry,constraints,edits);}
+                catch(ConstraintConflictException error)
+                {throw new ConstraintConflictException(error.Message,LayoutDiagnostics.ExplainEdit(Initial.Geometry,constraints,edits),error);}
                 writeFollowers(solved.Where(shape=>!GroupIds.Contains(shape.Id)).ToList().AsReadOnly());
                 var actual=new SelectionMoveFrame(readLayout(),readChildren());
                 var expected=new SelectionMoveFrame(solved,actualChildren);

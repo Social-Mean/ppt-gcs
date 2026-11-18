@@ -5,9 +5,11 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace PptGcs.Core
 {
-    public sealed class ConstraintConflictException : InvalidOperationException
+    public class ConstraintConflictException : InvalidOperationException
     {
-        public ConstraintConflictException(string message) : base(message) { }
+        public IReadOnlyList<LayoutConstraint> Relations { get; }
+        public ConstraintConflictException(string message, IReadOnlyList<LayoutConstraint> relations = null, Exception inner = null) : base(message, inner)
+        { Relations = relations ?? Array.Empty<LayoutConstraint>(); }
     }
 
     public enum GeometryEditMode { Exact, Move, ResizeNW, ResizeN, ResizeNE, ResizeE, ResizeSE, ResizeS, ResizeSW, ResizeW, NativeWidth, NativeHeight }

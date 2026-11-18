@@ -40,20 +40,20 @@ namespace PptGcs.AddIn
                 foreach(var position in positions)
                 {
                     if(left<position.Value.Value-LayoutSolver.PositionTolerance || top<position.SecondaryValue.Value-LayoutSolver.PositionTolerance)
-                        throw new ConstraintConflictException("组内对象的目标位置越过了组合固定的左边或顶边。");
+                        throw new ConstraintConflictException("组内对象的目标位置越过了组合固定的左边或顶边。",new[]{position});
                     foreach(var width in widths)
                         if(right>position.Value.Value+width.Value.Value+LayoutSolver.PositionTolerance)
-                            throw new ConstraintConflictException("组内对象的目标位置超出了组合固定的宽度。");
+                            throw new ConstraintConflictException("组内对象的目标位置超出了组合固定的宽度。",new[]{position,width});
                     foreach(var height in heights)
                         if(bottom>position.SecondaryValue.Value+height.Value.Value+LayoutSolver.PositionTolerance)
-                            throw new ConstraintConflictException("组内对象的目标位置超出了组合固定的高度。");
+                            throw new ConstraintConflictException("组内对象的目标位置超出了组合固定的高度。",new[]{position,height});
                 }
                 foreach(var width in widths)
                     if(right-left>width.Value.Value+LayoutSolver.PositionTolerance)
-                        throw new ConstraintConflictException("组内对象所需的水平跨度超过了组合固定的宽度。");
+                        throw new ConstraintConflictException("组内对象所需的水平跨度超过了组合固定的宽度。",new[]{width});
                 foreach(var height in heights)
                     if(bottom-top>height.Value.Value+LayoutSolver.PositionTolerance)
-                        throw new ConstraintConflictException("组内对象所需的垂直跨度超过了组合固定的高度。");
+                        throw new ConstraintConflictException("组内对象所需的垂直跨度超过了组合固定的高度。",new[]{height});
             }
         }
 

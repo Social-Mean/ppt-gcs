@@ -59,11 +59,66 @@ internal static class CoreTests
         Run("parameter and member validation covers every new kind", ParameterValidation);
         Run("normalization without a driver minimizes dimensions and positions", NeutralNormalization);
         Run("new relation residuals detect changed constrained geometry", NewResiduals);
+        Run("freedom separates indirect position locks from free axes and fixed dimensions", PositionFreedom);
+        Run("freedom reports proportional dimensions and the linked minimum", SizeFreedomAndMinimum);
+        Run("conflict witness excludes unrelated and compatible relations", ConflictWitness);
+        Run("edit restriction explains a rejected direction and a projected corner", EditRestriction);
         Console.WriteLine("PASS: " + passed + " core tests");
     }
 
     private static ShapeGeometry Shape(string id, double x = 0, double y = 0, double w = 20, double h = 30)
     { return new ShapeGeometry(id, x, y, w, h); }
+
+    private static void PositionFreedom()
+    {
+        var shapes=new[]{Shape(A,0,0,20,10),Shape(B,0,30,20,10)};
+        var left=Constraint(ConstraintKind.SameX,A,B);
+        var pin=Parameter(ConstraintKind.FixedPosition,0,30,B);
+        var width=Parameter(ConstraintKind.FixedWidth,20,null,A);
+        var freedom=LayoutDiagnostics.AnalyzeShape(shapes,new[]{left,pin,width},A);
+        Assert(!freedom.Horizontal && freedom.Vertical && freedom.Width==SizeFreedom.Fixed && freedom.Height==SizeFreedom.IncreaseAndDecrease);
+        var unlocked=LayoutDiagnostics.AnalyzeShape(shapes,new[]{left,width},A);
+        Assert(unlocked.Horizontal && unlocked.Vertical);
+    }
+
+    private static void SizeFreedomAndMinimum()
+    {
+        var shapes=new[]{Shape(A,0,0,2,1),Shape(B,80,0,2,10)};
+        var ratio=Parameter(ConstraintKind.AspectRatio,2,null,A);
+        var sameWidth=Constraint(ConstraintKind.SameWidth,A,B);
+        var freedom=LayoutDiagnostics.AnalyzeShape(shapes,new[]{ratio,sameWidth},A);
+        Assert(freedom.Proportional && freedom.Width==SizeFreedom.Increase && freedom.Height==SizeFreedom.Increase);
+        var linked=LayoutDiagnostics.AnalyzeShape(shapes,new[]{ratio,sameWidth},B);
+        Assert(linked.Width==SizeFreedom.Increase && linked.Height==SizeFreedom.IncreaseAndDecrease && !linked.Proportional);
+    }
+
+    private static void ConflictWitness()
+    {
+        var shapes=new[]{Shape(A,0,0,20,10),Shape(B,0,0,30,10),Shape(C,60,0,10,10)};
+        var a=Parameter(ConstraintKind.FixedWidth,20,null,A);
+        var b=Parameter(ConstraintKind.FixedWidth,30,null,B);
+        var attempted=Constraint(ConstraintKind.SameWidth,A,B);
+        var compatible=Constraint(ConstraintKind.SameY,A,B);
+        var unrelated=Parameter(ConstraintKind.FixedWidth,10,null,C);
+        var input=new[]{unrelated,a,compatible,attempted,b};
+        var witness=LayoutDiagnostics.ExplainConflict(shapes,input,attempted);
+        Assert(new HashSet<string>(witness.Select(item=>item.Id)).SetEquals(new[]{a.Id,b.Id,attempted.Id}));
+    }
+
+    private static void EditRestriction()
+    {
+        var shapes=new[]{Shape(A,0,0,20,10),Shape(B,0,30,30,10)};
+        var x=Constraint(ConstraintKind.SameX,A,B);
+        var pin=Parameter(ConstraintKind.FixedPosition,0,30,B);
+        var ratio=Parameter(ConstraintKind.AspectRatio,2,null,A);
+        var move=new[]{new GeometryEdit(Shape(A,3,0,20,10),GeometryEditMode.Move)};
+        var blocked=LayoutDiagnostics.ExplainEdit(shapes,new[]{x,pin,ratio},move);
+        Assert(new HashSet<string>(blocked.Select(item=>item.Id)).SetEquals(new[]{x.Id,pin.Id}));
+        var allowed=new[]{new GeometryEdit(Shape(A,0,3,20,10),GeometryEditMode.Move)};
+        Assert(LayoutDiagnostics.ExplainEdit(shapes,new[]{x,pin,ratio},allowed,blocked).Count==0);
+        var corner=new[]{new GeometryEdit(Shape(A,0,0,26,10),GeometryEditMode.ResizeSE)};
+        Assert(LayoutDiagnostics.ExplainEdit(shapes,new[]{x,pin,ratio},corner).SequenceEqual(new[]{ratio}));
+    }
 
     private static LayoutConstraint Constraint(ConstraintKind kind, params string[] shapes)
     {

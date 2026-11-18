@@ -69,7 +69,7 @@ namespace PptGcs.AddIn
             keyboard.Finished += OnKeyboardFinished;
             controller = new ConstrainedDragController(application, Log, NormalizeActiveIdentities);
             radial = new RadialMenuController(commands.BuildModel,commands.Preview,
-                kind=>ExecuteShared(()=>commands.Add(kind,null,null)),
+                kind=>ExecuteInteractive(()=>commands.Add(kind,null,null)),
                 more=> {var pane=EnsurePane();pane.Pane.Visible=true;if(more)pane.Control.ShowEditor();},
                 ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
             canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log,RunCanvasAction);
@@ -189,7 +189,7 @@ namespace PptGcs.AddIn
                             PaneInstance pane;
                             if(panes.TryGetValue(WindowIdentity((object)app.ActiveWindow),out pane))
                             {
-                                pane.Control.Render(commands.BuildModel());
+                                pane.Control.Render(commands.BuildPaneModel());
                                 pane.Control.ActivateRelation(relation.Id,false);
                             }
                         }
@@ -325,7 +325,7 @@ namespace PptGcs.AddIn
         public void Reload() { activeKey = null; }
 
         public string GetConstraintXml() { return PowerPointLayout.ReadDocument((object)app.ActivePresentation).ToXml(); }
-        public string GetPaneState() { return json.Serialize(commands.BuildModel()); }
+        public string GetPaneState() { return json.Serialize(commands.BuildPaneModel()); }
         public string GetRadialState() { return radial.GetState(); }
         public string GetNativeFieldState() { return nativeFields.GetState(); }
         public string GetOfficeIconDiagnostics() { return json.Serialize(officeIcons.Diagnostics()); }
@@ -356,7 +356,7 @@ namespace PptGcs.AddIn
             long handle=WindowIdentity((object)app.ActiveWindow);PaneInstance pane;
             if(!panes.TryGetValue(handle,out pane))return json.Serialize(new {factory=paneFactory!=null,window=handle,created=false});
             return json.Serialize(new {factory=paneFactory!=null,window=handle,created=true,visible=pane.Pane.Visible,title=pane.Pane.Title,editorKind=pane.Control.EditorKind,
-                selectedRelationId=pane.Control.SelectedRelationId,dock=pane.Pane.DockPosition.ToString(),width=pane.Pane.Width,
+                selectedRelationId=pane.Control.SelectedRelationId,hasConflict=pane.Control.HasConflict,dock=pane.Pane.DockPosition.ToString(),width=pane.Pane.Width,
                 host=(long)((dynamic)pane.Pane.ContentControl).HostHandle,control=pane.Control.Handle.ToInt64()});
         }
 
@@ -372,12 +372,13 @@ namespace PptGcs.AddIn
                 var ui=new ConstraintPaneControl();
                 instance=new PaneInstance {Pane=pane,Control=ui,Window=(object)window,Presentation=(object)window.Presentation};
                 ui.Bind(new ConstraintPaneActions {
-                    Add=(kind,value,second)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Add(kind,value,second))),
-                    Update=(id,value,second)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Update(id,value,second))),
-                    SetEnabled=(id,enabled)=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.SetEnabled(id,enabled))),
+                    Add=(kind,value,second)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Add(kind,value,second))),
+                    Update=(id,value,second)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Update(id,value,second))),
+                    SetEnabled=(id,enabled)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.SetEnabled(id,enabled))),
                     Delete=id=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Delete(id))),
                     SelectShapes=ids=>InPaneWindow(handle,()=> { if(selectingFromPane)return;selectingFromPane=true;try{commands.SelectShapes(ids);}finally{selectingFromPane=false;}RefreshPane(); }),
-                    Refresh=()=>InPaneWindow(handle,RefreshPane)
+                    Refresh=()=>InPaneWindow(handle,RefreshPane),
+                    ResolveConflict=(draft,disabled)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.ResolveConflict(draft,disabled)))
                 });
                 try
                 {
@@ -389,7 +390,7 @@ namespace PptGcs.AddIn
                 }
                 catch {instance.Dispose();throw;}
             }
-            instance.Control.Render(commands.BuildModel());
+            instance.Control.Render(commands.BuildPaneModel());
             return instance;
         }
 
@@ -400,7 +401,7 @@ namespace PptGcs.AddIn
             {
                 long handle=WindowIdentity((object)app.ActiveWindow);
                 PaneInstance pane;
-                if(panes.TryGetValue(handle,out pane)) pane.Control.Render(commands.BuildModel());
+                if(panes.TryGetValue(handle,out pane)) pane.Control.Render(commands.BuildPaneModel());
             }
             catch(Exception exception) {lastError=exception.Message;}
         }
@@ -411,6 +412,18 @@ namespace PptGcs.AddIn
             busy=true;
             try {command();activeKey=null;lastError=null;}
             finally {busy=false;if(canvasOverlay!=null)canvasOverlay.Invalidate();RefreshPane();}
+        }
+
+        private void ExecuteInteractive(Action command)
+        {
+            try {ExecuteShared(command);}
+            catch(ConstraintCommands.DraftConflict conflict) when(conflict.Choices.Any(choice=>choice.CanDisable))
+            {
+                var pane=EnsurePane();
+                pane.Pane.Visible=true;
+                pane.Control.ShowConflict(conflict);
+                throw;
+            }
         }
 
         private void InPaneWindow(long owner,Action action)
@@ -547,7 +560,7 @@ namespace PptGcs.AddIn
                 controller.Tick();
                 radial.Tick();
                 canvasOverlay.Tick(controller.ActiveGeometry ?? keyboard.ActiveGeometry,
-                    controller.ActiveDriverId ?? keyboard.ActiveDriverId,radial.IsOpen);
+                    controller.ActiveDriverId ?? keyboard.ActiveDriverId,radial.IsOpen,controller.ActiveRestrictions);
                 if (controller.IsDragging || keyboard.IsActive || radial.IsOpen || (activeKey != null && DateTime.UtcNow < nextRefresh)) return;
                 nextRefresh = DateTime.UtcNow.AddMilliseconds(200);
                 PrunePanes();
@@ -577,10 +590,10 @@ namespace PptGcs.AddIn
         private void RunCommand(Action action)
         {
             if (busy || (nativeFields!=null && nativeFields.IsApplying) || (controller != null && controller.IsDragging) || (keyboard!=null && keyboard.IsActive) || (radial!=null && radial.IsOpen)) return;
-            busy=true;
-            try { action(); }
+            try { ExecuteInteractive(action); }
+            catch (ConstraintCommands.DraftConflict conflict) when(conflict.Choices.Any(choice=>choice.CanDisable))
+            { Log("command-conflict",json.Serialize(new { proposed=conflict.Attempted, relations=conflict.Choices })); }
             catch (Exception ex) { Log("command-error",json.Serialize(new { error=ex.ToString() }));MessageBox.Show(ex.Message,"PPT GCS"); }
-            finally { busy=false;activeKey=null;if(canvasOverlay!=null)canvasOverlay.Invalidate();RefreshPane(); }
         }
         private void Log(string type,string data)
         {

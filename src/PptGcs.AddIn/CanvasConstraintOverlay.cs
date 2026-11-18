@@ -37,6 +37,7 @@ namespace PptGcs.AddIn
         private Rectangle viewport;
         private CanvasConstraintProjection projection;
         private string highlightedRelationId;
+        private IReadOnlyCollection<string> limitingRelationIds=Array.Empty<string>();
         private BadgePress press;
         private BadgeClick pendingClick;
         private bool disposed, interactive;
@@ -227,11 +228,13 @@ namespace PptGcs.AddIn
                 IsIconic(root) || GetAncestor(GetForegroundWindow(),2)!=root))Hide("inactive-window");
         }
 
-        public void Tick(IReadOnlyList<PptGcs.Core.ShapeGeometry> dragGeometry, string driverId, bool radialOpen)
+        public void Tick(IReadOnlyList<PptGcs.Core.ShapeGeometry> dragGeometry, string driverId, bool radialOpen,
+            IReadOnlyList<PptGcs.Core.LayoutConstraint> restrictions)
         {
             RequireThread();
             if(disposed)return;
             bool dragging=dragGeometry!=null;
+            limitingRelationIds=restrictions?.Select(item=>item.Id).ToArray()??Array.Empty<string>();
             interactive=false;
             try
             {
@@ -301,7 +304,7 @@ namespace PptGcs.AddIn
                 var signature=Signature();
                 if(signature==lastSignature && window!=null && window.Visible)
                 {interactive=!dragging;return;}
-                layout=CanvasConstraintRenderer.Build(model,Display,projection,bounds.Size,highlightedRelationId);
+                layout=CanvasConstraintRenderer.Build(model,Display,projection,bounds.Size,highlightedRelationId,limitingRelationIds);
                 if(layout.Badges.Count==0){Hide("no-visible-relations");return;}
                 int imageSize=Math.Max(16,Math.Min(128,(int)Math.Round(16*projection.DpiScale)));
                 var icons=new Dictionary<string,Image>(StringComparer.Ordinal);
@@ -356,7 +359,8 @@ namespace PptGcs.AddIn
 
         private string Signature()
         {
-            var value=new StringBuilder().Append(Display).Append('|').Append(highlightedRelationId).Append('|').Append(viewport).Append('|')
+            var value=new StringBuilder().Append(Display).Append('|').Append(highlightedRelationId).Append('|')
+                .Append(String.Join(",",limitingRelationIds)).Append('|').Append(viewport).Append('|')
                 .Append(projection.OriginX.ToString("R",CultureInfo.InvariantCulture)).Append('|')
                 .Append(projection.OriginY.ToString("R",CultureInfo.InvariantCulture)).Append('|')
                 .Append(projection.ScaleX.ToString("R",CultureInfo.InvariantCulture)).Append('|')
@@ -382,7 +386,7 @@ namespace PptGcs.AddIn
                 viewport=new {viewport.X,viewport.Y,viewport.Width,viewport.Height},
                 projection=projection==null?null:new {projection.OriginX,projection.OriginY,projection.ScaleX,projection.ScaleY,projection.DpiScale},
                 highlightedRelationId,menuVisible=IsMenuOpen,
-                badges=layout==null?new object[0]:layout.Badges.Select(item=>(object)new {item.RelationId,item.Kind,item.Label,item.Highlighted,
+                badges=layout==null?new object[0]:layout.Badges.Select(item=>(object)new {item.RelationId,item.Kind,item.Label,item.Highlighted,item.Limited,
                     bounds=new {item.Bounds.X,item.Bounds.Y,item.Bounds.Width,item.Bounds.Height}}).ToArray()};
         }
 

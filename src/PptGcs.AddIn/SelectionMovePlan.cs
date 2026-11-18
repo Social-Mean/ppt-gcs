@@ -98,12 +98,16 @@ namespace PptGcs.AddIn
 
         public SelectionMoveFrame Solve(double dx,double dy)
         {
+            return new SelectionMoveFrame(LayoutSolver.Solve(Initial.Geometry,constraints,RequestedEdits(dx,dy)),
+                Initial.Extras.Select(position=>position.Translate(dx,dy)));
+        }
+
+        internal IReadOnlyList<GeometryEdit> RequestedEdits(double dx,double dy)
+        {
             if(Double.IsNaN(dx)||Double.IsInfinity(dx)||Double.IsNaN(dy)||Double.IsInfinity(dy))
                 throw new ArgumentOutOfRangeException("delta");
-            var edits=drivers.Select(shape=>new GeometryEdit(new ShapeGeometry(shape.Id,
-                shape.Left+dx,shape.Top+dy,shape.Width,shape.Height),GeometryEditMode.Move));
-            return new SelectionMoveFrame(LayoutSolver.Solve(Initial.Geometry,constraints,edits),
-                Initial.Extras.Select(position=>position.Translate(dx,dy)));
+            return drivers.Select(shape=>new GeometryEdit(new ShapeGeometry(shape.Id,
+                shape.Left+dx,shape.Top+dy,shape.Width,shape.Height),GeometryEditMode.Move)).ToList();
         }
 
         public SelectionMoveFrame ApplyAtomic(SelectionMoveFrame previous,SelectionMoveFrame requested,

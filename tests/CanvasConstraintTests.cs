@@ -43,6 +43,10 @@ internal static class CanvasConstraintTests
         var linePoint = Point.Round(new PointF((line.Start.X+line.End.X)/2,(line.Start.Y+line.End.Y)/2));
         Check(layout.BadgeAt(linePoint)==null && layout.BadgeAt(Point.Empty)==null,
             "leader lines and canvas outside the badge remain unclaimed");
+        var limited=CanvasConstraintRenderer.Build(model,CanvasConstraintDisplay.Selection,projection,Viewport,null,new[]{"BC"});
+        Check(limited.Badges.Any(badge=>badge.RelationId=="BC" && badge.Limited && badge.Color.R>badge.Color.B) &&
+            limited.Badges.All(badge=>badge.RelationId=="BC" || !badge.Limited),
+            "an indirect blocker is visible and distinguished in selected-object mode");
     }
 
     private static void LabelFits()

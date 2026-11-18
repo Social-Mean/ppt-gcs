@@ -31,6 +31,7 @@ namespace PptGcs.AddIn
         public bool IsDragging { get { return gesture != null; } }
         internal IReadOnlyList<ShapeGeometry> ActiveGeometry { get { return gesture==null?null:gesture.LastGeometry; } }
         internal string ActiveDriverId { get { return gesture==null?null:gesture.Driver.Id; } }
+        internal IReadOnlyList<LayoutConstraint> ActiveRestrictions { get { return gesture?.Restrictions; } }
         public Func<int,int,int,IntPtr,bool> AlternateMouseInput { get; set; }
         public Func<int,bool,bool> AlternateKeyboardInput { get; set; }
         public Func<bool> AlternateInputActive { get; set; }
@@ -724,11 +725,12 @@ namespace PptGcs.AddIn
             }
             catch(ConstraintConflictException error)
             {
+                SetRestrictions(state,error.Relations);
                 if(state.LastRejection!=error.Message)SafeGestureLog(state,"constraint-rejected",new {gestureId=state.Id,driverId=state.Driver.Id,
                     mode=state.Mode.ToString(),groupChild=true,childNativeIds=child.Edit.ChildRoots.Keys,message=error.Message});
                 state.LastRejection=error.Message;return;
             }
-            if(GroupChildEditPlan.SameChildren(requested,child.Edit.LastFrame.Extras)){state.LastRejection=null;return;}
+            if(GroupChildEditPlan.SameChildren(requested,child.Edit.LastFrame.Extras)){SetRestrictions(state,null);state.LastRejection=null;return;}
             if(child.PendingSelection){child.Edit.SelectExact();child.PendingSelection=false;}
             if(!state.UndoStarted){application.StartNewUndoEntry();state.UndoStarted=true;}
             SelectionMoveFrame actual;
@@ -738,6 +740,7 @@ namespace PptGcs.AddIn
             }
             catch(GroupChildEditRejectedException error)
             {
+                SetRestrictions(state,(error.InnerException as ConstraintConflictException)?.Relations);
                 string rejection=error.InnerException==null ? error.Message : error.InnerException.Message;
                 if(state.LastRejection!=rejection)SafeGestureLog(state,error.InnerException is ConstraintConflictException ? "constraint-rejected" : "gesture-write-rejected",
                     new {gestureId=state.Id,driverId=state.Driver.Id,mode=state.Mode.ToString(),groupChild=true,childNativeIds=child.Edit.ChildRoots.Keys,
@@ -745,7 +748,7 @@ namespace PptGcs.AddIn
                 state.LastRejection=rejection;
                 return;
             }
-            state.LastRejection=null;state.LastGeometry=actual.Geometry.ToList();state.Frames++;
+            SetRestrictions(state,null);state.LastRejection=null;state.LastGeometry=actual.Geometry.ToList();state.Frames++;
             SafeGestureLog(state,"gesture-frame",new {gestureId=state.Id,driverId=state.Driver.Id,mode=state.Mode.ToString(),groupChild=true,
                 childNativeIds=child.Edit.ChildRoots.Keys,childGeometry=actual.Extras,frame=state.Frames,mouseDown,input="owned-gesture-loop",pointerMessage,
                 residualPt=LayoutSolver.MaxResidual(actual.Geometry,state.Constraints),cursor=new {x=point.X,y=point.Y},geometry=actual.Geometry});
@@ -844,12 +847,13 @@ namespace PptGcs.AddIn
             try {requested=selection.Plan.Solve(dx,dy);}
             catch(ConstraintConflictException error)
             {
+                SetRestrictions(state,LayoutDiagnostics.ExplainEdit(state.Before,state.Constraints,selection.Plan.RequestedEdits(dx,dy),state.Restrictions));
                 if(state.LastRejection!=error.Message)SafeGestureLog(state,"constraint-rejected",new {
                     gestureId=state.Id,driverId=state.Driver.Id,mode=state.Mode.ToString(),selectionMove=true,message=error.Message,dx,dy,selectedDriverIds=selection.Plan.DriverIds});
                 state.LastRejection=error.Message;
                 return;
             }
-            state.LastRejection=null;
+            SetRestrictions(state,null);state.LastRejection=null;
             if(selection.LastFrame.Matches(requested))return;
             if(!state.UndoStarted){application.StartNewUndoEntry();state.UndoStarted=true;}
             SelectionMoveFrame actual;
@@ -935,10 +939,12 @@ namespace PptGcs.AddIn
                 double dx = (point.X - state.StartMouse.X) / state.Map.ScaleX;
                 double dy = (point.Y - state.StartMouse.Y) / state.Map.ScaleY;
                 ShapeGeometry target = ComputeTarget(state.Driver, state.Mode, dx, dy);
+                var edits = new[] { new GeometryEdit(target, EditMode(state.Mode)) };
                 IReadOnlyList<ShapeGeometry> result;
-                try { result = LayoutSolver.Solve(state.Before, state.Constraints, state.Driver.Id, target, EditMode(state.Mode)); }
+                try { result = LayoutSolver.Solve(state.Before, state.Constraints, edits); }
                 catch (ConstraintConflictException exception)
                 {
+                    SetRestrictions(state,LayoutDiagnostics.ExplainEdit(state.Before,state.Constraints,edits,state.Restrictions));
                     if (state.LastRejection != exception.Message)
                         SafeGestureLog(state, "constraint-rejected", new
                         {
@@ -948,6 +954,8 @@ namespace PptGcs.AddIn
                     state.LastRejection = exception.Message;
                     return;
                 }
+                SetRestrictions(state,LayoutSolver.NeedsUpdate(target,result.Single(shape=>shape.Id==target.Id))
+                    ? LayoutDiagnostics.ExplainEdit(state.Before,state.Constraints,edits,state.Restrictions) : null);
                 state.LastRejection = null;
                 if (SameGeometry(state.LastGeometry, result)) return;
                 if (!state.UndoStarted)
@@ -972,6 +980,15 @@ namespace PptGcs.AddIn
                 });
             }
             finally { updating = false; }
+        }
+
+        private void SetRestrictions(Gesture state,IReadOnlyList<LayoutConstraint> relations)
+        {
+            var current=relations??Array.Empty<LayoutConstraint>();
+            if(state.Restrictions.SequenceEqual(current))return;
+            state.Restrictions=current;
+            SafeGestureLog(state,"gesture-restrictions",new {gestureId=state.Id,driverId=state.Driver.Id,
+                slideId=state.Context.SlideId,relations=ConstraintData(current)});
         }
 
         private void CheckRelease(Point point)
@@ -1372,6 +1389,7 @@ namespace PptGcs.AddIn
             public double DragThreshold;
             public int Frames;
             public string LastRejection;
+            public IReadOnlyList<LayoutConstraint> Restrictions=Array.Empty<LayoutConstraint>();
         }
         private sealed class SelectionMoveCapture
         {
