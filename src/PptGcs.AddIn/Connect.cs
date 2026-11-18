@@ -16,6 +16,14 @@ namespace PptGcs.AddIn
     [ComVisible(true), Guid("1B728F4B-5AF0-41FD-8589-86E44A7A5501"), ProgId("PptGcs.Connect"), ClassInterface(ClassInterfaceType.AutoDispatch)]
     public sealed class Connect : StandardOleMarshalObject, IDTExtensibility2, IRibbonExtensibility, ICustomTaskPaneConsumer
     {
+        private static readonly string AddInVersion = ReadAddInVersion();
+
+        private static string ReadAddInVersion()
+        {
+            using (var reader = new StreamReader(typeof(Connect).Assembly.GetManifestResourceStream("PptGcs.Version")))
+                return reader.ReadToEnd().Trim();
+        }
+
         private dynamic app;
         private Timer timer;
         private ConstrainedDragController controller;
@@ -100,7 +108,7 @@ namespace PptGcs.AddIn
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.7.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = AddInVersion, powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -372,7 +380,7 @@ namespace PptGcs.AddIn
             return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), parameters=document.Parameters, slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.7.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v" + AddInVersion + "\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 

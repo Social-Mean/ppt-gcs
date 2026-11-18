@@ -18,18 +18,30 @@ v0.4.2 补齐文本框选框外沿及首次边框拖动的约束接管；192 项
 
 v0.3 的矩形约束、轮盘和窗格真实鼠标结果见 [v0.3 验证记录](docs/validation-v3.md) 与 [交互验收](artifacts/v3-interaction/acceptance.json)，更早记录保留在 [v0.2](docs/validation-v2.md) 和 [v0.1](docs/validation.md)。这些历史结果不代替 v0.4 新增形状的真实鼠标验收。几何日志记录实际写回采样，不代表渲染 FPS。
 
-## 构建与安装
+## 安装
 
-当前仅面向 **Windows + 64 位桌面 PowerPoint**。开发机需要 Visual Studio 的 MSBuild、Roslyn 编译器、C++ x64 工具、Windows SDK、ATL，以及已安装的 Microsoft Office / Office PIA。项目使用 .NET Framework 4.8 原生 COM 加载项，不依赖 VSTO 项目模板或 .NET SDK。
+从 [GitHub Releases](https://github.com/Social-Mean/ppt-gcs/releases) 下载 `PPT-GCS-Setup-<版本>-x64.exe`，也可以从 [Windows installer 工作流](https://github.com/Social-Mean/ppt-gcs/actions/workflows/windows-installer.yml) 的成功运行下载同一安装包。Actions 产物下载为 ZIP，解压后双击 EXE。安装完成后关闭并重新打开 PowerPoint，在功能区选择 **PPT GCS**。
 
-关闭 PowerPoint 后，在项目根目录的 64 位 PowerShell 中运行：
+安装包面向 **x64 Windows 10/11 + 64 位桌面 PowerPoint**，需要 .NET Framework 4.8 或更高版本。安装目录为 `%LOCALAPPDATA%\Programs\PPT GCS`，当前用户即可安装。
+
+## 构建与打包
+
+开发机需要 Visual Studio 的 MSBuild、Roslyn 编译器、C++ x64 工具、Windows SDK、ATL 和 Office PIA。安装包另外需要 Inno Setup 6.3 或更高版本。从项目根目录运行下列命令，生成 `dist/PPT-GCS-Setup-<版本>-x64.exe`。
+
+```powershell
+.\scripts\BuildInstaller.ps1
+```
+
+GitHub Actions 在推送到 `main`、发起拉取请求或手动触发时运行构建和自动检查，并上传 EXE。发布前更新 `VERSION`，再推送与之匹配的 `v<版本>` 标签，工作流会把该 EXE 附到对应的 GitHub Release。
+
+本地调试时，关闭 PowerPoint 后可在 64 位 PowerShell 中直接构建并注册工作区里的 DLL。
 
 ```powershell
 .\scripts\Build.ps1
 .\scripts\Install.ps1
 ```
 
-`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行 568 项自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
+`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
 
 `Install.ps1` 注册当前用户的加载项和 `PptGcs.ConstraintPaneHost` 原生控件，不需要管理员权限。重新打开 PowerPoint 后应出现 **PPT GCS** 功能区。注册指向本项目的 DLL；移动项目目录后需重新运行安装脚本。重新构建前请关闭 PowerPoint，避免加载中的 DLL 被占用。
 
@@ -142,7 +154,7 @@ v0.3 的矩形约束、轮盘和窗格真实鼠标结果见 [v0.3 验证记录](
 
 ## 卸载
 
-关闭 PowerPoint 后运行：
+关闭 PowerPoint 后，在 Windows 的 **设置 → 应用 → 已安装的应用** 中卸载 **PPT GCS**。如果使用开发脚本注册，则运行下列命令。
 
 ```powershell
 .\scripts\Uninstall.ps1

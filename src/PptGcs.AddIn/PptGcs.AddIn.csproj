@@ -31,6 +31,7 @@
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </Reference>
     <Reference Include="office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <HintPath>$(MSBuildProgramFiles32)\Microsoft Visual Studio\Shared\Visual Studio Tools for Office\PIA\Office15\office.dll</HintPath>
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </Reference>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
@@ -39,6 +40,7 @@
       <Name>PptGcs.Core</Name>
     </ProjectReference>
     <Compile Include="**\*.cs" Exclude="bin\**;obj\**" />
+    <EmbeddedResource Include="..\..\VERSION" LogicalName="PptGcs.Version" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
