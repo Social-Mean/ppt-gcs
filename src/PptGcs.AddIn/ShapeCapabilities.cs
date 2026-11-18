@@ -52,6 +52,17 @@ namespace PptGcs.AddIn
             return (object)shape;
         }
 
+        internal static bool IsLocked(object shapeObject)
+        {
+            dynamic shape = shapeObject;
+            while ((int)shape.Locked == 0)
+            {
+                if ((int)shape.Child == 0) return false;
+                shape = shape.ParentGroup;
+            }
+            return true;
+        }
+
         private static bool Finite(double value)
         { return !Double.IsNaN(value) && !Double.IsInfinity(value); }
     }

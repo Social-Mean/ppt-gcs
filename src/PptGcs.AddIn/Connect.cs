@@ -27,8 +27,8 @@ namespace PptGcs.AddIn
         private RadialMenuController radial;
         private OfficeIconProvider officeIcons;
         private CanvasConstraintOverlay canvasOverlay;
-        private LayerMarqueeController layerMarquee;
         private SelectionPaneLayerOrder selectionPaneOrder;
+        private NativeMarqueeLockFilter marqueeLocks;
         private IRibbonUI ribbonUi;
         private ICTPFactory paneFactory;
         private readonly Dictionary<long,PaneInstance> panes = new Dictionary<long,PaneInstance>();
@@ -80,14 +80,12 @@ namespace PptGcs.AddIn
                 ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
             canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log,RunCanvasAction,
                 commands.FindSuggestions,RunSuggestedConstraint);
-            layerMarquee = new LayerMarqueeController(ActiveSlideLayers, ActiveLayer,
-                canvasOverlay.HideForContextChange, canvasOverlay.Invalidate, (type, data) => Log(type, json.Serialize(data)));
             selectionPaneOrder = new SelectionPaneLayerOrder(application, ActiveSlideLayers, (type, data) => Log(type, json.Serialize(data)));
+            marqueeLocks = new NativeMarqueeLockFilter(application, (type, data) => Log(type, json.Serialize(data)));
             controller.AlternateMouseInput=RouteCanvasMouse;
             controller.AlternateKeyboardInput=RouteCanvasKeyboard;
-            controller.AlternateInputActive=()=>radial.IsOpen || keyboard.IsActive || nativeFields.IsApplying || layerMarquee.IsDragging;
-            controller.UnhandledCanvasDown=(x,y,target)=>!busy && !radial.IsOpen && !canvasOverlay.IsMenuOpen
-                && !nativeFields.IsApplying && !keyboard.IsActive && layerMarquee.TryStart(x,y,target,false);
+            controller.AlternateInputActive=()=>radial.IsOpen || keyboard.IsActive || nativeFields.IsApplying;
+            controller.ObserveNativeCanvasDown=(x,y,target)=>{ if(!busy && !radial.IsOpen && !nativeFields.IsApplying) marqueeLocks.Begin(x,y,target); };
             controller.CanvasPointerStarting=canvasOverlay.BeginCanvasPointer;
             controller.CanvasGestureFinished=canvasOverlay.CompleteSuggestionEdit;
             selectionChanged = selection => OnIdentityEvent(null);
@@ -121,15 +119,15 @@ namespace PptGcs.AddIn
             if(controller!=null)
             {
                 controller.AlternateMouseInput=null;controller.AlternateKeyboardInput=null;controller.AlternateInputActive=null;
-                controller.UnhandledCanvasDown=null;
+                controller.ObserveNativeCanvasDown=null;
                 controller.CanvasPointerStarting=null;controller.CanvasGestureFinished=null;
                 Cleanup("pointer",()=>controller.Dispose());controller=null;
             }
             if(keyboard!=null){keyboard.Finished-=OnKeyboardFinished;Cleanup("keyboard",()=>keyboard.Dispose());keyboard=null;}
             if(nativeFields!=null){Cleanup("native-fields",()=>nativeFields.Dispose());nativeFields=null;}
             if(radial!=null){Cleanup("radial",()=>radial.Dispose());radial=null;}
-            if(layerMarquee!=null){Cleanup("marquee",()=>layerMarquee.Dispose());layerMarquee=null;}
             selectionPaneOrder = null;
+            marqueeLocks = null;
             if(canvasOverlay!=null){Cleanup("canvas",()=>canvasOverlay.Dispose());canvasOverlay=null;}
             ribbonUi=null;
             foreach(var pane in panes.Values.ToArray()) Cleanup("pane",()=>pane.Dispose());
@@ -206,7 +204,7 @@ namespace PptGcs.AddIn
                         else
                         {
                             PaneInstance pane;
-                            if(panes.TryGetValue(WindowIdentity((object)app.ActiveWindow),out pane))
+                            if(panes.TryGetValue(WindowIdentity((object)app.ActiveWindow),out pane) && pane.Control!=null)
                             {
                                 pane.Control.Render(commands.BuildPaneModel());
                                 pane.Control.ActivateRelation(relation.Id,false);
@@ -223,11 +221,10 @@ namespace PptGcs.AddIn
         private bool RouteCanvasMouse(int kind,int x,int y,IntPtr target)
         {
             if(!busy)selectionPaneOrder.ObserveMouse(kind,target);
+            marqueeLocks.ObserveMouse(kind,x,y);
             if(canvasOverlay.IsMenuOpen)return false;
-            if(layerMarquee.IsDragging)return layerMarquee.HandleBeforeDrag(kind,x,y,target);
             if(keyboard.HandleMouseInput(kind) || radial.HandleMouse(kind,x,y,target))return true;
             if(busy || nativeFields.IsApplying)return false;
-            if(layerMarquee.HandleBeforeDrag(kind,x,y,target))return true;
             if(canvasOverlay.HandleMouse(kind,x,y,target))return true;
             canvasOverlay.ObserveEditPointer(kind,target);
             return false;
@@ -236,10 +233,10 @@ namespace PptGcs.AddIn
         private bool RouteCanvasKeyboard(int key,bool down)
         {
             if(down)selectionPaneOrder.Cancel();
+            if(down && key==0x1B)marqueeLocks.Cancel();
             if(canvasOverlay.IsMenuOpen)return false;
             if(nativeFields.IsApplying)return true;
             if(radial.IsOpen)return radial.HandleKeyboard(key,down);
-            if(layerMarquee.HandleKeyboard(key,down))return true;
             canvasOverlay.ObserveEditKey(key,down);
             return nativeFields.HandleKeyboard(key,down) || keyboard.HandleKeyboard(key,down);
         }
@@ -439,8 +436,8 @@ namespace PptGcs.AddIn
         {
             RunCommand(() =>
             {
-                var pane = EnsurePane(true);
-                pane.Pane.Visible = true;
+                var pane = EnsureLayerPane();
+                pane.LayerPane.Visible = true;
                 RenderLayers(pane);
             });
         }
@@ -448,7 +445,7 @@ namespace PptGcs.AddIn
         public void OnLayerArrange(IRibbonControl control, ref bool cancelDefault)
         {
             cancelDefault = false;
-            if (stopping || busy || layerMarquee == null || layerMarquee.IsDragging || controller.IsDragging || keyboard.IsActive ||
+            if (stopping || busy || controller == null || controller.IsDragging || keyboard.IsActive ||
                 nativeFields.IsApplying) return;
             try
             {
@@ -508,66 +505,33 @@ namespace PptGcs.AddIn
         public string GetPaneDiagnostics()
         {
             long handle=WindowIdentity((object)app.ActiveWindow);PaneInstance pane;
-            if(!panes.TryGetValue(handle,out pane))return json.Serialize(new {factory=paneFactory!=null,window=handle,created=false});
+            if(!panes.TryGetValue(handle,out pane) || pane.Pane==null)return json.Serialize(new {factory=paneFactory!=null,window=handle,created=false});
             return json.Serialize(new {factory=paneFactory!=null,window=handle,created=true,visible=pane.Pane.Visible,title=pane.Pane.Title,editorKind=pane.Control.EditorKind,
                 selectedRelationId=pane.Control.SelectedRelationId,hasConflict=pane.Control.HasConflict,dock=pane.Pane.DockPosition.ToString(),width=pane.Pane.Width,
                 host=(long)((dynamic)pane.Pane.ContentControl).HostHandle,control=pane.Control.Handle.ToInt64()});
         }
 
-        private PaneInstance EnsurePane(bool showLayers = false)
+        private PaneInstance WindowPanes()
         {
             if(paneFactory==null) throw new InvalidOperationException("Office 尚未提供任务窗格接口。");
             dynamic window=app.ActiveWindow;
             long handle=WindowIdentity((object)window);
             PaneInstance instance;
-            if(!panes.TryGetValue(handle,out instance))
+            if (!panes.TryGetValue(handle, out instance))
             {
-                CustomTaskPane pane=paneFactory.CreateCTP("PptGcs.ConstraintPaneHost","约束",(object)window);
-                var ui=new ConstraintPaneControl();
-                var tabs = new TabControl { Dock = DockStyle.Fill };
-                var constraintTab = new TabPage("约束");
-                var layerTab = new TabPage("图层");
-                var layerUi = new LayerPaneControl();
-                ui.Dock = DockStyle.Fill;
-                constraintTab.Controls.Add(ui);
-                layerTab.Controls.Add(layerUi);
-                tabs.TabPages.AddRange(new[] { constraintTab, layerTab });
-                instance=new PaneInstance {Pane=pane,Control=ui,Tabs=tabs,Layers=layerUi,Window=(object)window,Presentation=(object)window.Presentation};
-                var owner = instance;
-                tabs.SelectedIndexChanged += (sender, args) => RefreshPane();
-                layerUi.ActivateLayer = id => InPaneWindow(handle, () =>
-                {
-                    var slide = RequireLayerSlide();
-                    if (!slide.Stack.Any(layer => layer.Id == id)) return;
-                    owner.ActiveLayers[slide.SlideId] = id;
-                    RenderLayers(owner);
-                });
-                layerUi.AddLayer = name => InPaneWindow(handle, () => ExecuteShared(() =>
-                {
-                    var slide = RequireLayerSlide();
-                    owner.ActiveLayers[slide.SlideId] = slide.Add((object)app, name);
-                }));
-                layerUi.RenameLayer = name => InPaneWindow(handle, () => ExecuteShared(() =>
-                {
-                    var slide = RequireLayerSlide();
-                    slide.Rename((object)app, ActiveLayer(slide), name);
-                }));
-                layerUi.RemoveLayer = id => InPaneWindow(handle, () => ExecuteShared(() => RequireLayerSlide().Remove((object)app, id)));
-                layerUi.ReorderLayer = index => InPaneWindow(handle, () => ExecuteShared(() =>
-                {
-                    var slide = RequireLayerSlide();
-                    slide.Reorder((object)app, ActiveLayer(slide), index);
-                }));
-                layerUi.AssignSelection = () => InPaneWindow(handle, () => ExecuteShared(() =>
-                {
-                    var slide = RequireLayerSlide();
-                    slide.Assign((object)app, ActiveLayer(slide));
-                }));
-                layerUi.ArmMarquee = () => InPaneWindow(handle, () =>
-                {
-                    layerMarquee.Toggle(RequireLayerSlide());
-                    RenderLayers(owner);
-                });
+                instance = new PaneInstance { Window = (object)window, Presentation = (object)window.Presentation };
+                panes.Add(handle, instance);
+            }
+            return instance;
+        }
+
+        private PaneInstance EnsurePane()
+        {
+            var instance = WindowPanes();
+            if (instance.Pane == null)
+            {
+                long handle = WindowIdentity(instance.Window);
+                var ui = new ConstraintPaneControl();
                 ui.Bind(new ConstraintPaneActions {
                     Add=(kind,value,second,containerId,parameterId)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Add(kind,value,second,containerId,parameterId))),
                     Update=(id,value,second,parameterId)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Update(id,value,second,parameterId))),
@@ -588,21 +552,78 @@ namespace PptGcs.AddIn
                     Refresh=()=>InPaneWindow(handle,RefreshPane),
                     ResolveConflict=(draft,disabled)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.ResolveConflict(draft,disabled)))
                 });
-                try
-                {
-                    ((dynamic)pane.ContentControl).AttachWindow(tabs.Handle.ToInt64());
-                    ui.SetIcons(officeIcons.Get);
-                    pane.DockPosition=MsoCTPDockPosition.msoCTPDockPositionRight;
-                    pane.Width=380;
-                    panes.Add(handle,instance);
-                }
-                catch {instance.Dispose();throw;}
+                ui.SetIcons(officeIcons.Get);
+                instance.Pane = AttachPane(instance.Window, "约束", ui, 380);
+                instance.Control = ui;
             }
-            instance.Tabs.SelectedIndex = showLayers ? 1 : 0;
-            if (showLayers) RenderLayers(instance);
-            else instance.Control.Render(commands.BuildPaneModel());
+            instance.Control.Render(commands.BuildPaneModel());
             return instance;
         }
+
+        private PaneInstance EnsureLayerPane()
+        {
+            var owner = WindowPanes();
+            if (owner.LayerPane != null) return owner;
+            long handle = WindowIdentity(owner.Window);
+            var ui = new LayerPaneControl();
+            ui.ActivateRow = row => InPaneWindow(handle, () =>
+            {
+                var slide = RequireLayerSlide();
+                if (!MatchesLayerRow(slide, row)) return;
+                owner.ActiveLayers[slide.SlideId] = row.LayerId;
+                if (row.ShapeId.HasValue) slide.SelectObject(row.LayerId, row.ShapeId.Value);
+                RenderLayers(owner);
+            });
+            ui.ToggleState = (row, visibility) => InPaneWindow(handle, () => ExecuteShared(() =>
+            {
+                var slide = RequireLayerSlide();
+                if (MatchesLayerRow(slide, row))
+                    slide.ToggleObjectState((object)app, row.LayerId, row.ShapeId, visibility);
+            }));
+            ui.AddLayer = name => InPaneWindow(handle, () => ExecuteShared(() =>
+            {
+                var slide = RequireLayerSlide();
+                owner.ActiveLayers[slide.SlideId] = slide.Add((object)app, name);
+            }));
+            ui.RenameLayer = name => InPaneWindow(handle, () => ExecuteShared(() =>
+            {
+                var slide = RequireLayerSlide();
+                slide.Rename((object)app, ActiveLayer(slide), name);
+            }));
+            ui.RemoveLayer = id => InPaneWindow(handle, () => ExecuteShared(() => RequireLayerSlide().Remove((object)app, id)));
+            ui.ReorderLayer = (id, index) => InPaneWindow(handle, () => ExecuteShared(() =>
+            {
+                var slide = RequireLayerSlide();
+                if (!slide.Stack.Any(layer => layer.Id == id)) return;
+                owner.ActiveLayers[slide.SlideId] = id;
+                slide.Reorder((object)app, id, index);
+            }));
+            ui.AssignSelection = () => InPaneWindow(handle, () => ExecuteShared(() =>
+            {
+                var slide = RequireLayerSlide();
+                slide.Assign((object)app, ActiveLayer(slide));
+            }));
+            owner.LayerPane = AttachPane(owner.Window, "图层", ui, 320);
+            owner.Layers = ui;
+            return owner;
+        }
+
+        private CustomTaskPane AttachPane(object window, string title, Control ui, int width)
+        {
+            CustomTaskPane pane = null;
+            try
+            {
+                pane = paneFactory.CreateCTP("PptGcs.ConstraintPaneHost", title, window);
+                ((dynamic)pane.ContentControl).AttachWindow(ui.Handle.ToInt64());
+                pane.DockPosition = MsoCTPDockPosition.msoCTPDockPositionRight;
+                pane.Width = width;
+                return pane;
+            }
+            catch { PaneInstance.DisposePane(pane, ui); throw; }
+        }
+
+        private static bool MatchesLayerRow(SlideLayers slide, LayerPaneRow row)
+        { return slide.SlideId == row.SlideId && slide.Stack.Any(layer => layer.Id == row.LayerId); }
 
         private SlideLayers ActiveSlideLayers()
         { return app == null || (int)app.Presentations.Count == 0 ? null : SlideLayers.Read((object)app.ActiveWindow); }
@@ -621,7 +642,7 @@ namespace PptGcs.AddIn
         private void RenderLayers(PaneInstance pane)
         {
             var slide = ActiveSlideLayers();
-            pane.Layers.Render(slide, slide == null ? null : ActiveLayer(slide), layerMarquee.IsArmed(slide));
+            pane.Layers.Render(slide, slide == null ? null : ActiveLayer(slide));
         }
 
         private void RefreshPane()
@@ -633,11 +654,8 @@ namespace PptGcs.AddIn
                 PaneInstance pane;
                 if (panes.TryGetValue(handle, out pane))
                 {
-                    if (pane.Tabs.SelectedIndex == 1)
-                    {
-                        if (pane.Pane.Visible && !layerMarquee.IsDragging) RenderLayers(pane);
-                    }
-                    else pane.Control.Render(commands.BuildPaneModel());
+                    if (pane.Pane != null && pane.Pane.Visible) pane.Control.Render(commands.BuildPaneModel());
+                    if (pane.LayerPane != null && pane.LayerPane.Visible) RenderLayers(pane);
                 }
             }
             catch(Exception exception) {lastError=exception.Message;}
@@ -645,7 +663,7 @@ namespace PptGcs.AddIn
 
         private void ExecuteShared(Action command)
         {
-            if(busy || (nativeFields!=null && nativeFields.IsApplying) || (controller!=null && controller.IsDragging) || (keyboard!=null && keyboard.IsActive) || (radial!=null && radial.IsOpen) || (layerMarquee!=null && layerMarquee.IsDragging)) throw new InvalidOperationException("请先结束当前操作。");
+            if(busy || (nativeFields!=null && nativeFields.IsApplying) || (controller!=null && controller.IsDragging) || (keyboard!=null && keyboard.IsActive) || (radial!=null && radial.IsOpen)) throw new InvalidOperationException("请先结束当前操作。");
             busy=true;
             try {command();activeKey=null;lastError=null;}
             finally {busy=false;if(canvasOverlay!=null)canvasOverlay.Invalidate();RefreshPane();}
@@ -706,19 +724,24 @@ namespace PptGcs.AddIn
         private sealed class PaneInstance : IDisposable
         {
             public CustomTaskPane Pane;public ConstraintPaneControl Control;public object Window,Presentation;
-            public TabControl Tabs;
+            public CustomTaskPane LayerPane;
             public LayerPaneControl Layers;
             public readonly Dictionary<int, string> ActiveLayers = new Dictionary<int, string>();
             private bool disposed;
             public void Dispose()
             {
                 if(disposed)return;disposed=true;
-                try {((dynamic)Pane.ContentControl).DetachWindow();} catch(COMException) { }
+                try { DisposePane(Pane, Control); }
+                finally { DisposePane(LayerPane, Layers); }
+            }
+
+            public static void DisposePane(CustomTaskPane pane, Control view)
+            {
+                try {if(pane!=null)((dynamic)pane.ContentControl).DetachWindow();} catch(COMException) { }
                 catch(InvalidComObjectException) { }
-                if(Tabs!=null) Tabs.Dispose();
-                try {if(Pane!=null)Pane.Delete();} catch(COMException) { }
+                if(view!=null) view.Dispose();
+                try {if(pane!=null)pane.Delete();} catch(COMException) { }
                 catch(InvalidComObjectException) { }
-                Window=null;Presentation=null;Pane=null;Control=null;Tabs=null;Layers=null;
             }
         }
 
@@ -751,6 +774,7 @@ namespace PptGcs.AddIn
             if (stopping || busy || repairingIdentities || app == null || (nativeFields != null && nativeFields.IsApplying) || (controller != null && controller.IsDragging) || (keyboard != null && keyboard.IsActive)) return;
             try
             {
+                if (presentation == null) marqueeLocks.Finish(true);
                 if (presentation == null) NormalizeActiveIdentities();
                 else NormalizeIdentities(presentation);
                 if(canvasOverlay!=null)canvasOverlay.Invalidate();
@@ -808,8 +832,7 @@ namespace PptGcs.AddIn
                 keyboard.Tick();
                 controller.Tick();
                 radial.Tick();
-                layerMarquee.Tick();
-                if(layerMarquee.IsDragging)return;
+                marqueeLocks.Finish();
                 busy = true;
                 try { selectionPaneOrder.Tick(); }
                 finally { busy = false; }

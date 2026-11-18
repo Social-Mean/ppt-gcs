@@ -130,6 +130,11 @@ namespace PptGcs.AddIn
                 ShapeGeometry current = Geometry(shapeObject, value.Id);
                 if (Math.Abs(current.Left-value.Left)<=0.0001 && Math.Abs(current.Top-value.Top)<=0.0001 &&
                     Math.Abs(current.Width-value.Width)<=0.0001 && Math.Abs(current.Height-value.Height)<=0.0001) continue;
+                if (ShapeCapabilities.IsLocked(shapeObject))
+                {
+                    if (!LayoutSolver.NeedsUpdate(current, value)) continue;
+                    throw new InvalidOperationException("此约束编辑需要移动或调整已锁定的对象。");
+                }
                 int aspect = (int)shape.LockAspectRatio;
                 bool sizeChanged = Math.Abs(current.Width-value.Width)>0.0001 || Math.Abs(current.Height-value.Height)>0.0001;
                 if (sizeChanged && aspect != 0) shape.LockAspectRatio = 0;

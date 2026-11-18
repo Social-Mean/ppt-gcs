@@ -185,7 +185,7 @@ namespace PptGcs.AddIn
             bool childSelection=(bool)selection.HasChildShapeRange;
             dynamic range=childSelection ? selection.ChildShapeRange : selection.ShapeRange;
             var selected=Enumerable.Range(1,(int)range.Count).Select(index=>(object)range[index]).ToArray();
-            if(selected.Length==0)return false;
+            if(selected.Length==0 || selected.Any(ShapeCapabilities.IsLocked))return false;
             double scaleX=KeyboardNudgePolicy.PixelsPerPoint((double)window.PointsToScreenPixelsX(0f),(double)window.PointsToScreenPixelsX(10000f));
             double scaleY=KeyboardNudgePolicy.PixelsPerPoint((double)window.PointsToScreenPixelsY(0f),(double)window.PointsToScreenPixelsY(10000f));
             if(childSelection)

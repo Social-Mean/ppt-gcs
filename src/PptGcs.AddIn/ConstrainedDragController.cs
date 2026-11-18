@@ -33,7 +33,7 @@ namespace PptGcs.AddIn
         internal string ActiveDriverId { get { return gesture==null?null:gesture.Driver.Id; } }
         internal IReadOnlyList<LayoutConstraint> ActiveRestrictions { get { return gesture?.Restrictions; } }
         public Func<int,int,int,IntPtr,bool> AlternateMouseInput { get; set; }
-        public Func<int,int,IntPtr,bool> UnhandledCanvasDown { get; set; }
+        public Action<int,int,IntPtr> ObserveNativeCanvasDown { get; set; }
         public Func<int,bool,bool> AlternateKeyboardInput { get; set; }
         public Func<bool> AlternateInputActive { get; set; }
         internal Action<int,int,IntPtr> CanvasPointerStarting { get; set; }
@@ -323,9 +323,8 @@ namespace PptGcs.AddIn
                         RunGestureLoop();
                         return new IntPtr(1);
                     }
-                    if (kind == WmLeftDown && UnhandledCanvasDown != null &&
-                        UnhandledCanvasDown(mouse.Position.X, mouse.Position.Y, mouse.Window))
-                        return new IntPtr(1);
+                    if (kind == WmLeftDown)
+                        ObserveNativeCanvasDown?.Invoke(mouse.Position.X, mouse.Position.Y, mouse.Window);
                 }
             }
             catch (Exception exception)
@@ -768,6 +767,7 @@ namespace PptGcs.AddIn
             if((int)window.Selection.Type!=2)return false;
             dynamic range=window.Selection.ShapeRange;
             var selected=Enumerable.Range(1,(int)range.Count).Select(index=>(object)range[index]).ToArray();
+            if(selected.Any(ShapeCapabilities.IsLocked))return false;
             if(selected.Any(shape=>(int)((dynamic)shape).Child!=0))
             {LogRoute(mouse,messageKind,"native-child-selection",ReadSelection(window));return false;}
             var point=new System.Drawing.PointF(mouse.Position.X,mouse.Position.Y);
@@ -1192,7 +1192,7 @@ namespace PptGcs.AddIn
             return count == expected.Count;
         }
 
-        internal static int ActivateSlidePane(dynamic window)
+        private static int ActivateSlidePane(dynamic window)
         {
             int previous = (int)window.ActivePane.ViewType;
             if (previous != 1)
@@ -1262,7 +1262,7 @@ namespace PptGcs.AddIn
         private static bool CanDrag(object shapeObject)
         {
             dynamic shape = shapeObject;
-            return ShapeCapabilities.IsSupported(shapeObject) && (int)shape.Visible != 0;
+            return ShapeCapabilities.IsSupported(shapeObject) && (int)shape.Visible != 0 && !ShapeCapabilities.IsLocked(shapeObject);
         }
 
         private static bool HitBody(ShapeGeometry shape, ScreenMap map, Point point)
@@ -1413,7 +1413,7 @@ namespace PptGcs.AddIn
             public GroupChildNativeEdit Edit;
             public bool PendingSelection;
         }
-        internal sealed class ScreenMap
+        private sealed class ScreenMap
         {
             public double OriginX, OriginY, ScaleX, ScaleY;
             public static ScreenMap From(object windowObject)
@@ -1434,7 +1434,7 @@ namespace PptGcs.AddIn
                 return new Point { X = (int)Math.Round(OriginX + x * ScaleX), Y = (int)Math.Round(OriginY + y * ScaleY) };
             }
         }
-        [StructLayout(LayoutKind.Sequential)] internal struct Point { public int X, Y; }
+        [StructLayout(LayoutKind.Sequential)] private struct Point { public int X, Y; }
         [StructLayout(LayoutKind.Sequential)] private struct MouseHookData
         {
             public Point Position;

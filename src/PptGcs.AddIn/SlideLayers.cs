@@ -120,11 +120,13 @@ namespace PptGcs.AddIn
 
         private static string ShapeSuffix(int id) { return ":" + id.ToString(CultureInfo.InvariantCulture); }
 
-        internal HashSet<int> Selected()
+        internal HashSet<int> Selected(bool includeGroupChildren = false)
         {
             dynamic selection = ((dynamic)Window).Selection;
-            if ((int)selection.Type != 2 || (bool)selection.HasChildShapeRange) return new HashSet<int>();
-            dynamic range = selection.ShapeRange;
+            if ((int)selection.Type != 2) return new HashSet<int>();
+            bool childSelection = (bool)selection.HasChildShapeRange;
+            if (childSelection && !includeGroupChildren) return new HashSet<int>();
+            dynamic range = childSelection ? selection.ChildShapeRange : selection.ShapeRange;
             var ids = new HashSet<int>();
             for (int i = 1; i <= (int)range.Count; i++) ids.Add((int)range[i].Id);
             return ids;
@@ -137,6 +139,134 @@ namespace PptGcs.AddIn
                 ((dynamic)Window).Selection.Unselect();
             else
                 ((dynamic)Slide).Shapes.Range(indexes).Select();
+        }
+
+        internal LayerPaneRow[] PaneRows(Member[] members)
+        {
+            var byLayer = members.ToLookup(member => member.LayerId);
+            return Stack.Select(layer =>
+            {
+                var objects = byLayer[layer.Id].Select(member => ObjectRow(layer.Id, member.Shape)).ToArray();
+                return new LayerPaneRow(SlideId, layer.Id, null, layer.Name,
+                    Summary(objects.Select(row => row.Visible)), Summary(objects.Select(row => row.Locked)), objects);
+            }).ToArray();
+        }
+
+        private LayerPaneRow ObjectRow(string layerId, object shapeObject)
+        {
+            dynamic shape = shapeObject;
+            var children = Children(shapeObject).Select(child => ObjectRow(layerId, child)).ToArray();
+            return new LayerPaneRow(SlideId, layerId, (int)shape.Id, (string)shape.Name,
+                ReadState(shapeObject, true) == 0 ? LayerRowState.Off : LayerRowState.On,
+                ReadState(shapeObject, false) == 0 ? LayerRowState.Off : LayerRowState.On, children);
+        }
+
+        private static LayerRowState Summary(IEnumerable<LayerRowState> values)
+        {
+            var states = values.Distinct().ToArray();
+            return states.Length == 0 ? LayerRowState.Empty : states.Length == 1 ? states[0] : LayerRowState.Mixed;
+        }
+
+        internal void SelectObject(string layerId, int shapeId)
+        {
+            object shape = FindObject(layerId, shapeId);
+            if (shape == null) return;
+            dynamic current = shape;
+            while (true)
+            {
+                if ((int)current.Visible == 0) return;
+                if ((int)current.Child == 0) break;
+                current = current.ParentGroup;
+            }
+            ((dynamic)shape).Select();
+        }
+
+        internal void ToggleObjectState(object app, string layerId, int? shapeId, bool visibility)
+        {
+            var shapes = shapeId.HasValue
+                ? new[] { FindObject(layerId, shapeId.Value) }.Where(shape => shape != null).ToArray()
+                : Members().Where(member => member.LayerId == layerId).Select(member => member.Shape).ToArray();
+            if (shapes.Length == 0) return;
+            var before = shapes.Select(shape => ReadStateTree(shape, visibility).ToArray()).ToArray();
+            bool turnOn = visibility ? before.All(tree => tree[0].Value == 0) : before.Any(tree => tree[0].Value == 0);
+            int value = turnOn ? -1 : 0;
+            var attempted = new List<int>();
+            dynamic application = app;
+            application.StartNewUndoEntry();
+            try
+            {
+                for (int index = 0; index < shapes.Length; index++)
+                {
+                    if ((before[index][0].Value != 0) == turnOn) continue;
+                    attempted.Add(index);
+                    WriteState(shapes[index], visibility, value);
+                }
+            }
+            catch (Exception error)
+            {
+                var failures = new List<Exception> { error };
+                foreach (int index in attempted)
+                    foreach (var state in before[index])
+                        Restore(() =>
+                        {
+                            if (ReadState(state.Shape, visibility) != state.Value)
+                                WriteState(state.Shape, visibility, state.Value);
+                        }, failures);
+                if (failures.Count > 1) throw new AggregateException("图层状态更新失败，且部分对象无法恢复。", failures);
+                throw;
+            }
+            finally { application.StartNewUndoEntry(); }
+        }
+
+        private object FindObject(string layerId, int id)
+        {
+            foreach (var member in Members().Where(member => member.LayerId == layerId))
+            {
+                var match = FindObject(member.Shape, id);
+                if (match != null) return match;
+            }
+            return null;
+        }
+
+        private static object FindObject(object root, int id)
+        {
+            if ((int)((dynamic)root).Id == id) return root;
+            foreach (var child in Children(root))
+            {
+                var match = FindObject(child, id);
+                if (match != null) return match;
+            }
+            return null;
+        }
+
+        private static IEnumerable<object> Children(object shapeObject)
+        {
+            dynamic shape = shapeObject;
+            if ((int)shape.Type != 6) yield break;
+            dynamic children = shape.GroupItems;
+            for (int i = (int)children.Count; i >= 1; i--) yield return (object)children[i];
+        }
+
+        private static int ReadState(object shapeObject, bool visibility)
+        {
+            dynamic shape = shapeObject;
+            return visibility ? (int)shape.Visible : (int)shape.Locked;
+        }
+
+        private static IEnumerable<(object Shape, int Value)> ReadStateTree(object shape, bool visibility)
+        {
+            yield return (shape, ReadState(shape, visibility));
+            foreach (var child in Children(shape))
+                foreach (var state in ReadStateTree(child, visibility)) yield return state;
+        }
+
+        private static void WriteState(object shapeObject, bool visibility, int value)
+        {
+            dynamic shape = shapeObject;
+            if (visibility) shape.Visible = value;
+            else shape.Locked = value;
+            if ((ReadState(shapeObject, visibility) != 0) != (value != 0))
+                throw new InvalidOperationException("PowerPoint 未能应用对象的显示或锁定状态。");
         }
 
         internal string Add(object app, string name)

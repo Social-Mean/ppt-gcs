@@ -60,7 +60,7 @@ namespace PptGcs.AddIn
         {
             if(context==null)throw new ArgumentNullException("context");
             if(children==null)throw new ArgumentNullException("children");
-            if(children.Length==0 || children.Any(child=>child==null || (int)((dynamic)child).Child==0))return null;
+            if(children.Length==0 || children.Any(child=>child==null || (int)((dynamic)child).Child==0 || ShapeCapabilities.IsLocked(child)))return null;
             var roots=children.Select(ShapeCapabilities.TopLevel).GroupBy(group=>(int)((dynamic)group).Id).Select(group=>group.First()).ToList();
             if(!roots.Any(group=>FindGroupId(context,group)!=null))return null;
             try

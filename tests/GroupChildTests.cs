@@ -53,6 +53,7 @@ internal static class GroupChildTests
         Run("the native single-root rule also rejects two nondegenerate linked roots", NativeMixedLinkedRootsRejected);
         Run("same-root native members still move and restore without writing their parent", NativeSameRootMove);
         Run("native follower failure restores actual children through the shared helper", NativeSameRootRollback);
+        Run("native locks prevent child takeover and restore geometry if a follower is locked", NativeShapeLocks);
         Run("associated capture errors retain ownership while non-child selections stay native", NativeCaptureFailureOwnership);
         Run("an intended related pointer edit consumes a failed capture and its matching up", NativePointerCaptureRejected);
         Console.WriteLine("PASS: "+passed+" group child tests");
@@ -510,6 +511,22 @@ internal static class GroupChildTests
         Assert(failed&&edit.ReadFrame().Matches(edit.Plan.Initial)&&edit.LastFrame.Matches(edit.Plan.Initial),"A failed native follower must restore children, root and external geometry");
         scene.AssertNoParentWrites();
     }
+    private static void NativeShapeLocks()
+    {
+        var scene = new NativeCaptureScene();
+        scene.A.Locked = -1;
+        Assert(scene.Capture(scene.A) == null, "A locked child must stay native");
+        scene.A.Locked = 0;
+        scene.Root.Locked = -1;
+        Assert(scene.Capture(scene.A) == null, "A locked ancestor must keep its children native");
+        scene.Root.Locked = 0;
+        scene.Follower.Locked = -1;
+        var edit = scene.Capture(scene.A);
+        Throws<GroupChildEditRejectedException>(() => edit.Apply(edit.Plan.Target(-10, 5)));
+        Assert(edit.ReadFrame().Matches(edit.Plan.Initial) && scene.Follower.Writes == 0,
+            "An attempted movement must restore the unlocked driver and leave the locked follower untouched");
+        scene.AssertNoParentWrites();
+    }
     private static void NativeCaptureFailureOwnership()
     {
         var scene=new NativeCaptureScene();scene.A.ThrowOnWidthRead=true;GroupChildCaptureException rejected=null;
@@ -558,6 +575,7 @@ public sealed class GroupChildFakeShape
     public GroupChildFakeShape ParentGroup {get;private set;}
     public readonly List<GroupChildFakeShape> Members=new List<GroupChildFakeShape>();
     public int LockAspectRatio {get;set;}
+    public int Locked {get;set;}
     public int Writes,ParentWriteAttempts;
     public bool ThrowOnWidthRead;
     public Action<string,double> AfterWrite;
