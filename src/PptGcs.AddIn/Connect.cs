@@ -72,10 +72,12 @@ namespace PptGcs.AddIn
                 kind=>ExecuteShared(()=>commands.Add(kind,null,null)),
                 more=> {var pane=EnsurePane();pane.Pane.Visible=true;if(more)pane.Control.ShowEditor();},
                 ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
-            canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log);
-            controller.AlternateMouseInput=(kind,x,y,hwnd)=>keyboard.HandleMouseInput(kind) || radial.HandleMouse(kind,x,y,hwnd);
-            controller.AlternateKeyboardInput=(key,down)=>nativeFields.IsApplying ||
-                (radial.IsOpen ? radial.HandleKeyboard(key,down) : nativeFields.HandleKeyboard(key,down) || keyboard.HandleKeyboard(key,down));
+            canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log,RunCanvasAction);
+            controller.AlternateMouseInput=(kind,x,y,hwnd)=>!canvasOverlay.IsMenuOpen &&
+                (keyboard.HandleMouseInput(kind) || radial.HandleMouse(kind,x,y,hwnd) ||
+                    (!busy && !nativeFields.IsApplying && canvasOverlay.HandleMouse(kind,x,y,hwnd)));
+            controller.AlternateKeyboardInput=(key,down)=>!canvasOverlay.IsMenuOpen && (nativeFields.IsApplying ||
+                (radial.IsOpen ? radial.HandleKeyboard(key,down) : nativeFields.HandleKeyboard(key,down) || keyboard.HandleKeyboard(key,down)));
             controller.AlternateInputActive=()=>radial.IsOpen || keyboard.IsActive || nativeFields.IsApplying;
             selectionChanged = selection => OnIdentityEvent(null);
             presentationOpened = presentation => OnIdentityEvent(presentation);
@@ -156,6 +158,45 @@ namespace PptGcs.AddIn
             return value;
         }
         public string GetCanvasConstraintState() { return json.Serialize(canvasOverlay.GetState()); }
+
+        public string ReplayCanvasBadgeForTest(string relationId,string gesture)
+        {
+            if(stopping || app==null || busy || controller.IsDragging || keyboard.IsActive || nativeFields.IsApplying || radial.IsOpen ||
+                (int)app.Presentations.Count==0 || (string)app.ActivePresentation.Tags["PPTGCS_TEST"]!="V3")
+                throw new InvalidOperationException("Canvas badge replay requires an idle V3 fixture.");
+            return json.Serialize(canvasOverlay.ReplayBadgeForTest(relationId,gesture));
+        }
+
+        private void RunCanvasAction(CanvasConstraintAction action,ConstraintPaneRelation relation)
+        {
+            RunCommand(()=>{
+                switch(action)
+                {
+                    case CanvasConstraintAction.Enable: commands.SetEnabled(relation.Id,true);break;
+                    case CanvasConstraintAction.Disable: commands.SetEnabled(relation.Id,false);break;
+                    case CanvasConstraintAction.Delete: commands.Delete(relation.Id);break;
+                    case CanvasConstraintAction.Select:
+                    case CanvasConstraintAction.Edit:
+                        commands.SelectShapes(relation.MemberIds.ToList());
+                        if(action==CanvasConstraintAction.Edit)
+                        {
+                            PaneInstance pane=EnsurePane();
+                            pane.Pane.Visible=true;
+                            pane.Control.ActivateRelation(relation.Id,true);
+                        }
+                        else
+                        {
+                            PaneInstance pane;
+                            if(panes.TryGetValue(WindowIdentity((object)app.ActiveWindow),out pane))
+                            {
+                                pane.Control.Render(commands.BuildModel());
+                                pane.Control.ActivateRelation(relation.Id,false);
+                            }
+                        }
+                        break;
+                }
+            });
+        }
 
         public void CreateConstraint(IRibbonControl control)
         { RunCommand(()=>BeginConstraintCore(control.Tag)); }
@@ -315,7 +356,8 @@ namespace PptGcs.AddIn
             long handle=WindowIdentity((object)app.ActiveWindow);PaneInstance pane;
             if(!panes.TryGetValue(handle,out pane))return json.Serialize(new {factory=paneFactory!=null,window=handle,created=false});
             return json.Serialize(new {factory=paneFactory!=null,window=handle,created=true,visible=pane.Pane.Visible,title=pane.Pane.Title,editorKind=pane.Control.EditorKind,
-                dock=pane.Pane.DockPosition.ToString(),width=pane.Pane.Width,host=(long)((dynamic)pane.Pane.ContentControl).HostHandle,control=pane.Control.Handle.ToInt64()});
+                selectedRelationId=pane.Control.SelectedRelationId,dock=pane.Pane.DockPosition.ToString(),width=pane.Pane.Width,
+                host=(long)((dynamic)pane.Pane.ContentControl).HostHandle,control=pane.Control.Handle.ToInt64()});
         }
 
         private PaneInstance EnsurePane()
@@ -496,7 +538,7 @@ namespace PptGcs.AddIn
         private void Tick(object sender, EventArgs args)
         {
             if(canvasOverlay!=null)canvasOverlay.CheckVisibility();
-            if (busy || refreshing || app == null || stopping || nativeFields.IsApplying) return;
+            if (busy || refreshing || app == null || stopping || nativeFields.IsApplying || canvasOverlay.IsMenuOpen) return;
             refreshing = true;
             try
             {

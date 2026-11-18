@@ -194,6 +194,7 @@ namespace PptGcs.AddIn
 
         // The wheel's "more constraints" action can open this exact editor.
         public string EditorKind { get { return editor.Visible ? selectedKind : null; } }
+        internal string SelectedRelationId { get { return selectedRelationId; } }
 
         public void ShowEditor(string kind = null)
         {
@@ -203,7 +204,9 @@ namespace PptGcs.AddIn
             editor.Text = "新建约束";
             PopulateOptions(kind);
             applyButton.Text = "创建约束";
+            applyButton.AccessibleName = applyButton.Text;
             editor.Visible = true;
+            optionViewport.Visible = true;
             LoadEditorValues(null);
             ScrollControlIntoView(editor);
             Button selected;
@@ -212,6 +215,18 @@ namespace PptGcs.AddIn
 
         public void ShowMessage(string message)
         { operationMessage = message; RefreshMessage(); }
+
+        public void ActivateRelation(string id, bool edit)
+        {
+            var relation = model.Relations.FirstOrDefault(item => item.Id == id);
+            if (relation == null) return;
+            selectedRelationId = id;
+            listSignature = null;
+            RefreshLists();
+            var row = relations.SelectedItems.Cast<ListViewItem>().FirstOrDefault();
+            if (row != null) row.EnsureVisible();
+            if (edit) EditRelation(relation);
+        }
 
         private void RefreshMessage()
         { messageLabel.Text = operationMessage ?? model.Message ?? String.Empty; }
@@ -250,6 +265,8 @@ namespace PptGcs.AddIn
             fields.Controls.Add(editorHint, 0, 1); fields.SetColumnSpan(editorHint, 2);
             ConfigureNumeric(valueBox, "第一个约束参数");
             ConfigureNumeric(secondBox, "第二个约束参数");
+            valueBox.KeyDown += CommitWithEnter;
+            secondBox.KeyDown += CommitWithEnter;
             valueLabel.AutoSize = true; valueLabel.Anchor = AnchorStyles.Left;
             secondLabel.AutoSize = true; secondLabel.Anchor = AnchorStyles.Left;
             fields.Controls.Add(valueLabel, 0, 2); fields.Controls.Add(valueBox, 1, 2);
@@ -341,28 +358,41 @@ namespace PptGcs.AddIn
         private void RefreshButtons()
         {
             var relation = SelectedRelation();
-            var option = relation == null ? null : model.Options.FirstOrDefault(item => item.Kind == relation.Kind);
             addButton.Enabled = actions != null && model.Options.Count > 0;
-            editButton.Enabled = actions != null && relation != null && option != null && (!String.IsNullOrEmpty(option.ValueLabel) || !String.IsNullOrEmpty(option.SecondLabel));
+            editButton.Enabled = actions != null && HasEditableParameters(relation);
             enableButton.Enabled = deleteButton.Enabled = actions != null && relation != null;
             enableButton.Text = relation != null && !relation.Enabled ? "启用" : "停用";
             enableButton.AccessibleName = enableButton.Text;
         }
 
         private void EditSelected()
+        { EditRelation(SelectedRelation()); }
+
+        private bool HasEditableParameters(ConstraintPaneRelation relation)
         {
-            var relation = SelectedRelation();
-            if (relation == null) return;
+            var option = relation == null ? null : model.Options.FirstOrDefault(item => item.Kind == relation.Kind);
+            return option != null && (!String.IsNullOrEmpty(option.ValueLabel) || !String.IsNullOrEmpty(option.SecondLabel));
+        }
+
+        private void EditRelation(ConstraintPaneRelation relation)
+        {
+            if (!HasEditableParameters(relation)) return;
             operationMessage = null;
             RefreshMessage();
             editingId = relation.Id;
-            editor.Text = "修改约束参数";
+            editor.Text = "修改约束参数 · " + (relation.Label ?? relation.Kind);
             PopulateOptions(relation.Kind);
             applyButton.Text = "保存修改";
+            applyButton.AccessibleName = applyButton.Text;
             editor.Visible = true;
+            optionViewport.Visible = false;
             LoadEditorValues(relation);
-            ScrollControlIntoView(editor);
-            if (valueBox.Visible) valueBox.Focus();
+            ScrollControlIntoView(applyButton);
+            if (IsHandleCreated) BeginInvoke((Action)(() => {
+                if (IsDisposed || editingId != relation.Id || !editor.Visible) return;
+                var parameter = valueBox.Visible ? valueBox : secondBox;
+                if (parameter.Focus()) parameter.Select(0, parameter.Text.Length);
+            }));
         }
 
         private void PopulateOptions(string kind)
@@ -485,6 +515,13 @@ namespace PptGcs.AddIn
             string id = editingId;
             if (InvokeCommand(() => { if (id == null) actions.Add?.Invoke(option.Kind, first, second); else actions.Update?.Invoke(id, first, second); }))
             { editor.Visible = false; editingId = null; }
+        }
+
+        private void CommitWithEnter(object sender, KeyEventArgs args)
+        {
+            if (args.KeyCode != Keys.Enter || args.Modifiers != Keys.None || !editor.Visible || !applyButton.Enabled) return;
+            args.SuppressKeyPress = true;
+            ApplyEditor();
         }
 
         private void ToggleSelected()

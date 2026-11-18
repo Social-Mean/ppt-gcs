@@ -164,6 +164,17 @@ internal static class PaneTests
         delete.PerformClick();
         Check(deletedId == "R2", "delete targets only the selected relation");
 
+        int callsBeforeCanvasActivation = selectionCalls;
+        pane.ActivateRelation("R1", true);
+        Check(relations.SelectedItems.Count == 1 && relations.SelectedItems[0].Text.StartsWith("同宽") && !editor.Visible,
+            "activating a parameterless relation selects its row without opening an editor");
+        pane.ActivateRelation("R2", true);
+        Check(pane.EditorKind == "FixedWidth" && number.Value == 60 && selectionCalls == callsBeforeCanvasActivation,
+            "canvas activation loads the addressed relation without reselecting objects");
+        number.Value = 88;
+        apply.PerformClick();
+        Check(updatedId == "R2" && updatedValue == 88, "canvas editor applies the named relation through the shared action");
+
         pane.ShowEditor("SameWidth");
         Check(!apply.Enabled, "insufficient selected objects disable creation");
 

@@ -21,11 +21,28 @@ internal static class CanvasConstraintTests
             LabelFits();
             ProjectionAndVisibility();
             PlacementAndState();
+            BadgeInteractionBounds();
             RenderAlpha();
             Console.WriteLine("PASS: " + passed + " canvas constraint tests (no Office, windows or input)");
             return 0;
         }
         catch(Exception error){Console.Error.WriteLine(error);return 1;}
+    }
+
+    private static void BadgeInteractionBounds()
+    {
+        var model = Model();
+        model.Relations.Add(Relation("BC", "同高", "B", "C"));
+        var projection = new CanvasConstraintProjection { ScaleX=1, ScaleY=1 };
+        var layout = CanvasConstraintRenderer.Build(model,CanvasConstraintDisplay.All,projection,Viewport,"AB");
+        var target = layout.Badges.Single(badge => badge.RelationId=="AB");
+        var anchor = Point.Round(new PointF(target.Bounds.Left+target.Bounds.Width/2, target.Bounds.Top+target.Bounds.Height/2));
+        Check(layout.BadgeAt(anchor)==target && layout.Badges.Count(badge=>badge.Highlighted)==1 && target.Highlighted,
+            "only the addressed relation owns its badge point and highlight");
+        var line = layout.Lines.First();
+        var linePoint = Point.Round(new PointF((line.Start.X+line.End.X)/2,(line.Start.Y+line.End.Y)/2));
+        Check(layout.BadgeAt(linePoint)==null && layout.BadgeAt(Point.Empty)==null,
+            "leader lines and canvas outside the badge remain unclaimed");
     }
 
     private static void LabelFits()

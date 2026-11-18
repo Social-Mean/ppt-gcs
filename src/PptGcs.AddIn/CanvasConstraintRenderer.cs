@@ -21,6 +21,9 @@ namespace PptGcs.AddIn
     {
         public List<CanvasConstraintBadge> Badges { get; } = new List<CanvasConstraintBadge>();
         public List<CanvasConstraintLine> Lines { get; } = new List<CanvasConstraintLine>();
+
+        public CanvasConstraintBadge BadgeAt(Point point)
+        { return Badges.LastOrDefault(badge => badge.Bounds.Contains(point)); }
     }
 
     public sealed class CanvasConstraintBadge
@@ -28,6 +31,7 @@ namespace PptGcs.AddIn
         public string RelationId, Kind, Label;
         public RectangleF Bounds;
         public Color Color;
+        public bool Highlighted;
     }
 
     public sealed class CanvasConstraintLine
@@ -43,7 +47,7 @@ namespace PptGcs.AddIn
         private static readonly Color Unsatisfied = Color.FromArgb(199, 57, 57);
 
         public static CanvasConstraintLayout Build(ConstraintPaneModel model, CanvasConstraintDisplay display,
-            CanvasConstraintProjection projection, Size viewport)
+            CanvasConstraintProjection projection, Size viewport, string highlightedRelationId = null)
         {
             if (model == null) throw new ArgumentNullException("model");
             if (projection == null) throw new ArgumentNullException("projection");
@@ -65,9 +69,15 @@ namespace PptGcs.AddIn
             }
             var clip = new RectangleF(PointF.Empty, viewport);
             float dpi = projection.DpiScale, clearance = 8 * dpi;
-            var obstacles = bounds.Values.Where(rectangle => rectangle.IntersectsWith(clip)).Select(rectangle => {
+            var otherBounds = objects.Values.Where(item => item.CanvasBounds.HasValue).Select(item => {
+                var value = item.CanvasBounds.Value;
+                return new RectangleF((float)(projection.OriginX+value.Left*projection.ScaleX),
+                    (float)(projection.OriginY+value.Top*projection.ScaleY),(float)(value.Width*projection.ScaleX),
+                    (float)(value.Height*projection.ScaleY));
+            });
+            var obstacles = bounds.Values.Concat(otherBounds).Select(rectangle => {
                 rectangle.Inflate(clearance, clearance); return rectangle;
-            }).ToList();
+            }).Where(rectangle => rectangle.IntersectsWith(clip)).ToList();
             using (var measurementImage = new Bitmap(1, 1))
             using (var measurement = Graphics.FromImage(measurementImage))
             using (var font = CreateFont(dpi))
@@ -95,14 +105,15 @@ namespace PptGcs.AddIn
                     Color color = !relation.Enabled ? Disabled : missing ||
                         (!String.IsNullOrEmpty(relation.Status) && (relation.Status.Contains("未满足") ||
                             relation.Status.Contains("缺失") || relation.Status.Contains("不支持"))) ? Unsatisfied : Satisfied;
+                    bool highlighted = relation.Id == highlightedRelationId && highlightedRelationId != null;
                     layout.Badges.Add(new CanvasConstraintBadge {RelationId=relation.Id, Kind=relation.Kind,
-                        Label=label, Bounds=badgeBounds, Color=color});
+                        Label=label, Bounds=badgeBounds, Color=color, Highlighted=highlighted});
                     foreach (string member in known)
                     {
                         PointF from = EdgeToward(bounds[member], Center(badgeBounds));
                         PointF to = EdgeToward(badgeBounds, Center(bounds[member]));
                         if (ClipLine(ref from, ref to, viewport) && DistanceSquared(from, to) > 1)
-                            layout.Lines.Add(new CanvasConstraintLine {Start=from, End=to, Color=Color.FromArgb(88, color)});
+                            layout.Lines.Add(new CanvasConstraintLine {Start=from, End=to, Color=Color.FromArgb(highlighted ? 200 : 88, color)});
                     }
                 }
             }
@@ -125,12 +136,13 @@ namespace PptGcs.AddIn
                 foreach (var line in layout.Lines)
                     using (var pen = new Pen(line.Color, Math.Max(1, dpiScale))) graphics.DrawLine(pen, line.Start, line.End);
                 using (var background = new SolidBrush(Color.FromArgb(240, 255, 255, 255)))
+                using (var highlightedBackground = new SolidBrush(Color.FromArgb(250, 224, 238, 255)))
                 using (var font = CreateFont(dpiScale))
                 using (var format = CreateFormat())
                 foreach (var badge in layout.Badges)
                 {
-                    graphics.FillRectangle(background, badge.Bounds);
-                    using (var pen = new Pen(Color.FromArgb(190, badge.Color), Math.Max(1, dpiScale)))
+                    graphics.FillRectangle(badge.Highlighted ? highlightedBackground : background, badge.Bounds);
+                    using (var pen = new Pen(Color.FromArgb(badge.Highlighted ? 255 : 190, badge.Color), Math.Max(1, dpiScale)*(badge.Highlighted ? 2 : 1)))
                         graphics.DrawRectangle(pen, badge.Bounds.X, badge.Bounds.Y, badge.Bounds.Width, badge.Bounds.Height);
                     float padding = 4 * dpiScale;
                     int iconSize = Math.Max(1, (int)Math.Round(16 * dpiScale));
