@@ -76,7 +76,12 @@ namespace PptGcs.AddIn
             LayoutContext context=ReadCurrent();
             if((bool)((dynamic)context.Window).Selection.HasChildShapeRange)
                 throw new InvalidOperationException("请先退出组合内部编辑，并选中组合整体建立约束。");
-            var selected=SelectedShapes(context.Window);
+            return PlanAdd(context,SelectedShapes(context.Window),kind,value,second,containerId,parameterId);
+        }
+
+        private static EditPlan PlanAdd(LayoutContext context,List<object> selected,ConstraintKind kind,double? value,
+            double? second,string containerId=null,string parameterId=null)
+        {
             int minimum=LayoutConstraint.GetMinimumShapeCount(kind), maximum=LayoutConstraint.GetMaximumShapeCount(kind);
             if(selected.Count<minimum || (maximum>0 && selected.Count>maximum))
                 throw new InvalidOperationException(maximum==minimum ? "此约束需要选中 "+minimum+" 个对象。" : "请选中至少 "+minimum+" 个对象。");
@@ -112,6 +117,71 @@ namespace PptGcs.AddIn
             var relation=new LayoutConstraint(Guid.NewGuid().ToString("D"),context.SlideId,kind,ids,parameter?.Value??value,second,parameterId:parameter?.Id);
             var next=context.Document.WithConstraints(context.Document.Constraints.Concat(new[]{relation}));
             return SolvePlan(new EditPlan {Context=context,Document=next,Attempted=relation,NewIdentities=tags,RelationId=relation.Id});
+        }
+
+        internal IReadOnlyList<CanvasConstraintOffer> FindSuggestions(IReadOnlyDictionary<int,ShapeGeometry> baseline)
+        {
+            var context=ReadCurrent();
+            if(((dynamic)context.Window).Selection.HasChildShapeRange)return Array.Empty<CanvasConstraintOffer>();
+            var shapes=SuggestionShapes(context);
+            var edited=shapes.Where(item=>baseline.ContainsKey(item.Key) && baseline[item.Key].Id==item.Value.Id &&
+                LayoutSolver.NeedsUpdate(baseline[item.Key],item.Value)).Select(item=>item.Value.Id).ToList();
+            if(edited.Count==0)return Array.Empty<CanvasConstraintOffer>();
+            var byId=shapes.ToDictionary(item=>item.Value.Id,item=>item.Key,StringComparer.Ordinal);
+            var current=context.Document.Constraints.Where(item=>item.SlideId==context.SlideId)
+                .Select(item=>item.BindPageSize(context.PageWidth,context.PageHeight)).ToList();
+            return ConstraintSuggestions.Find(context.SlideId,shapes.Values.ToList(),edited,current).Select(offer=>
+                new CanvasConstraintOffer(offer.Kind,byId[offer.AnchorId],offer.MemberIds.Select(id=>byId[id]).ToArray(),
+                    offer.MemberIds.Select(id=>shapes[byId[id]]).ToArray())).ToList().AsReadOnly();
+        }
+
+        internal string AcceptSuggestion(CanvasConstraintOffer offer)
+        {
+            var context=ReadCurrent();
+            dynamic slide=context.Slide;
+            var byNativeId=new Dictionary<int,object>();
+            for(int index=1;index<=(int)slide.Shapes.Count;index++)
+            {
+                object shape=(object)slide.Shapes[index];
+                int nativeId=(int)((dynamic)shape).Id;
+                if(offer.MemberIds.Contains(nativeId) && IsSupported(shape))byNativeId.Add(nativeId,shape);
+            }
+            if(byNativeId.Count!=offer.MemberIds.Count)return null;
+            var selected=offer.MemberIds.Select(id=>byNativeId[id]).ToList();
+            var geometry=offer.MemberIds.Select(id=>PowerPointLayout.Geometry(byNativeId[id],
+                PowerPointLayout.ReadId(byNativeId[id])??SuggestionIdentity(context.SlideId,id))).ToList();
+            if(geometry.Where((shape,index)=>shape.Id!=offer.Geometry[index].Id || LayoutSolver.NeedsUpdate(shape,offer.Geometry[index])).Any() ||
+                ConstraintSuggestions.Error(offer.Kind,geometry)>ConstraintSuggestions.Tolerance || ConstraintSuggestions.AlreadyRelated(
+                    context.Document.Constraints.Where(item=>item.SlideId==context.SlideId),offer.Kind,geometry.Select(shape=>shape.Id).ToArray()))return null;
+            EditPlan plan;
+            try {plan=PlanAdd(context,selected,offer.Kind,null,null);}
+            catch(DraftConflict) {return null;}
+            Commit(plan);
+            return plan.RelationId;
+        }
+
+        internal static string SuggestionIdentity(int slideId,int shapeId)
+        {
+            // Preview-only identities cannot collide with the UUIDv4 tags
+            // generated when the user actually creates a relationship.
+            return new Guid(slideId,0,0x7000,BitConverter.GetBytes((long)shapeId)).ToString("D").ToUpperInvariant();
+        }
+
+        private static Dictionary<int,ShapeGeometry> SuggestionShapes(LayoutContext context)
+        {
+            var result=new Dictionary<int,ShapeGeometry>();
+            var byId=context.Geometry.ToDictionary(item=>item.Id,StringComparer.Ordinal);
+            dynamic slide=context.Slide;
+            for(int index=1;index<=(int)slide.Shapes.Count;index++)
+            {
+                object shape=(object)slide.Shapes[index];
+                int nativeId=(int)((dynamic)shape).Id;
+                string id=PowerPointLayout.ReadId(shape);
+                ShapeGeometry geometry;
+                if(id!=null && byId.TryGetValue(id,out geometry))result.Add(nativeId,geometry);
+                else if(id==null && IsSupported(shape))result.Add(nativeId,PowerPointLayout.Geometry(shape,SuggestionIdentity(context.SlideId,nativeId)));
+            }
+            return result;
         }
 
         private static EditPlan SolvePlan(EditPlan plan)

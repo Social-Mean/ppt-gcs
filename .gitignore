@@ -10,6 +10,7 @@ artifacts/checker-pending.json
 artifacts/editing-entries-*/
 artifacts/reference-constraints/
 artifacts/component-validation/
+artifacts/suggestion-validation/
 *.user
 .packages/
 ~$*

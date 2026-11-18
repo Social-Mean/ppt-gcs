@@ -22,6 +22,7 @@ internal static class CanvasConstraintTests
             ProjectionAndVisibility();
             PlacementAndState();
             BadgeInteractionBounds();
+            RenderSuggestion();
             RenderAlpha();
             Console.WriteLine("PASS: " + passed + " canvas constraint tests (no Office, windows or input)");
             return 0;
@@ -47,6 +48,23 @@ internal static class CanvasConstraintTests
         Check(limited.Badges.Any(badge=>badge.RelationId=="BC" && badge.Limited && badge.Color.R>badge.Color.B) &&
             limited.Badges.All(badge=>badge.RelationId=="BC" || !badge.Limited),
             "an indirect blocker is visible and distinguished in selected-object mode");
+    }
+
+    private static void RenderSuggestion()
+    {
+        var model=Model();model.Relations.Clear();
+        var projection=new CanvasConstraintProjection { ScaleX=1,ScaleY=1 };
+        var offer=new CanvasConstraintOffer(ConstraintKind.SameY,4,new[]{4,5},new[]{model.Objects[0].Geometry,model.Objects[1].Geometry});
+        var layout=CanvasConstraintRenderer.Build(model,CanvasConstraintDisplay.Selection,projection,Viewport,offers:new[]{offer});
+        var badge=layout.Badges.Single();
+        Check(badge.Suggested && badge.Label=="应用顶端对齐" && badge.RelationId==offer.Id && layout.Lines.Count==2,
+            "candidate badges are actionable previews with leaders even when there are no stored relations");
+        Check(CanvasConstraintRenderer.Build(model,CanvasConstraintDisplay.Hidden,projection,Viewport,offers:new[]{offer}).Badges.Count==0,
+            "hiding canvas markers also hides candidate previews");
+        var offscreen=new CanvasConstraintOffer(ConstraintKind.SameY,4,new[]{4,5},new[]{model.Objects[0].Geometry,Geometry(1200,80,70,50)});
+        Check(CanvasConstraintRenderer.Build(model,CanvasConstraintDisplay.All,projection,Viewport,offers:new[]{offscreen}).Badges.Count==0,
+            "no candidate is offered for a peer outside the visible canvas");
+        Check(model.Relations.Count==0,"rendering candidates does not manufacture stored relation rows");
     }
 
     private static void LabelFits()

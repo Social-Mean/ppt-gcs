@@ -74,13 +74,13 @@ namespace PptGcs.AddIn
                 kind=>ExecuteInteractive(()=>commands.Add(kind,null,null)),
                 more=> {var pane=EnsurePane();pane.Pane.Visible=true;if(more)pane.Control.ShowEditor();},
                 ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
-            canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log,RunCanvasAction);
-            controller.AlternateMouseInput=(kind,x,y,hwnd)=>!canvasOverlay.IsMenuOpen &&
-                (keyboard.HandleMouseInput(kind) || radial.HandleMouse(kind,x,y,hwnd) ||
-                    (!busy && !nativeFields.IsApplying && canvasOverlay.HandleMouse(kind,x,y,hwnd)));
-            controller.AlternateKeyboardInput=(key,down)=>!canvasOverlay.IsMenuOpen && (nativeFields.IsApplying ||
-                (radial.IsOpen ? radial.HandleKeyboard(key,down) : nativeFields.HandleKeyboard(key,down) || keyboard.HandleKeyboard(key,down)));
+            canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log,RunCanvasAction,
+                commands.FindSuggestions,RunSuggestedConstraint);
+            controller.AlternateMouseInput=RouteCanvasMouse;
+            controller.AlternateKeyboardInput=RouteCanvasKeyboard;
             controller.AlternateInputActive=()=>radial.IsOpen || keyboard.IsActive || nativeFields.IsApplying;
+            controller.CanvasPointerStarting=canvasOverlay.BeginCanvasPointer;
+            controller.CanvasGestureFinished=canvasOverlay.CompleteSuggestionEdit;
             selectionChanged = selection => OnIdentityEvent(null);
             presentationOpened = presentation => OnIdentityEvent(presentation);
             presentationClosed = OnPresentationClosed;
@@ -110,6 +110,7 @@ namespace PptGcs.AddIn
             if(controller!=null)
             {
                 controller.AlternateMouseInput=null;controller.AlternateKeyboardInput=null;controller.AlternateInputActive=null;
+                controller.CanvasPointerStarting=null;controller.CanvasGestureFinished=null;
                 Cleanup("pointer",()=>controller.Dispose());controller=null;
             }
             if(keyboard!=null){keyboard.Finished-=OnKeyboardFinished;Cleanup("keyboard",()=>keyboard.Dispose());keyboard=null;}
@@ -202,6 +203,37 @@ namespace PptGcs.AddIn
 
         public void CreateConstraint(IRibbonControl control)
         { RunCommand(()=>BeginConstraintCore(control.Tag)); }
+
+        private bool RouteCanvasMouse(int kind,int x,int y,IntPtr target)
+        {
+            if(canvasOverlay.IsMenuOpen)return false;
+            if(keyboard.HandleMouseInput(kind) || radial.HandleMouse(kind,x,y,target))return true;
+            if(busy || nativeFields.IsApplying)return false;
+            if(canvasOverlay.HandleMouse(kind,x,y,target))return true;
+            canvasOverlay.ObserveEditPointer(kind,target);
+            return false;
+        }
+
+        private bool RouteCanvasKeyboard(int key,bool down)
+        {
+            if(canvasOverlay.IsMenuOpen)return false;
+            if(nativeFields.IsApplying)return true;
+            if(radial.IsOpen)return radial.HandleKeyboard(key,down);
+            canvasOverlay.ObserveEditKey(key,down);
+            return nativeFields.HandleKeyboard(key,down) || keyboard.HandleKeyboard(key,down);
+        }
+
+        private void RunSuggestedConstraint(CanvasConstraintOffer offer)
+        {
+            try
+            {
+                ExecuteShared(()=>{
+                    string id=commands.AcceptSuggestion(offer);
+                    if(id!=null)Log("suggestion-accepted",json.Serialize(new {id,kind=offer.Kind.ToString(),members=offer.MemberIds}));
+                });
+            }
+            catch(Exception error) {Log("suggestion-not-applied",json.Serialize(new {message=error.Message}));}
+        }
 
         public void BeginConstraint(string kind)
         { ExecuteShared(()=>BeginConstraintCore(kind)); }

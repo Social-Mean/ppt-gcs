@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using PptGcs.Core;
 
 namespace PptGcs.AddIn
 {
@@ -22,6 +23,8 @@ namespace PptGcs.AddIn
         private readonly Func<string,int,Image> getIcon;
         private readonly Action<string,string> log;
         private readonly Action<CanvasConstraintAction,ConstraintPaneRelation> action;
+        private readonly Func<IReadOnlyDictionary<int,ShapeGeometry>,IReadOnlyList<CanvasConstraintOffer>> findSuggestions;
+        private readonly Action<CanvasConstraintOffer> acceptSuggestion;
         private readonly System.Windows.Forms.Timer singleClickTimer;
         private readonly int thread = Thread.CurrentThread.ManagedThreadId;
         private readonly uint nativeThread=GetCurrentThreadId(),processId=GetCurrentProcessId();
@@ -42,14 +45,20 @@ namespace PptGcs.AddIn
         private BadgeClick pendingClick;
         private bool disposed, interactive;
         private int renders, modelReads;
+        private SuggestionEdit suggestionEdit;
+        private IReadOnlyList<CanvasConstraintOffer> offers=Array.Empty<CanvasConstraintOffer>();
+        private int suggestionRevision;
         public CanvasConstraintDisplay Display { get; private set; } = CanvasConstraintDisplay.Selection;
         public bool IsMenuOpen { get; private set; }
 
         public CanvasConstraintOverlay(object application, Func<ConstraintPaneModel> readModel,
             Func<string,int,Image> getIcon, Action<string,string> log,
-            Action<CanvasConstraintAction,ConstraintPaneRelation> action)
+            Action<CanvasConstraintAction,ConstraintPaneRelation> action,
+            Func<IReadOnlyDictionary<int,ShapeGeometry>,IReadOnlyList<CanvasConstraintOffer>> findSuggestions,
+            Action<CanvasConstraintOffer> acceptSuggestion)
         {
             this.application=application;this.readModel=readModel;this.getIcon=getIcon;this.log=log;this.action=action;
+            this.findSuggestions=findSuggestions;this.acceptSuggestion=acceptSuggestion;
             singleClickTimer=new System.Windows.Forms.Timer {Interval=SystemInformation.DoubleClickTime};
             singleClickTimer.Tick+=(sender,args)=>CompleteSingleClick();
         }
@@ -67,6 +76,109 @@ namespace PptGcs.AddIn
 
         public void HideForContextChange()
         { RequireThread();if(IsMenuOpen)EndMenu();Hide("context-changed");Invalidate(); }
+
+        public void ObserveEditPointer(int message,IntPtr targetWindow)
+        {
+            if(message==0x0201 || message==0x0204 || message==0x0207 || message==0x020A || message==0x020E || !IsCanvasTarget(targetWindow))
+                ClearSuggestions();
+            else if(message==0x0202 && suggestionEdit?.Key==0)CompleteSuggestionEdit(false);
+        }
+
+        public void BeginCanvasPointer(int x,int y,IntPtr canvasWindow)
+        {
+            if(Display!=CanvasConstraintDisplay.Hidden)BeginSuggestionEdit(new Point(x,y),0,canvasWindow);
+        }
+
+        public void ObserveEditKey(int key,bool down)
+        {
+            if(key<0x25 || key>0x28)
+            {
+                if(down && key!=0x10 && key!=0x11 && key!=0x12)ClearSuggestions();
+                return;
+            }
+            if(!down)
+            {
+                if(suggestionEdit?.Key==key)CompleteSuggestionEdit(false);
+                return;
+            }
+            if(Display==CanvasConstraintDisplay.Hidden || !IsCanvasTarget(GetFocus()) || (Control.ModifierKeys&~Keys.Control)!=Keys.None)return;
+            if(suggestionEdit?.Key==key){suggestionEdit.ReleaseTime=null;return;}
+            ClearSuggestions();
+            BeginSuggestionEdit(null,key,GetFocus());
+        }
+
+        public void CompleteSuggestionEdit(bool cancelled)
+        {
+            if(cancelled){ClearSuggestions();return;}
+            if(suggestionEdit!=null && !suggestionEdit.ReleaseTime.HasValue)
+                suggestionEdit.ReleaseTime=DateTime.UtcNow.AddMilliseconds(75);
+        }
+
+        private void BeginSuggestionEdit(Point? pointer,int key,IntPtr targetWindow)
+        {
+            try
+            {
+                dynamic active=application.ActiveWindow;
+                if(active==null || (int)active.ViewType!=9 || (int)active.Selection.Type==3 || (bool)active.Selection.HasChildShapeRange)return;
+                IntPtr owner=GetAncestor(targetWindow,2);
+                if(owner==IntPtr.Zero || GetAncestor(GetForegroundWindow(),2)!=owner)return;
+                SetContext(owner,Identity((object)active),Identity((object)active.Presentation),(int)active.View.Slide.SlideID);
+                if(canvas==IntPtr.Zero)canvas=targetWindow;
+                var baseline=new Dictionary<int,ShapeGeometry>();
+                if((int)active.Selection.Type==2)
+                {
+                    dynamic range=active.Selection.ShapeRange;
+                    for(int index=1;index<=(int)range.Count;index++)AddBaseline((object)range[index],baseline);
+                }
+                if(pointer.HasValue)
+                {
+                    dynamic hit=active.RangeFromPoint(pointer.Value.X,pointer.Value.Y);
+                    if(hit!=null)AddBaseline(ShapeCapabilities.TopLevel((object)hit),baseline);
+                }
+                if(baseline.Count!=0)suggestionEdit=new SuggestionEdit {Key=key,Pointer=pointer,Baseline=baseline};
+            }
+            catch(Exception error) {ClearSuggestions();log("suggestion-start-error",error.Message);}
+        }
+
+        private void AddBaseline(object shape,Dictionary<int,ShapeGeometry> baseline)
+        {
+            int id=(int)((dynamic)shape).Id;
+            if(!baseline.ContainsKey(id) && ShapeCapabilities.IsSupported(shape))
+                baseline.Add(id,PowerPointLayout.Geometry(shape,PowerPointLayout.ReadId(shape)??ConstraintCommands.SuggestionIdentity(slideId,id)));
+        }
+
+        private bool IsCanvasTarget(IntPtr target)
+        { return canvas!=IntPtr.Zero && (target==canvas || target!=IntPtr.Zero && IsChild(canvas,target)); }
+
+        private void ClearSuggestions()
+        {
+            suggestionEdit=null;
+            if(offers.Count==0)return;
+            offers=Array.Empty<CanvasConstraintOffer>();
+            suggestionRevision++;
+        }
+
+        private void UpdateSuggestions(bool editing)
+        {
+            if(suggestionEdit==null && offers.Count==0)return;
+            var cursor=new NativePoint();
+            if(!GetCursorPos(out cursor) || !viewport.Contains(cursor.X,cursor.Y) ||
+                !IsCanvasTarget(WindowFromPoint(cursor)) || !IsCanvasTarget(GetFocus()))
+            {ClearSuggestions();return;}
+            var session=suggestionEdit;
+            if(session==null)return;
+            var now=DateTime.UtcNow;
+            bool held=GetAsyncKeyState(session.Key==0?1:session.Key)<0;
+            if(!held && !editing)CompleteSuggestionEdit(false);
+            bool complete=session.ReleaseTime.HasValue && now>=session.ReleaseTime.Value && !editing;
+            bool live=held && now>=session.NextSample && (session.Key!=0 ||
+                !Within(new Point(cursor.X,cursor.Y),session.Pointer.Value,SystemInformation.DragSize));
+            if(!complete && !live)return;
+            if(complete)suggestionEdit=null;
+            session.NextSample=now.AddMilliseconds(120);
+            offers=findSuggestions(session.Baseline);
+            suggestionRevision++;
+        }
 
         public bool HandleMouse(int message, int x, int y, IntPtr targetWindow)
         {
@@ -93,6 +205,11 @@ namespace PptGcs.AddIn
                     Defer(()=>ShowMenu(hit));
                     return true;
                 }
+                if(hit.Offer!=null)
+                {
+                    Defer(()=>AcceptOffer(hit));
+                    return true;
+                }
                 if(completed.DoubleClick)
                 {
                     CancelPendingClick();
@@ -112,6 +229,7 @@ namespace PptGcs.AddIn
             // to another window or process. Never swallow this fresh click's up.
             if(press!=null && press.Left==left)press=null;
             BadgeClick click=press==null && Control.ModifierKeys==Keys.None ? FindClick(point,targetWindow) : null;
+            if(click?.Offer!=null && !left)click=null;
             if(click!=null && !IsBlankCanvas(click))click=null;
             bool doubleClick=left && SameBadge(pendingClick,click) &&
                 Within(point,pendingClick.Point,SystemInformation.DoubleClickSize);
@@ -128,6 +246,13 @@ namespace PptGcs.AddIn
                 (targetWindow!=canvas && !IsChild(canvas,targetWindow)))return null;
             var clientPoint=new Point(screenPoint.X-window.Left,screenPoint.Y-window.Top);
             CanvasConstraintBadge badge=layout.BadgeAt(clientPoint);
+            if(badge?.Suggested==true)
+            {
+                var offer=suggestionEdit==null?offers.FirstOrDefault(item=>item.Id==badge.RelationId):null;
+                if(offer==null)return null;
+                return new BadgeClick {Root=root,WindowIdentity=identity,PresentationIdentity=presentationIdentity,SlideId=slideId,
+                    RelationId=badge.RelationId,Point=screenPoint,Offer=offer};
+            }
             var relation=badge==null ? null : model.Relations.FirstOrDefault(item=>item.Id==badge.RelationId);
             if(relation==null)return null;
             return new BadgeClick {Root=root,WindowIdentity=identity,PresentationIdentity=presentationIdentity,SlideId=slideId,
@@ -155,6 +280,13 @@ namespace PptGcs.AddIn
 
         private void Defer(Action callback)
         { if(window!=null && window.IsHandleCreated)window.BeginInvoke(callback); }
+
+        private void AcceptOffer(BadgeClick click)
+        {
+            if(disposed || !offers.Contains(click.Offer) || GetAncestor(GetForegroundWindow(),2)!=click.Root || !IsBlankCanvas(click))return;
+            ClearSuggestions();
+            acceptSuggestion(click.Offer);
+        }
 
         private void ShowMenu(BadgeClick click)
         {
@@ -253,11 +385,7 @@ namespace PptGcs.AddIn
                 long currentIdentity=Identity((object)documentWindow);
                 long currentPresentation=Identity((object)documentWindow.Presentation);
                 int currentSlide=(int)slide.SlideID;
-                if(owner!=root || identity!=currentIdentity || presentationIdentity!=currentPresentation || slideId!=currentSlide)
-                {
-                    ClearContext();root=owner;identity=currentIdentity;presentationIdentity=currentPresentation;slideId=currentSlide;
-                    if(window!=null){window.Dispose();window=null;}
-                }
+                SetContext(owner,currentIdentity,currentPresentation,currentSlide);
 
                 double originX=(double)documentWindow.PointsToScreenPixelsX(0f);
                 double originY=(double)documentWindow.PointsToScreenPixelsY(0f);
@@ -277,6 +405,7 @@ namespace PptGcs.AddIn
                 if(dpi==0){Hide("invalid-dpi");return;}
                 projection=new CanvasConstraintProjection {OriginX=originX-bounds.Left,OriginY=originY-bounds.Top,
                     ScaleX=scaleX,ScaleY=scaleY,DpiScale=dpi/96f};
+                UpdateSuggestions(dragging);
 
                 // Keep the full relation/selection read out of the drag loop.
                 // During a drag, the existing controller has already written
@@ -304,7 +433,7 @@ namespace PptGcs.AddIn
                 var signature=Signature();
                 if(signature==lastSignature && window!=null && window.Visible)
                 {interactive=!dragging;return;}
-                layout=CanvasConstraintRenderer.Build(model,Display,projection,bounds.Size,highlightedRelationId,limitingRelationIds);
+                layout=CanvasConstraintRenderer.Build(model,Display,projection,bounds.Size,highlightedRelationId,limitingRelationIds,offers);
                 if(layout.Badges.Count==0){Hide("no-visible-relations");return;}
                 int imageSize=Math.Max(16,Math.Min(128,(int)Math.Round(16*projection.DpiScale)));
                 var icons=new Dictionary<string,Image>(StringComparer.Ordinal);
@@ -359,7 +488,7 @@ namespace PptGcs.AddIn
 
         private string Signature()
         {
-            var value=new StringBuilder().Append(Display).Append('|').Append(highlightedRelationId).Append('|')
+            var value=new StringBuilder().Append(Display).Append('|').Append(highlightedRelationId).Append('|').Append(suggestionRevision).Append('|')
                 .Append(String.Join(",",limitingRelationIds)).Append('|').Append(viewport).Append('|')
                 .Append(projection.OriginX.ToString("R",CultureInfo.InvariantCulture)).Append('|')
                 .Append(projection.OriginY.ToString("R",CultureInfo.InvariantCulture)).Append('|')
@@ -386,7 +515,8 @@ namespace PptGcs.AddIn
                 viewport=new {viewport.X,viewport.Y,viewport.Width,viewport.Height},
                 projection=projection==null?null:new {projection.OriginX,projection.OriginY,projection.ScaleX,projection.ScaleY,projection.DpiScale},
                 highlightedRelationId,menuVisible=IsMenuOpen,
-                badges=layout==null?new object[0]:layout.Badges.Select(item=>(object)new {item.RelationId,item.Kind,item.Label,item.Highlighted,item.Limited,
+                editingForSuggestions=suggestionEdit!=null,suggestionCount=offers.Count,
+                badges=layout==null?new object[0]:layout.Badges.Select(item=>(object)new {item.RelationId,item.Kind,item.Label,item.Highlighted,item.Limited,item.Suggested,
                     bounds=new {item.Bounds.X,item.Bounds.Y,item.Bounds.Width,item.Bounds.Height}}).ToArray()};
         }
 
@@ -424,9 +554,15 @@ namespace PptGcs.AddIn
         }
 
         private void Hide(string reason)
-        {if(window!=null && window.IsHandleCreated)window.Hide();interactive=false;CancelPendingClick();hiddenReason=reason;lastSignature=null;layout=null;}
+        {if(window!=null && window.IsHandleCreated)window.Hide();interactive=false;CancelPendingClick();if(reason!="no-visible-relations" && reason!="waiting-for-scene")ClearSuggestions();hiddenReason=reason;lastSignature=null;layout=null;}
+        private void SetContext(IntPtr owner,long currentIdentity,long currentPresentation,int currentSlide)
+        {
+            if(owner==root && identity==currentIdentity && presentationIdentity==currentPresentation && slideId==currentSlide)return;
+            ClearContext();root=owner;identity=currentIdentity;presentationIdentity=currentPresentation;slideId=currentSlide;
+            if(window!=null){window.Dispose();window=null;}
+        }
         private void ClearContext()
-        {if(IsMenuOpen)EndMenu();CancelPendingClick();highlightedRelationId=null;model=null;tracked.Clear();layout=null;canvas=IntPtr.Zero;identity=0;presentationIdentity=0;slideId=0;nextModelRefresh=DateTime.MinValue;lastSignature=null;}
+        {if(IsMenuOpen)EndMenu();CancelPendingClick();ClearSuggestions();highlightedRelationId=null;model=null;tracked.Clear();layout=null;canvas=IntPtr.Zero;identity=0;presentationIdentity=0;slideId=0;nextModelRefresh=DateTime.MinValue;lastSignature=null;}
         private void RequireThread()
         {if(Thread.CurrentThread.ManagedThreadId!=thread)throw new InvalidOperationException("Canvas overlay requires Office's UI thread.");}
         public void Dispose()
@@ -470,6 +606,15 @@ namespace PptGcs.AddIn
             public string RelationId;
             public Point Point;
             public bool HasParameters;
+            public CanvasConstraintOffer Offer;
+        }
+        private sealed class SuggestionEdit
+        {
+            public int Key;
+            public Point? Pointer;
+            public Dictionary<int,ShapeGeometry> Baseline;
+            public DateTime NextSample;
+            public DateTime? ReleaseTime;
         }
         private sealed class BadgePress {public BadgeClick Click;public bool Left,DoubleClick,Cancelled;}
         private sealed class Owner : IWin32Window {public IntPtr Handle{get;private set;}public Owner(IntPtr handle){Handle=handle;}}
@@ -513,6 +658,9 @@ namespace PptGcs.AddIn
         [DllImport("user32.dll")] private static extern bool IsChild(IntPtr parent,IntPtr child);
         [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr window);
         [DllImport("user32.dll")] private static extern IntPtr WindowFromPoint(NativePoint point);
+        [DllImport("user32.dll")] private static extern bool GetCursorPos(out NativePoint point);
+        [DllImport("user32.dll")] private static extern IntPtr GetFocus();
+        [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int key);
         [DllImport("user32.dll")] private static extern IntPtr CreatePopupMenu();
         [DllImport("user32.dll",CharSet=CharSet.Unicode)] private static extern bool AppendMenu(IntPtr menu,uint flags,UIntPtr id,string text);
         [DllImport("user32.dll")] private static extern uint TrackPopupMenuEx(IntPtr menu,uint flags,int x,int y,IntPtr owner,IntPtr parameters);

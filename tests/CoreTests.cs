@@ -67,6 +67,8 @@ internal static class CoreTests
         Run("moving and resizing a container preserves its members' insets", ContainerAnchors);
         Run("named dimensions store one value and resolve every reference", NamedParameters);
         Run("component copies remap internal relations and can share or clone parameters", CopyComponent);
+        Run("candidate discovery anchors nearby alignment, width and both gap axes to the edited object", CandidateDiscovery);
+        Run("candidate discovery filters stored, implied and unsatisfiable layouts", CandidateConflicts);
         Console.WriteLine("PASS: " + passed + " core tests");
     }
 
@@ -290,6 +292,40 @@ internal static class CoreTests
             Assert(ConstraintDocument.Parse(result.ToXml()).ToXml() == result.ToXml());
         }
         Throws<ArgumentException>(() => ComponentCopy.Plan(doc, 256, 256, new Dictionary<string, string> { { A, C } }, false));
+    }
+
+    private static void CandidateDiscovery()
+    {
+        var top=new[] {Shape(A,60,40,55,30),Shape(B,190,42,85,49),Shape(C,900,41,40,50)};
+        var empty=new LayoutConstraint[0];
+        var align=ConstraintSuggestions.Find(256,top,new[]{ShapeIdentity.Normalize(A)},empty);
+        Assert(align.Any(item=>item.Kind==ConstraintKind.SameY && item.AnchorId==top[0].Id && item.MemberIds.SequenceEqual(new[]{top[0].Id,top[1].Id})));
+        Assert(align.All(item=>!item.MemberIds.Contains(top[2].Id)) && align.Count<=3);
+        Assert(ConstraintSuggestions.Find(256,top,new string[0],empty).Count==0);
+        var width=new[]{Shape(A,10,30,65,41),Shape(B,155,125,67,28)};
+        Assert(ConstraintSuggestions.Find(256,width,new[]{width[1].Id},empty).Any(item=>item.Kind==ConstraintKind.SameWidth));
+
+        var row=new[]{Shape(A,20,40,30,44),Shape(B,98,46,40,33),Shape(C,186,42,45,51)};
+        var horizontal=ConstraintSuggestions.Find(256,row,new[]{row[1].Id},empty);
+        Assert(horizontal.Any(item=>item.Kind==ConstraintKind.EqualHorizontalGap && item.MemberIds.SequenceEqual(row.Select(shape=>shape.Id))));
+        var column=row.Select(shape=>Shape(shape.Id,shape.Top,shape.Left,shape.Height,shape.Width)).ToArray();
+        Assert(ConstraintSuggestions.Find(256,column,new[]{column[0].Id},empty).Any(item=>item.Kind==ConstraintKind.EqualVerticalGap));
+        Assert(top[0].Top==40 && row[1].Left==98,"Discovery leaves inputs untouched.");
+    }
+
+    private static void CandidateConflicts()
+    {
+        var baseline=new[]{Shape(A,60,40,55,30),Shape(B,190,42,85,49)};
+        string[] driver={baseline[0].Id};
+        var fixedAnchors=new[] {Parameter(ConstraintKind.FixedPosition,60,40,A),Parameter(ConstraintKind.FixedPosition,190,42,B)};
+        Assert(!ConstraintSuggestions.Find(256,baseline,driver,fixedAnchors).Any(item=>item.Kind==ConstraintKind.SameY));
+        var inactive=Constraint(ConstraintKind.SameY,A,B).WithEnabled(false);
+        Assert(!ConstraintSuggestions.Find(256,baseline,driver,new[]{inactive}).Any(item=>item.Kind==ConstraintKind.SameY));
+        var linked=new[]{Constraint(ConstraintKind.SameY,A,C),Constraint(ConstraintKind.SameY,C,B)};
+        Assert(ConstraintSuggestions.AlreadyRelated(linked,ConstraintKind.SameY,baseline.Select(shape=>shape.Id).ToArray()));
+        var gap=new[]{Constraint(ConstraintKind.EqualHorizontalGap,A,B,C,D)};
+        Assert(ConstraintSuggestions.AlreadyRelated(gap,ConstraintKind.EqualHorizontalGap,new[]{A,B,C}.Select(ShapeIdentity.Normalize).ToArray()));
+        Assert(!ConstraintSuggestions.AlreadyRelated(gap,ConstraintKind.EqualHorizontalGap,new[]{A,B,D}.Select(ShapeIdentity.Normalize).ToArray()));
     }
 
     private static void RejectV1()

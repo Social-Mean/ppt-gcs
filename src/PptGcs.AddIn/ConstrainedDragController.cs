@@ -35,6 +35,8 @@ namespace PptGcs.AddIn
         public Func<int,int,int,IntPtr,bool> AlternateMouseInput { get; set; }
         public Func<int,bool,bool> AlternateKeyboardInput { get; set; }
         public Func<bool> AlternateInputActive { get; set; }
+        internal Action<int,int,IntPtr> CanvasPointerStarting { get; set; }
+        internal Action<bool> CanvasGestureFinished { get; set; }
 
         public ConstrainedDragController(object application, Action<string, string> log, Action normalizeIdentities)
         {
@@ -473,6 +475,7 @@ namespace PptGcs.AddIn
             // activated. Only the actual mdiClass input surface can reach here;
             // do not change panes for thumbnail, notes, Ribbon or task-pane input.
             int previousPane = ActivateSlidePane(window);
+            if(messageKind==WmLeftDown)CanvasPointerStarting?.Invoke(mouse.Position.X,mouse.Position.Y,mouse.Window);
 
             // Resolve the active document at mouse-down; never carry a cached
             // slide ID or COM object into a different presentation window.
@@ -1142,12 +1145,14 @@ namespace PptGcs.AddIn
                 {
                     gestureId = state.Id, reason, error = exception.GetType().Name, message = exception.Message
                 });
+                cancel = true;
                 try { if (state.UndoStarted) application.StartNewUndoEntry(); } catch { }
             }
             finally
             {
                 if (state.CaptureWindow != IntPtr.Zero && GetCapture() == state.CaptureWindow) ReleaseCapture();
                 finishing = false;
+                if (!state.IsTest) CanvasGestureFinished?.Invoke(cancel);
             }
         }
 

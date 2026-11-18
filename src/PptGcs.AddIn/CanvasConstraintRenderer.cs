@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Globalization;
 using System.Linq;
+using PptGcs.Core;
 
 namespace PptGcs.AddIn
 {
@@ -33,6 +34,22 @@ namespace PptGcs.AddIn
         public Color Color;
         public bool Highlighted;
         public bool Limited;
+        public bool Suggested;
+    }
+
+    public sealed class CanvasConstraintOffer
+    {
+        public string Id { get; }
+        public ConstraintKind Kind { get; }
+        public int AnchorId { get; }
+        public IReadOnlyList<int> MemberIds { get; }
+        public IReadOnlyList<ShapeGeometry> Geometry { get; }
+
+        public CanvasConstraintOffer(ConstraintKind kind,int anchorId,IReadOnlyList<int> members,IReadOnlyList<ShapeGeometry> geometry)
+        {
+            Kind=kind;AnchorId=anchorId;MemberIds=members;Geometry=geometry;
+            Id="suggestion/"+kind+"/"+String.Join(",",members.OrderBy(id=>id));
+        }
     }
 
     public sealed class CanvasConstraintLine
@@ -47,10 +64,11 @@ namespace PptGcs.AddIn
         private static readonly Color Disabled = Color.FromArgb(116, 122, 132);
         private static readonly Color Unsatisfied = Color.FromArgb(199, 57, 57);
         private static readonly Color Limiting = Color.FromArgb(168, 83, 10);
+        private static readonly Color Suggestion = Color.FromArgb(0, 108, 79);
 
         public static CanvasConstraintLayout Build(ConstraintPaneModel model, CanvasConstraintDisplay display,
             CanvasConstraintProjection projection, Size viewport, string highlightedRelationId = null,
-            IReadOnlyCollection<string> limitingRelationIds = null)
+            IReadOnlyCollection<string> limitingRelationIds = null,IReadOnlyList<CanvasConstraintOffer> offers=null)
         {
             if (model == null) throw new ArgumentNullException("model");
             if (projection == null) throw new ArgumentNullException("projection");
@@ -68,7 +86,7 @@ namespace PptGcs.AddIn
             foreach (var item in objects.Values)
             {
                 RectangleF projected;
-                if (TryProject(item, projection, out projected)) bounds.Add(item.Id, projected);
+                if (TryProject(item.Geometry, projection, out projected)) bounds.Add(item.Id, projected);
             }
             var clip = new RectangleF(PointF.Empty, viewport);
             float dpi = projection.DpiScale, clearance = 8 * dpi;
@@ -97,32 +115,51 @@ namespace PptGcs.AddIn
                     var visible = known.Where(id => bounds[id].IntersectsWith(clip)).ToList();
                     if (visible.Count == 0) continue;
                     string anchor = visible.FirstOrDefault(id => objects[id].Selected) ?? visible[0];
-                    string label = RelationLabel(relation);
-                    float height = 24 * dpi, margin = 4 * dpi;
-                    // Reserve the icon and all three padding gaps before measuring the label.
-                    float width = 28 * dpi + (float)Math.Ceiling(measurement.MeasureString(label, font, PointF.Empty, format).Width);
-                    width = Math.Min(Math.Min(width, 220 * dpi), viewport.Width - 2 * margin);
-                    if (width < 24 * dpi || height > viewport.Height - 2 * margin) continue;
-                    RectangleF badgeBounds;
-                    if (!Place(bounds[anchor], new SizeF(width, height), viewport, dpi, obstacles, layout.Badges, out badgeBounds)) continue;
                     bool missing = known.Count != members.Count;
                     Color color = !relation.Enabled ? Disabled : missing ||
                         (!String.IsNullOrEmpty(relation.Status) && (relation.Status.Contains("未满足") ||
                             relation.Status.Contains("缺失") || relation.Status.Contains("不支持"))) ? Unsatisfied : Satisfied;
                     if(limited) color=Limiting;
                     bool highlighted = relation.Id == highlightedRelationId && highlightedRelationId != null;
-                    layout.Badges.Add(new CanvasConstraintBadge {RelationId=relation.Id, Kind=relation.Kind,
-                        Label=label, Bounds=badgeBounds, Color=color, Highlighted=highlighted, Limited=limited});
-                    foreach (string member in known)
+                    AddBadge(new CanvasConstraintBadge {RelationId=relation.Id, Kind=relation.Kind,
+                        Label=RelationLabel(relation), Color=color, Highlighted=highlighted, Limited=limited},bounds[anchor],
+                        known.Select(id=>bounds[id]),layout,viewport,dpi,obstacles,measurement,font,format);
+                }
+                foreach(var offer in offers??Array.Empty<CanvasConstraintOffer>())
+                {
+                    var projected=new Dictionary<int,RectangleF>();
+                    for(int index=0;index<offer.MemberIds.Count;index++)
                     {
-                        PointF from = EdgeToward(bounds[member], Center(badgeBounds));
-                        PointF to = EdgeToward(badgeBounds, Center(bounds[member]));
-                        if (ClipLine(ref from, ref to, viewport) && DistanceSquared(from, to) > 1)
-                            layout.Lines.Add(new CanvasConstraintLine {Start=from, End=to, Color=Color.FromArgb(highlighted || limited ? 200 : 88, color)});
+                        RectangleF box;
+                        if(TryProject(offer.Geometry[index],projection,out box) && box.IntersectsWith(clip))projected.Add(offer.MemberIds[index],box);
                     }
+                    if(projected.Count!=offer.MemberIds.Count || !projected.ContainsKey(offer.AnchorId))continue;
+                    var protectedBounds=projected.Values.Select(box=>{box.Inflate(clearance,clearance);return box;});
+                    AddBadge(new CanvasConstraintBadge {RelationId=offer.Id,Kind=offer.Kind.ToString(),
+                        Label="应用"+ConstraintCatalog.Label(offer.Kind),Color=Suggestion,Suggested=true},projected[offer.AnchorId],
+                        projected.Values,layout,viewport,dpi,obstacles.Concat(protectedBounds).ToList(),measurement,font,format);
                 }
             }
             return layout;
+        }
+
+        private static void AddBadge(CanvasConstraintBadge badge,RectangleF anchor,IEnumerable<RectangleF> members,
+            CanvasConstraintLayout layout,Size viewport,float dpi,List<RectangleF> obstacles,Graphics measurement,Font font,StringFormat format)
+        {
+            float height=24*dpi,margin=4*dpi;
+            // Reserve the icon and the full label before placing the badge.
+            float width=28*dpi+(float)Math.Ceiling(measurement.MeasureString(badge.Label,font,PointF.Empty,format).Width);
+            width=Math.Min(Math.Min(width,220*dpi),viewport.Width-2*margin);
+            if(width<24*dpi || height>viewport.Height-2*margin ||
+                !Place(anchor,new SizeF(width,height),viewport,dpi,obstacles,layout.Badges,out badge.Bounds))return;
+            layout.Badges.Add(badge);
+            foreach(var member in members)
+            {
+                PointF from=EdgeToward(member,Center(badge.Bounds)),to=EdgeToward(badge.Bounds,Center(member));
+                if(ClipLine(ref from,ref to,viewport) && DistanceSquared(from,to)>1)
+                    layout.Lines.Add(new CanvasConstraintLine {Start=from,End=to,
+                        Color=Color.FromArgb(badge.Highlighted || badge.Limited ? 200 : 88,badge.Color)});
+            }
         }
 
         public static void Draw(Graphics graphics, CanvasConstraintLayout layout,
@@ -143,11 +180,12 @@ namespace PptGcs.AddIn
                 using (var background = new SolidBrush(Color.FromArgb(240, 255, 255, 255)))
                 using (var highlightedBackground = new SolidBrush(Color.FromArgb(250, 224, 238, 255)))
                 using (var limitedBackground = new SolidBrush(Color.FromArgb(252, 255, 231, 198)))
+                using (var suggestedBackground = new SolidBrush(Color.FromArgb(250, 229, 249, 238)))
                 using (var font = CreateFont(dpiScale))
                 using (var format = CreateFormat())
                 foreach (var badge in layout.Badges)
                 {
-                    graphics.FillRectangle(badge.Limited ? limitedBackground : badge.Highlighted ? highlightedBackground : background, badge.Bounds);
+                    graphics.FillRectangle(badge.Suggested ? suggestedBackground : badge.Limited ? limitedBackground : badge.Highlighted ? highlightedBackground : background, badge.Bounds);
                     bool emphasized=badge.Limited || badge.Highlighted;
                     using (var pen = new Pen(Color.FromArgb(emphasized ? 255 : 190, badge.Color), Math.Max(1, dpiScale)*(emphasized ? 2 : 1)))
                         graphics.DrawRectangle(pen, badge.Bounds.X, badge.Bounds.Y, badge.Bounds.Width, badge.Bounds.Height);
@@ -177,11 +215,10 @@ namespace PptGcs.AddIn
         { return new StringFormat {Alignment=StringAlignment.Near, LineAlignment=StringAlignment.Center,
             Trimming=StringTrimming.EllipsisCharacter, FormatFlags=StringFormatFlags.NoWrap}; }
 
-        private static bool TryProject(ConstraintPaneObject item, CanvasConstraintProjection projection, out RectangleF bounds)
+        private static bool TryProject(ShapeGeometry geometry, CanvasConstraintProjection projection, out RectangleF bounds)
         {
             bounds = RectangleF.Empty;
-            if (item.Geometry == null) return false;
-            var geometry = item.Geometry;
+            if (geometry == null) return false;
             double x = projection.OriginX + geometry.Left * projection.ScaleX,
                 y = projection.OriginY + geometry.Top * projection.ScaleY,
                 width = geometry.Width * projection.ScaleX, height = geometry.Height * projection.ScaleY;

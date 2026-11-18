@@ -29,7 +29,7 @@ v0.3 的矩形约束、轮盘和窗格真实鼠标结果见 [v0.3 验证记录](
 .\scripts\Install.ps1
 ```
 
-`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行 562 项自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
+`Build.ps1` 编译托管加载项、核心库和原生 ATL 窗格宿主，并运行 568 项自动检查，产物位于 `bin/`。首次构建从 NuGet 恢复固定版本 `Microsoft.NETFramework.ReferenceAssemblies 1.0.3` 和 `MathNet.Numerics 5.0.0`，缓存于 `.packages/`。MathNet 使用 MIT 许可证。官方 Extensibility 和 Office PIA 的 COM 接口元数据由编译器嵌入插件。
 
 `Install.ps1` 注册当前用户的加载项和 `PptGcs.ConstraintPaneHost` 原生控件，不需要管理员权限。重新打开 PowerPoint 后应出现 **PPT GCS** 功能区。注册指向本项目的 DLL；移动项目目录后需重新运行安装脚本。重新构建前请关闭 PowerPoint，避免加载中的 DLL 被占用。
 
@@ -59,6 +59,10 @@ v0.3 的矩形约束、轮盘和窗格真实鼠标结果见 [v0.3 验证记录](
 边距以磅（pt）输入，0 表示边缘对齐，正值朝参考框内侧，负值朝外。居中的偏移量为 0 时中心对齐，正值向右或向下。对象同时约束到同一参考框、同一轴的两条不同位置时，宽度或高度随参考框变化，例如同时保留左、右内边距。容器可以嵌套，循环引用会提示冲突。
 
 通过 **PPT GCS → 幻灯片尺寸…** 输入宽高并应用到全部幻灯片。插件先检查所有受约束的页，再修改 PowerPoint 页面尺寸和对象几何，两者共用一步原生撤销和重做。PowerPoint 自带的 **设计 → 幻灯片大小** 直接运行其内置缩放，保持约束的页面重排入口是 **PPT GCS → 幻灯片尺寸…**。[页面与容器约束验证](docs/validation-reference-constraints.md)
+
+## 候选约束
+
+在普通幻灯片画布移动、缩放或用方向键微移对象时，插件检查邻近对象的边缘、中心、宽高或相邻间距是否接近，最多提示三条可行关系。候选使用绿色 **应用…** 标记，点击后创建约束。提示本身不改动几何、对象编号或历史。按 Esc、切页或离开画布会清除提示。**隐藏标记** 也会隐藏候选。[候选约束验证](docs/validation-suggestions.md)
 
 ## 约束窗格
 
