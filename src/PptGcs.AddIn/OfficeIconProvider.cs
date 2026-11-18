@@ -32,7 +32,13 @@ namespace PptGcs.AddIn
             {"FixedHorizontalGap", "AlignDistributeHorizontally"}, {"FixedVerticalGap", "AlignDistributeVertically"},
             {"Offset", "ObjectSizeAndPositionDialog"},
             {"SymmetricVertical", "ObjectFlipHorizontal"}, {"SymmetricHorizontal", "ObjectFlipVertical"},
-            {"more", "ObjectAlignMenu"}, {"view", "SelectionPane"},
+            {"PageLeft", "ObjectsAlignLeftSmart"}, {"ContainerLeft", "ObjectsAlignLeftSmart"},
+            {"PageCenterX", "ObjectsAlignCenterHorizontalSmart"}, {"ContainerCenterX", "ObjectsAlignCenterHorizontalSmart"},
+            {"PageRight", "ObjectsAlignRightSmart"}, {"ContainerRight", "ObjectsAlignRightSmart"},
+            {"PageTop", "ObjectsAlignTopSmart"}, {"ContainerTop", "ObjectsAlignTopSmart"},
+            {"PageCenterY", "ObjectsAlignMiddleVerticalSmart"}, {"ContainerCenterY", "ObjectsAlignMiddleVerticalSmart"},
+            {"PageBottom", "ObjectsAlignBottomSmart"}, {"ContainerBottom", "ObjectsAlignBottomSmart"},
+            {"more", "ObjectAlignMenu"}, {"view", "SelectionPane"}, {"pageSize", "PowerPointPageSetup"},
             {"remove", "Clear"}, {"demo", "SlideNew"}, {"status", "FileProperties"}
         };
 

@@ -334,6 +334,14 @@ namespace PptGcs.AddIn
             string id=null;var values=ReadParameters(parameters);
             ExecuteShared(()=>id=commands.Add(kind,values.Item1,values.Item2));return id;
         }
+        public string AddContainerConstraintCommand(string kind,double value,string containerId)
+        {
+            string id=null;
+            ExecuteShared(()=>id=commands.Add(kind,value,null,containerId));
+            return id;
+        }
+        public void ResizePageCommand(double width,double height)
+        { ExecuteShared(()=>PageResize.Apply((object)app,width,height)); }
         public void UpdateConstraintCommand(string id,string parameters)
         { var values=ReadParameters(parameters);ExecuteShared(()=>commands.Update(id,values.Item1,values.Item2)); }
         public void SetConstraintEnabled(string id,bool enabled) { ExecuteShared(()=>commands.SetEnabled(id,enabled)); }
@@ -349,6 +357,15 @@ namespace PptGcs.AddIn
 
         public void CTPFactoryAvailable(ICTPFactory factory) { paneFactory=factory; }
         public void ShowConstraintPane(object control) { RunCommand(()=>EnsurePane().Pane.Visible=true); }
+        public void ShowPageResize(object control)
+        {
+            RunCommand(()=>{
+                var pane=EnsurePane();
+                dynamic page=app.ActivePresentation.PageSetup;
+                pane.Pane.Visible=true;
+                pane.Control.ShowPageResize((double)page.SlideWidth,(double)page.SlideHeight);
+            });
+        }
         public string OpenConstraintPane()
         { var pane=EnsurePane();pane.Pane.Visible=true;return GetPaneState(); }
         public string GetPaneDiagnostics()
@@ -373,7 +390,9 @@ namespace PptGcs.AddIn
                 instance=new PaneInstance {Pane=pane,Control=ui,Window=(object)window,Presentation=(object)window.Presentation};
                 ui.Bind(new ConstraintPaneActions {
                     Add=(kind,value,second)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Add(kind,value,second))),
+                    AddContainer=(kind,value,containerId)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Add(kind,value,null,containerId))),
                     Update=(id,value,second)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Update(id,value,second))),
+                    ResizePage=(width,height)=>InPaneWindow(handle,()=>ResizePageCommand(width,height)),
                     SetEnabled=(id,enabled)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.SetEnabled(id,enabled))),
                     Delete=id=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Delete(id))),
                     SelectShapes=ids=>InPaneWindow(handle,()=> { if(selectingFromPane)return;selectingFromPane=true;try{commands.SelectShapes(ids);}finally{selectingFromPane=false;}RefreshPane(); }),

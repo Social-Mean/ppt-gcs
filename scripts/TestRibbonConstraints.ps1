@@ -1,8 +1,8 @@
 ﻿[CmdletBinding()]
-param()
+param([string]$OutputDirectory = (Join-Path $PSScriptRoot '..\artifacts\ribbon-ui'))
 $ErrorActionPreference='Stop'
-$root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$directory=Join-Path $root ('artifacts\ribbon-ui\run-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfff'))
+$OutputDirectory=[IO.Path]::GetFullPath($OutputDirectory)
+$directory=Join-Path $OutputDirectory ('run-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfff'))
 New-Item -ItemType Directory -Force -Path $directory|Out-Null
 $fixture=Join-Path $directory 'ribbon.pptx'
 $ppt=[Runtime.InteropServices.Marshal]::GetActiveObject('PowerPoint.Application')
@@ -36,7 +36,7 @@ try {
     $p.PageSetup.SlideWidth=960;$p.PageSetup.SlideHeight=540
     [xml]$ribbon=$addin.GetCustomUI('Microsoft.PowerPoint.Presentation')
     $buttons=@($ribbon.SelectNodes('//*[local-name()="button" and @tag]'))
-    if($buttons.Count -ne 20){throw 'Expected twenty actual Ribbon constraint buttons'}
+    if($buttons.Count -ne 32){throw 'Expected 32 actual Ribbon constraint buttons'}
     $ribbon.Save((Join-Path $directory 'ribbon.xml'))
     for($i=0;$i -lt $buttons.Count;$i++){
         $slide=$p.Slides.Add($i+1,12);$slide.Name=$buttons[$i].GetAttribute('tag')
@@ -48,6 +48,7 @@ try {
         $slide=$p.Slides.Item($i+1)
         $option=@(($addin.GetPaneState()|ConvertFrom-Json).Options|Where-Object Kind -eq $kind)[0]
         $names=@(for($j=0;$j -lt $option.MinimumMembers;$j++){'Member_'+$j})
+        $container=$kind.StartsWith('Container',[StringComparison]::Ordinal)
         $slide.Shapes.Range([object[]]$names).Select()
         $option=@(($addin.GetPaneState()|ConvertFrom-Json).Options|Where-Object Kind -eq $kind)[0]
         $before=Read-State
@@ -60,13 +61,17 @@ try {
             if($diag.title -ne '约束' -or -not $diag.visible -or $diag.editorKind -ne $kind){throw ($kind+' did not open the matching parameter editor')}
             $values=@{value=[double]$option.DefaultValue}
             if(-not [string]::IsNullOrEmpty($option.SecondLabel)){$values.second=[double]$option.DefaultSecond}
-            $null=$addin.AddConstraintCommand([string]$kind,($values|ConvertTo-Json -Compress))
+            if($container){
+                $reference='shape:{0}/{1}' -f $slide.SlideID,$slide.Shapes.Item($names[-1]).Id
+                $null=$addin.AddContainerConstraintCommand([string]$kind,$values.value,$reference)
+            }else{$null=$addin.AddConstraintCommand([string]$kind,($values|ConvertTo-Json -Compress))}
         }
         $snapshot=$addin.GetSnapshot()|ConvertFrom-Json;Assert-Owned
         $relations=@($snapshot.slides[$i].constraints)
         if($snapshot.presentation -ne $fixture -or $relations.Count -ne 1 -or $relations[0].Kind -ne $kind -or $relations[0].ShapeIds.Count -ne $names.Count){throw ($kind+' created an unexpected relationship')}
         $actualIds=@(foreach($name in $names){$slide.Shapes.Item($name).Tags.Item('PPTGCS_ID')})
         if(@($relations[0].ShapeIds|Where-Object {$_ -notin $actualIds}).Count){throw ($kind+' references objects outside the selection')}
+        if($container -and $relations[0].ShapeIds[0] -cne $actualIds[-1]){throw ($kind+' did not preserve the designated container')}
         if($parameterized -and ([math]::Abs($relations[0].Value-$option.DefaultValue) -gt .00001)){throw ($kind+' did not retain its entered parameter')}
         $after=Read-State
         Invoke-VerifiedHistory 'Undo' $before
@@ -81,5 +86,5 @@ finally {
     if($null -ne $returnWindow){try{$returnWindow.Activate()}catch{}}
     $report=[pscustomobject]@{Passed=$passed;PhysicalMouseInput=$false;ActualRibbonClicks=$false;RibbonControlTagsAndSharedDispatch=$true;CompletedCases=$cases.Count;Cases=$cases;Failure=$failure;Directory=$directory;Utc=[DateTime]::UtcNow.ToString('O')}
     $report|ConvertTo-Json -Depth 12|Set-Content (Join-Path $directory 'acceptance.json') -Encoding UTF8
-    $report|ConvertTo-Json -Depth 12|Set-Content (Join-Path $root 'artifacts\ribbon-ui\latest.json') -Encoding UTF8
+    $report|ConvertTo-Json -Depth 12|Set-Content (Join-Path $OutputDirectory 'latest.json') -Encoding UTF8
 }

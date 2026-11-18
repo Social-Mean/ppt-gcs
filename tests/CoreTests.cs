@@ -63,6 +63,8 @@ internal static class CoreTests
         Run("freedom reports proportional dimensions and the linked minimum", SizeFreedomAndMinimum);
         Run("conflict witness excludes unrelated and compatible relations", ConflictWitness);
         Run("edit restriction explains a rejected direction and a projected corner", EditRestriction);
+        Run("page anchors use the current dimensions and preserve both margins", PageAnchors);
+        Run("moving and resizing a container preserves its members' insets", ContainerAnchors);
         Console.WriteLine("PASS: " + passed + " core tests");
     }
 
@@ -177,12 +179,61 @@ internal static class CoreTests
             }).ToArray();
             var source = new ConstraintDocument(all);
             var result = ConstraintDocument.Parse(source.ToXml());
-            Assert(result.Constraints.Count == 20);
+            Assert(result.Constraints.Select(item => item.Kind).SequenceEqual(all.Select(item => item.Kind)));
             Assert(result.Constraints[5].ShapeIds.SequenceEqual(new[] { C, A, B }.Select(ShapeIdentity.Normalize)));
             Assert(source.ToXml() == result.ToXml());
             Assert(ConstraintDocument.Parse(new ConstraintDocument(new LayoutConstraint[0]).ToXml()).Constraints.Count == 0);
         }
         finally { Thread.CurrentThread.CurrentCulture = prior; }
+    }
+
+    private static void PageAnchors()
+    {
+        var input = new[] { Shape(A, 20, 40, 80, 50), Shape(B, 120, 140, 90, 60), Shape(C, 720, 420, 30, 40) };
+        var document = new ConstraintDocument(new[] {
+            Parameter(ConstraintKind.PageLeft, 20, null, A, B),
+            Parameter(ConstraintKind.PageRight, 30, null, A, B),
+            Parameter(ConstraintKind.PageCenterY, -10, null, A),
+            Parameter(ConstraintKind.PageBottom, 15, null, B)
+        });
+        string xml = document.ToXml();
+        var reloaded = ConstraintDocument.Parse(xml);
+        foreach (var page in new[] { new[] { 960.0, 540.0 }, new[] { 1080.0, 610.0 } })
+        {
+            double width = page[0], height = page[1];
+            var relations = reloaded.Constraints.Select(item => item.BindPageSize(width, height)).ToArray();
+            var result = Normalize(input, relations);
+            Same(Get(result, A), Shape(A, 20, height / 2 - 35, width - 50, 50));
+            Same(Get(result, B), Shape(B, 20, height - 75, width - 50, 60));
+            Same(Get(result, C), input[2]);
+            Near(LayoutSolver.MaxResidual(result.Values, relations), 0);
+            var impossible = relations.Concat(new[] { Parameter(ConstraintKind.FixedWidth, 80, null, A) }).ToArray();
+            Throws<ConstraintConflictException>(() => Normalize(input, impossible));
+        }
+        Assert(reloaded.ToXml() == xml);
+    }
+
+    private static void ContainerAnchors()
+    {
+        var input = new[] { Shape(A, 40, 60, 200, 100), Shape(B, 70, 90, 60, 20), Shape(C, 80, 120, 60, 30) };
+        var left = Parameter(ConstraintKind.ContainerLeft, 15, null, A, B, C);
+        var right = Parameter(ConstraintKind.ContainerRight, 20, null, A, B, C);
+        var top = Parameter(ConstraintKind.ContainerTop, 8, null, A, B, C);
+        var relations = new[] { left, right, top };
+        var initial = Normalize(input, relations);
+        Same(Get(initial, A), input[0]);
+        Same(Get(initial, B), Shape(B, 55, 68, 165, 20));
+        Same(Get(initial, C), Shape(C, 55, 68, 165, 30));
+        var moved = Edit(initial.Values, relations, Shape(A, 80, 130, 200, 100), GeometryEditMode.Move);
+        Same(Get(moved, B), Shape(B, 95, 138, 165, 20));
+        Same(Get(moved, C), Shape(C, 95, 138, 165, 30));
+        var resized = Edit(moved.Values, relations, Shape(A, 80, 130, 250, 100), GeometryEditMode.ResizeE);
+        Same(Get(resized, B), Shape(B, 95, 138, 215, 20));
+        Same(Get(resized, C), Shape(C, 95, 138, 215, 30));
+        Near(LayoutSolver.MaxResidual(resized.Values, relations), 0);
+        Throws<ConstraintConflictException>(() => Edit(resized.Values, relations, Shape(B, 96, 138, 215, 20), GeometryEditMode.Move));
+        Throws<ArgumentException>(() => new ConstraintDocument(new[] { left, Parameter(ConstraintKind.ContainerLeft, 15, null, A, C, B) }));
+        Throws<ConstraintConflictException>(() => Normalize(input, left, Parameter(ConstraintKind.ContainerLeft, 15, null, B, A)));
     }
 
     private static void RejectV1()

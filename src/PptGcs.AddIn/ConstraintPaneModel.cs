@@ -64,7 +64,9 @@ namespace PptGcs.AddIn
     {
         public Action<IReadOnlyList<string>> SelectShapes { get; set; }
         public Action<string, double?, double?> Add { get; set; }
+        public Action<string, double?, string> AddContainer { get; set; }
         public Action<string, double?, double?> Update { get; set; }
+        public Action<double, double> ResizePage { get; set; }
         public Action<string, bool> SetEnabled { get; set; }
         public Action<string> Delete { get; set; }
         public Action Refresh { get; set; }

@@ -87,7 +87,11 @@ namespace PptGcs.Core
             var component = baseline.Where(shape => connected.Contains(shape.Id)).ToList();
             var indices = component.Select((shape, index) => new { shape.Id, Index = index })
                 .ToDictionary(item => item.Id, item => item.Index, StringComparer.Ordinal);
-            double[] dimensions = ResolveDimensions(component, active, indices, edits);
+            var relative = active.Where(relation => RelativeAnchor.For(relation.Kind)!=null).ToList();
+            var ordinary = relative.Count==0 ? active : active.Except(relative).ToList();
+            if(relative.Count!=0)ValidateContainers(relative);
+            double[] dimensions = ResolveDimensions(component, ordinary, indices, edits);
+            if(relative.Count!=0)dimensions=ResolveDimensions(component,ordinary,indices,edits,relative,dimensions);
             double[] widths = Enumerable.Range(0, component.Count).Select(i => dimensions[2 * i]).ToArray();
             double[] heights = Enumerable.Range(0, component.Count).Select(i => dimensions[2 * i + 1]).ToArray();
             var xsRequested = new Dictionary<string, double>(StringComparer.Ordinal);
@@ -97,6 +101,11 @@ namespace PptGcs.Core
                 int index = indices[edit.Id];
                 var anchor = DrivenPosition(component[index], edit.Target, widths[index], heights[index], edit.Mode);
                 xsRequested.Add(edit.Id, anchor[0]); ysRequested.Add(edit.Id, anchor[1]);
+            }
+            if(relative.Count!=0)
+            {
+                PinContainerOrigins(component,ordinary,relative,indices,widths,xsRequested,true);
+                PinContainerOrigins(component,ordinary,relative,indices,heights,ysRequested,false);
             }
             var xs = ResolvePositions(component, active, indices, widths, xsRequested, true);
             var ys = ResolvePositions(component, active, indices, heights, ysRequested, false);
@@ -131,6 +140,14 @@ namespace PptGcs.Core
             {
                 var shapes = relation.ShapeIds.Select(id => byId[id]).ToList();
                 ShapeGeometry first = shapes[0];
+                var anchor=RelativeAnchor.For(relation.Kind);
+                if(anchor!=null)
+                {
+                    double reference=anchor.OnPage ? anchor.Fraction*relation.PageLength.Value : AnchorPosition(first,anchor);
+                    foreach(var shape in shapes.Skip(anchor.OnPage?0:1))
+                        largest=Max(largest,AnchorPosition(shape,anchor)-reference-anchor.MarginSign*relation.Value.Value);
+                    continue;
+                }
                 switch (relation.Kind)
                 {
                     case ConstraintKind.EqualHorizontalGap:
@@ -200,12 +217,17 @@ namespace PptGcs.Core
         private static void ValidateReferences(IEnumerable<LayoutConstraint> relations, IDictionary<string, ShapeGeometry> shapes)
         {
             foreach (var relation in relations)
+            {
+                var anchor=RelativeAnchor.For(relation.Kind);
+                if(anchor!=null && anchor.OnPage && !relation.PageLength.HasValue)
+                    throw new ArgumentException("Page dimensions must be bound before solving a page anchor.");
                 foreach (var id in relation.ShapeIds)
                     if (!shapes.ContainsKey(id)) throw new ArgumentException("A constraint references a missing shape: " + id);
+            }
         }
 
         private static double[] ResolveDimensions(IList<ShapeGeometry> shapes, IList<LayoutConstraint> relations,
-            IDictionary<string, int> indices, IList<GeometryEdit> edits)
+            IDictionary<string, int> indices, IList<GeometryEdit> edits, IList<LayoutConstraint> relative=null, double[] firstPass=null)
         {
             int count = shapes.Count * 2;
             var edges = Enumerable.Range(0, count).Select(i => (IList<SizeEdge>)new List<SizeEdge>()).ToArray();
@@ -226,6 +248,7 @@ namespace PptGcs.Core
                 else if (relation.Kind == ConstraintKind.FixedWidth) fixedValues.Add(new SizeValue(first, relation.Value.Value));
                 else if (relation.Kind == ConstraintKind.FixedHeight) fixedValues.Add(new SizeValue(first + 1, relation.Value.Value));
             }
+            if(relative!=null)AddRelativeSizes(relative,indices,edges,fixedValues,firstPass);
             foreach (var edit in edits)
             {
                 int at = indices[edit.Id] * 2;
@@ -251,12 +274,14 @@ namespace PptGcs.Core
             }
             var baseline = shapes.SelectMany(shape => new[] { shape.Width, shape.Height }).ToArray();
             var factors = new double[count];
+            var offsets = new double[count];
             var visited = new bool[count];
             var output = new double[count];
             for (int root = 0; root < count; root++)
             {
                 if (visited[root]) continue;
                 var members = new List<int>();
+                var cyclePins=new List<double>();
                 var queue = new Queue<int>();
                 queue.Enqueue(root); visited[root] = true; factors[root] = 1;
                 while (queue.Count > 0)
@@ -265,12 +290,18 @@ namespace PptGcs.Core
                     foreach (var edge in edges[current])
                     {
                         double factor = factors[current] * edge.Factor;
-                        if (!Finite(factor) || factor <= 0)
+                        double offset = offsets[current] * edge.Factor + edge.Offset;
+                        if (!Finite(factor) || !Finite(offset) || factor <= 0)
                             throw new ConstraintConflictException("Dimension ratios exceed the supported numerical range.");
                         if (!visited[edge.To])
-                        { factors[edge.To] = factor; visited[edge.To] = true; queue.Enqueue(edge.To); }
-                        else if (Math.Abs(factors[edge.To] - factor) > 1e-9 * Math.Max(factors[edge.To], factor))
-                            throw new ConstraintConflictException("Dimension equality and ratio constraints are inconsistent.");
+                        { factors[edge.To] = factor; offsets[edge.To]=offset; visited[edge.To] = true; queue.Enqueue(edge.To); }
+                        else
+                        {
+                            double slope=factors[edge.To]-factor,intercept=offset-offsets[edge.To];
+                            if(Math.Abs(slope)>1e-9*Math.Max(factors[edge.To],factor))cyclePins.Add(intercept/slope);
+                            else if(Math.Abs(intercept)>ResidualTolerance)
+                                throw new ConstraintConflictException("Dimension and margin constraints are inconsistent.");
+                        }
                     }
                 }
                 double scale = members.Max(i => factors[i]);
@@ -278,33 +309,112 @@ namespace PptGcs.Core
                 var memberSet = new HashSet<int>(members);
                 var required = fixedValues.Where(value => memberSet.Contains(value.Index)).ToList();
                 var requested = preferred.Where(value => memberSet.Contains(value.Index)).ToList();
-                double lower = members.Max(i => MinimumSize / factors[i]);
+                double lower = members.Max(i => (MinimumSize-offsets[i]) / factors[i]);
                 double chosen;
-                if (required.Count > 0)
+                if (required.Count>0 || cyclePins.Count>0)
                 {
-                    chosen = required[0].Value / factors[required[0].Index];
-                    if (required.Any(value => Math.Abs(factors[value.Index] * chosen - value.Value) > ResidualTolerance))
+                    chosen=required.Count>0 ? (required[0].Value-offsets[required[0].Index])/factors[required[0].Index] : cyclePins[0]*scale;
+                    if (required.Any(value => Math.Abs(factors[value.Index] * chosen + offsets[value.Index] - value.Value) > ResidualTolerance) ||
+                        cyclePins.Any(value=>Math.Abs(value*scale-chosen)>ResidualTolerance))
                         throw new ConstraintConflictException("The requested size conflicts with fixed dimensions, equal sizes or aspect ratios.");
                     if (chosen < lower - ResidualTolerance)
                         throw new ConstraintConflictException("The requested size would make a linked dimension smaller than one point.");
                 }
                 else if (requested.Count > 0)
-                    chosen = requested.Sum(value => factors[value.Index] * value.Value) /
+                    chosen = requested.Sum(value => factors[value.Index] * (value.Value-offsets[value.Index])) /
                         requested.Sum(value => factors[value.Index] * factors[value.Index]);
-                else chosen = members.Sum(i => factors[i] * baseline[i]) / members.Sum(i => factors[i] * factors[i]);
+                else chosen = members.Sum(i => factors[i] * (baseline[i]-offsets[i])) / members.Sum(i => factors[i] * factors[i]);
                 chosen = Math.Max(chosen, lower);
                 if (!Finite(chosen)) throw new ConstraintConflictException("Dimension constraints exceed the supported numerical range.");
                 foreach (int member in members)
                 {
-                    output[member] = Math.Max(MinimumSize, factors[member] * chosen);
+                    output[member] = Math.Max(MinimumSize, factors[member] * chosen + offsets[member]);
                     if (!Finite(output[member])) throw new ConstraintConflictException("Dimension constraints exceed the supported numerical range.");
                 }
             }
             return output;
         }
 
-        private static void JoinSize(IList<SizeEdge>[] edges, int from, int to, double factor)
-        { edges[from].Add(new SizeEdge(to, factor)); edges[to].Add(new SizeEdge(from, 1 / factor)); }
+        private static void JoinSize(IList<SizeEdge>[] edges, int from, int to, double factor,double offset=0)
+        { edges[from].Add(new SizeEdge(to,factor,offset)); edges[to].Add(new SizeEdge(from,1/factor,-offset/factor)); }
+
+        private static void AddRelativeSizes(IList<LayoutConstraint> relations,IDictionary<string,int> indices,
+            IList<SizeEdge>[] edges,ICollection<SizeValue> values,double[] baseline)
+        {
+            var targets=relations.SelectMany(relation=>{
+                var anchor=RelativeAnchor.For(relation.Kind);
+                return relation.ShapeIds.Skip(anchor.OnPage?0:1).Select(id=>new {
+                    target=indices[id]*2+(anchor.Horizontal?0:1),
+                    reference=anchor.OnPage ? -1 : indices[relation.ShapeIds[0]]*2+(anchor.Horizontal?0:1),
+                    anchor.Fraction,margin=anchor.MarginSign*relation.Value.Value,relation.PageLength
+                });
+            });
+            var parents=new HashSet<int>();
+            var resized=new HashSet<int>();
+            foreach(var group in targets.GroupBy(item=>new {item.target,item.reference}))
+            {
+                var ordered=group.OrderBy(item=>item.Fraction).ToList();
+                var first=ordered[0];var last=ordered[ordered.Count-1];
+                if(first.Fraction==last.Fraction)continue;
+                // Two distinct anchors on the same frame imply an extent.
+                // (targetSize-referenceSize) * (last-first) = marginDelta.
+                double difference=(last.margin-first.margin)/(last.Fraction-first.Fraction);
+                resized.Add(first.target);
+                if(first.reference<0)values.Add(new SizeValue(first.target,first.PageLength.Value+difference));
+                else
+                {
+                    JoinSize(edges,first.reference,first.target,1,difference);
+                    parents.Add(first.reference);
+                }
+            }
+            foreach(int parent in parents.Except(resized))values.Add(new SizeValue(parent,baseline[parent]));
+        }
+
+        private static void ValidateContainers(IEnumerable<LayoutConstraint> relatives)
+        {
+            var children=new Dictionary<string,HashSet<string>>(StringComparer.Ordinal);
+            var incoming=new Dictionary<string,int>(StringComparer.Ordinal);
+            foreach(var relation in relatives.Where(item=>RelativeAnchor.UsesContainer(item.Kind)))
+            {
+                string frame=relation.ShapeIds[0];
+                HashSet<string> links;
+                if(!children.TryGetValue(frame,out links))children.Add(frame,links=new HashSet<string>(StringComparer.Ordinal));
+                if(!incoming.ContainsKey(frame))incoming.Add(frame,0);
+                foreach(string target in relation.ShapeIds.Skip(1))
+                {
+                    if(!links.Add(target))continue;
+                    int count;incoming.TryGetValue(target,out count);incoming[target]=count+1;
+                }
+            }
+            var ready=new Queue<string>(incoming.Where(item=>item.Value==0).Select(item=>item.Key));
+            int visited=0;
+            while(ready.Count>0)
+            {
+                string frame=ready.Dequeue();visited++;
+                HashSet<string> links;
+                if(!children.TryGetValue(frame,out links))continue;
+                foreach(string id in links)if(--incoming[id]==0)ready.Enqueue(id);
+            }
+            if(visited!=incoming.Count)throw new ConstraintConflictException("容器相对约束不能形成循环引用。");
+        }
+
+        private static void PinContainerOrigins(IList<ShapeGeometry> component,IList<LayoutConstraint> original,
+            IList<LayoutConstraint> relatives,IDictionary<string,int> indices,double[] sizes,
+            Dictionary<string,double> driven,bool horizontal)
+        {
+            var axis=relatives.Where(item=>RelativeAnchor.For(item.Kind).Horizontal==horizontal).ToList();
+            var frames=new HashSet<string>(axis.Where(item=>RelativeAnchor.UsesContainer(item.Kind)).Select(item=>item.ShapeIds[0]),StringComparer.Ordinal);
+            if(frames.Count==0)return;
+            var subjects=new HashSet<string>(axis.SelectMany(item=>item.ShapeIds.Skip(RelativeAnchor.UsesContainer(item.Kind)?1:0)),StringComparer.Ordinal);
+            var pins=frames.Where(id=>!subjects.Contains(id) && !driven.ContainsKey(id)).ToList();
+            if(pins.Count==0)return;
+            // The reference may be driven or governed by ordinary relations.
+            // A relative member's attempted movement does not drive its frame.
+            var inputs=driven.Where(entry=>!subjects.Contains(entry.Key)||frames.Contains(entry.Key))
+                .ToDictionary(entry=>entry.Key,entry=>entry.Value,StringComparer.Ordinal);
+            var positions=ResolvePositions(component,original,indices,sizes,inputs,horizontal);
+            foreach(string id in pins)driven.Add(id,positions[indices[id]]);
+        }
 
         private static double[] DrivenPosition(ShapeGeometry start, ShapeGeometry target, double width, double height, GeometryEditMode mode)
         {
@@ -329,6 +439,20 @@ namespace PptGcs.Core
             foreach (var relation in relations)
             {
                 int first = indices[relation.ShapeIds[0]];
+                var relative=RelativeAnchor.For(relation.Kind);
+                if(relative!=null)
+                {
+                    if(relative.Horizontal!=horizontal)continue;
+                    double frameSize=relative.OnPage ? relation.PageLength.Value : sizes[first];
+                    foreach(string id in relation.ShapeIds.Skip(relative.OnPage?0:1))
+                    {
+                        int member=indices[id];
+                        var row=new double[count];row[member]=1;
+                        if(!relative.OnPage)row[first]=-1;
+                        rows.Add(row);values.Add(relative.Fraction*(frameSize-sizes[member])+relative.MarginSign*relation.Value.Value);
+                    }
+                    continue;
+                }
                 double? edge = AlignmentEdge(relation.Kind, horizontal);
                 if (edge.HasValue)
                 {
@@ -427,11 +551,13 @@ namespace PptGcs.Core
 
         private static double Gap(ShapeGeometry left, ShapeGeometry right, bool horizontal)
         { return horizontal ? right.Left - left.Left - left.Width : right.Top - left.Top - left.Height; }
+        private static double AnchorPosition(ShapeGeometry shape,RelativeAnchor anchor)
+        { return anchor.Horizontal?shape.Left+anchor.Fraction*shape.Width:shape.Top+anchor.Fraction*shape.Height; }
         private static bool Finite(double value) { return !Double.IsNaN(value) && !Double.IsInfinity(value); }
         private sealed class SizeEdge
         {
-            public readonly int To; public readonly double Factor;
-            public SizeEdge(int to, double factor) { To = to; Factor = factor; }
+            public readonly int To; public readonly double Factor,Offset;
+            public SizeEdge(int to,double factor,double offset) { To=to;Factor=factor;Offset=offset; }
         }
         private sealed class SizeValue
         {

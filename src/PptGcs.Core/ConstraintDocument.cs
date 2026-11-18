@@ -41,7 +41,9 @@ namespace PptGcs.Core
         FixedVerticalGap,
         Offset,
         SymmetricVertical,
-        SymmetricHorizontal
+        SymmetricHorizontal,
+        PageLeft, PageCenterX, PageRight, PageTop, PageCenterY, PageBottom,
+        ContainerLeft, ContainerCenterX, ContainerRight, ContainerTop, ContainerCenterY, ContainerBottom
     }
 
     public sealed class LayoutConstraint
@@ -53,6 +55,7 @@ namespace PptGcs.Core
         public double? Value { get; private set; }
         public double? SecondaryValue { get; private set; }
         public bool Enabled { get; private set; }
+        internal double? PageLength { get; private set; }
 
         public LayoutConstraint(string id, int slideId, ConstraintKind kind, IEnumerable<string> shapeIds,
             double? value = null, double? secondaryValue = null, bool enabled = true)
@@ -86,6 +89,8 @@ namespace PptGcs.Core
         public static int GetMinimumShapeCount(ConstraintKind kind)
         {
             if (!Enum.IsDefined(typeof(ConstraintKind), kind)) throw new ArgumentOutOfRangeException("kind");
+            var anchor=RelativeAnchor.For(kind);
+            if(anchor!=null)return anchor.OnPage?1:2;
             if (kind == ConstraintKind.FixedWidth || kind == ConstraintKind.FixedHeight ||
                 kind == ConstraintKind.FixedPosition || kind == ConstraintKind.AspectRatio) return 1;
             return kind == ConstraintKind.EqualHorizontalGap || kind == ConstraintKind.EqualVerticalGap ? 3 : 2;
@@ -94,6 +99,7 @@ namespace PptGcs.Core
         public static int GetMaximumShapeCount(ConstraintKind kind)
         {
             int minimum = GetMinimumShapeCount(kind);
+            if(RelativeAnchor.For(kind)!=null)return Int32.MaxValue;
             if (minimum == 1) return 1;
             return kind == ConstraintKind.Offset || kind == ConstraintKind.SymmetricVertical ||
                 kind == ConstraintKind.SymmetricHorizontal ? 2 : Int32.MaxValue;
@@ -102,6 +108,7 @@ namespace PptGcs.Core
         public static int GetParameterCount(ConstraintKind kind)
         {
             GetMinimumShapeCount(kind);
+            if(RelativeAnchor.For(kind)!=null)return 1;
             if (kind == ConstraintKind.FixedPosition || kind == ConstraintKind.Offset) return 2;
             return kind == ConstraintKind.FixedWidth || kind == ConstraintKind.FixedHeight || kind == ConstraintKind.AspectRatio ||
                 kind == ConstraintKind.FixedHorizontalGap || kind == ConstraintKind.FixedVerticalGap ||
@@ -111,7 +118,24 @@ namespace PptGcs.Core
         public static bool PreservesOrder(ConstraintKind kind)
         {
             return kind == ConstraintKind.EqualHorizontalGap || kind == ConstraintKind.EqualVerticalGap ||
-                kind == ConstraintKind.FixedHorizontalGap || kind == ConstraintKind.FixedVerticalGap || kind == ConstraintKind.Offset;
+                kind == ConstraintKind.FixedHorizontalGap || kind == ConstraintKind.FixedVerticalGap || kind == ConstraintKind.Offset || RelativeAnchor.UsesContainer(kind);
+        }
+
+        public static string MembershipKey(ConstraintKind kind,IEnumerable<string> members)
+        {
+            if(RelativeAnchor.UsesContainer(kind))
+                return String.Join(",",members.Take(1).Concat(members.Skip(1).OrderBy(id=>id,StringComparer.Ordinal)));
+            return String.Join(",",PreservesOrder(kind)?members:members.OrderBy(id=>id,StringComparer.Ordinal));
+        }
+
+        // Page dimensions are read from the host for each operation and never serialized.
+        public LayoutConstraint BindPageSize(double width,double height)
+        {
+            var anchor=RelativeAnchor.For(Kind);
+            if(anchor==null || !anchor.OnPage)return this;
+            double length=anchor.Horizontal?width:height;
+            if(!Finite(length) || length<LayoutSolver.MinimumSize)throw new ArgumentOutOfRangeException("pageSize");
+            return new LayoutConstraint(Id,SlideId,Kind,ShapeIds,Value,SecondaryValue,Enabled) {PageLength=length};
         }
 
         private static bool Finite(double value) { return !Double.IsNaN(value) && !Double.IsInfinity(value); }
@@ -133,9 +157,7 @@ namespace PptGcs.Core
             {
                 if (item == null) throw new ArgumentException("A constraint cannot be null.", "constraints");
                 if (!ids.Add(item.Id)) throw new ArgumentException("Duplicate constraint ID: " + item.Id);
-                bool ordered = LayoutConstraint.PreservesOrder(item.Kind);
-                IEnumerable<string> members = ordered ? item.ShapeIds.AsEnumerable() : item.ShapeIds.OrderBy(id => id, StringComparer.Ordinal);
-                string key = item.SlideId.ToString(CultureInfo.InvariantCulture) + ":" + item.Kind + ":" + String.Join(",", members);
+                string key = item.SlideId.ToString(CultureInfo.InvariantCulture) + ":" + item.Kind + ":" + LayoutConstraint.MembershipKey(item.Kind,item.ShapeIds);
                 if (!relations.Add(key)) throw new ArgumentException("Duplicate " + item.Kind + " relation on slide " + item.SlideId + ".");
             }
             Constraints = list.AsReadOnly();

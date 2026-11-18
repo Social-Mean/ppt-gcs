@@ -26,10 +26,16 @@ namespace PptGcs.AddIn
         private readonly Button enableButton = new Button();
         private readonly Button deleteButton = new Button();
         private readonly GroupBox editor = new GroupBox();
+        private readonly GroupBox pageResizeEditor = new GroupBox();
+        private readonly NumericUpDown pageWidth = new NumericUpDown();
+        private readonly NumericUpDown pageHeight = new NumericUpDown();
+        private readonly Label pageResizeError = new Label();
         private readonly Panel optionViewport = new Panel();
         private readonly TableLayoutPanel optionGrid = new TableLayoutPanel();
         private readonly Dictionary<string,Button> optionButtons = new Dictionary<string,Button>();
         private readonly Label editorHint = new Label();
+        private readonly Label containerLabel = new Label();
+        private readonly ComboBox containerBox = new ComboBox();
         private readonly Label valueLabel = new Label();
         private readonly Label secondLabel = new Label();
         private readonly NumericUpDown valueBox = new NumericUpDown();
@@ -89,6 +95,8 @@ namespace PptGcs.AddIn
             conflictControl.Retry+=RetryConflict;
             conflictControl.Cancel+=()=>{conflictControl.ClearDraft();ShowMessage("已取消本次提交。");};
             content.Controls.Add(conflictControl);
+            BuildPageResizeEditor();
+            content.Controls.Add(pageResizeEditor);
 
             content.Controls.Add(SectionLabel("对象"));
             ConfigureList(objects, true, 122, "当前页对象");
@@ -220,10 +228,12 @@ namespace PptGcs.AddIn
 
         public void ShowEditor(string kind = null)
         {
+            pageResizeEditor.Visible=false;
             conflictControl.ClearDraft();
             operationMessage = null;
             RefreshMessage();
             editingId = null;
+            containerBox.SelectedIndex=-1;
             editor.Text = "新建约束";
             PopulateOptions(kind);
             applyButton.Text = "创建约束";
@@ -238,6 +248,70 @@ namespace PptGcs.AddIn
 
         public void ShowMessage(string message)
         { operationMessage = message; RefreshMessage(); }
+
+        public void ShowPageResize(double width,double height)
+        {
+            editor.Visible=false;
+            editingId=null;
+            conflictControl.ClearDraft();
+            pageResizeError.Text=String.Empty;
+            SetNumber(pageWidth,PageResize.MinimumPoints,PageResize.MaximumPoints,width);
+            SetNumber(pageHeight,PageResize.MinimumPoints,PageResize.MaximumPoints,height);
+            pageResizeEditor.Visible=true;
+            ScrollControlIntoView(pageResizeEditor);
+            if(pageWidth.Focus())pageWidth.Select(0,pageWidth.Text.Length);
+        }
+
+        private void BuildPageResizeEditor()
+        {
+            pageResizeEditor.Text="幻灯片尺寸";
+            pageResizeEditor.AccessibleName=pageResizeEditor.Text;
+            pageResizeEditor.Dock=DockStyle.Fill;
+            pageResizeEditor.AutoSize=true;
+            pageResizeEditor.Padding=new Padding(8,14,8,8);
+            pageResizeEditor.Visible=false;
+            var fields=new TableLayoutPanel { ColumnCount=2, Dock=DockStyle.Top, AutoSize=true };
+            fields.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            fields.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));
+            fields.Controls.Add(SectionLabel("宽度 (pt)"),0,0);
+            fields.Controls.Add(SectionLabel("高度 (pt)"),0,1);
+            ConfigureNumeric(pageWidth,"幻灯片宽度 (pt)");
+            ConfigureNumeric(pageHeight,"幻灯片高度 (pt)");
+            fields.Controls.Add(pageWidth,1,0);
+            fields.Controls.Add(pageHeight,1,1);
+            pageResizeError.AutoSize=true;
+            pageResizeError.Dock=DockStyle.Fill;
+            pageResizeError.AccessibleName="幻灯片尺寸操作结果";
+            fields.Controls.Add(pageResizeError,0,2);
+            fields.SetColumnSpan(pageResizeError,2);
+            var buttons=new FlowLayoutPanel { AutoSize=true, Dock=DockStyle.Fill, Margin=new Padding(0,4,0,0) };
+            var apply=new Button { Text="应用到全部幻灯片",AccessibleName="应用到全部幻灯片",AutoSize=true };
+            apply.Click+=(sender,args)=>ApplyPageSize();
+            buttons.Controls.Add(apply);
+            buttons.Controls.Add(MakeButton("取消",60,()=>pageResizeEditor.Visible=false));
+            fields.Controls.Add(buttons,0,3);
+            fields.SetColumnSpan(buttons,2);
+            pageResizeEditor.Controls.Add(fields);
+            fields.SizeChanged+=(sender,args)=>{
+                int height=fields.Bottom+pageResizeEditor.Padding.Bottom;
+                if(pageResizeEditor.Height!=height)pageResizeEditor.Height=height;
+            };
+            KeyEventHandler commit=(sender,args)=>{
+                if(args.KeyCode!=Keys.Enter || args.Modifiers!=Keys.None)return;
+                args.SuppressKeyPress=true;
+                ApplyPageSize();
+            };
+            pageWidth.KeyDown+=commit;
+            pageHeight.KeyDown+=commit;
+        }
+
+        private void ApplyPageSize()
+        {
+            if(actions?.ResizePage==null)return;
+            if(InvokeCommand(()=>actions.ResizePage((double)pageWidth.Value,(double)pageHeight.Value)))
+                pageResizeEditor.Visible=false;
+            else pageResizeError.Text=operationMessage;
+        }
 
         public void ActivateRelation(string id, bool edit)
         {
@@ -306,19 +380,28 @@ namespace PptGcs.AddIn
             editorHint.AutoSize = true; editorHint.Dock = DockStyle.Fill;
             editorHint.Margin = new Padding(0, 6, 0, 6);
             fields.Controls.Add(editorHint, 0, 1); fields.SetColumnSpan(editorHint, 2);
+            containerLabel.Text="参照容器";
+            containerLabel.AutoSize=true;
+            containerLabel.Anchor=AnchorStyles.Left;
+            containerBox.DropDownStyle=ComboBoxStyle.DropDownList;
+            containerBox.Dock=DockStyle.Fill;
+            containerBox.DisplayMember=nameof(ConstraintPaneObject.Name);
+            containerBox.AccessibleName=containerLabel.Text;
+            containerBox.SelectedIndexChanged+=(sender,args)=>UpdateApplyButton();
+            fields.Controls.Add(containerLabel,0,2);fields.Controls.Add(containerBox,1,2);
             ConfigureNumeric(valueBox, "第一个约束参数");
             ConfigureNumeric(secondBox, "第二个约束参数");
             valueBox.KeyDown += CommitWithEnter;
             secondBox.KeyDown += CommitWithEnter;
             valueLabel.AutoSize = true; valueLabel.Anchor = AnchorStyles.Left;
             secondLabel.AutoSize = true; secondLabel.Anchor = AnchorStyles.Left;
-            fields.Controls.Add(valueLabel, 0, 2); fields.Controls.Add(valueBox, 1, 2);
-            fields.Controls.Add(secondLabel, 0, 3); fields.Controls.Add(secondBox, 1, 3);
+            fields.Controls.Add(valueLabel, 0, 3); fields.Controls.Add(valueBox, 1, 3);
+            fields.Controls.Add(secondLabel, 0, 4); fields.Controls.Add(secondBox, 1, 4);
             var buttons = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 8, 0, 0) };
             ConfigureButton(applyButton, "创建约束", 88, ApplyEditor);
             buttons.Controls.Add(applyButton);
             buttons.Controls.Add(MakeButton("取消", 60, () => { editor.Visible = false; editingId = null; }));
-            fields.Controls.Add(buttons, 0, 4); fields.SetColumnSpan(buttons, 2);
+            fields.Controls.Add(buttons, 0, 5); fields.SetColumnSpan(buttons, 2);
             editor.Controls.Add(fields);
         }
 
@@ -420,6 +503,7 @@ namespace PptGcs.AddIn
         private void EditRelation(ConstraintPaneRelation relation)
         {
             if (!HasEditableParameters(relation)) return;
+            pageResizeEditor.Visible=false;
             conflictControl.ClearDraft();
             operationMessage = null;
             RefreshMessage();
@@ -539,7 +623,6 @@ namespace PptGcs.AddIn
             var option = EditorOption();
             int count = model.Objects.Count(item => item.Selected);
             string unsupported = model.Objects.Where(item => item.Selected).Select(item => item.UnsupportedReason).FirstOrDefault(reason => reason != null);
-            bool eligible = unsupported == null && option != null && count >= option.MinimumMembers && (option.MaximumMembers <= 0 || count <= option.MaximumMembers);
             if (option == null) editorHint.Text = "请先选择约束类型。";
             else
             {
@@ -547,17 +630,51 @@ namespace PptGcs.AddIn
                 editorHint.Text = (option.Description ?? String.Empty) + (editingId == null ? Environment.NewLine + "需要 " + required + " 个对象，当前已选 " + count + " 个。" : String.Empty);
                 if (editingId == null && unsupported != null) editorHint.Text = unsupported;
             }
-            applyButton.Enabled = actions != null && option != null && (editingId != null || eligible);
+            containerLabel.Visible=containerBox.Visible=NeedsContainer(option);
+            if(NeedsContainer(option))RefreshContainerChoices();
+            UpdateApplyButton();
+        }
+
+        private bool NeedsContainer(ConstraintPaneOption option)
+        {
+            ConstraintKind kind;
+            return editingId==null && option!=null && Enum.TryParse(option.Kind,out kind) && RelativeAnchor.UsesContainer(kind);
+        }
+
+        private void RefreshContainerChoices()
+        {
+            var choices=model.Objects.Where(item=>item.Selected && item.UnsupportedReason==null).ToList();
+            var old=containerBox.Items.Cast<ConstraintPaneObject>().ToList();
+            if(old.Count==choices.Count && old.Zip(choices,(a,b)=>a.Id==b.Id && a.Name==b.Name).All(same=>same))return;
+            string selected=(containerBox.SelectedItem as ConstraintPaneObject)?.Id;
+            containerBox.Items.Clear();
+            containerBox.Items.AddRange(choices.Cast<object>().ToArray());
+            containerBox.SelectedIndex=choices.FindIndex(item=>item.Id==selected);
+        }
+
+        private void UpdateApplyButton()
+        {
+            var option=EditorOption();
+            var selected=model.Objects.Where(item=>item.Selected).ToList();
+            bool eligible=option!=null && selected.Count>=option.MinimumMembers &&
+                (option.MaximumMembers<=0 || selected.Count<=option.MaximumMembers) && selected.All(item=>item.UnsupportedReason==null);
+            applyButton.Enabled=actions!=null && option!=null && (editingId!=null || eligible &&
+                (!NeedsContainer(option) || actions.AddContainer!=null && containerBox.SelectedIndex>=0));
         }
 
         private void ApplyEditor()
         {
             var option = EditorOption();
-            if (option == null || actions == null) return;
+            if (option == null || actions == null || !applyButton.Enabled) return;
             double? first = String.IsNullOrEmpty(option.ValueLabel) ? (double?)null : (double)valueBox.Value;
             double? second = String.IsNullOrEmpty(option.SecondLabel) ? (double?)null : (double)secondBox.Value;
             string id = editingId;
-            if (InvokeCommand(() => { if (id == null) actions.Add?.Invoke(option.Kind, first, second); else actions.Update?.Invoke(id, first, second); }))
+            string container=NeedsContainer(option)?((ConstraintPaneObject)containerBox.SelectedItem).Id:null;
+            if (InvokeCommand(() => {
+                if(id!=null)actions.Update?.Invoke(id,first,second);
+                else if(container!=null)actions.AddContainer(option.Kind,first,container);
+                else actions.Add?.Invoke(option.Kind,first,second);
+            }))
             { editor.Visible = false; editingId = null; }
         }
 
@@ -619,6 +736,7 @@ namespace PptGcs.AddIn
         private void ResizeColumns()
         {
             freedomLabel.MaximumSize=new Size(Math.Max(150,ClientSize.Width-Padding.Horizontal-18),0);
+            pageResizeError.MaximumSize=new Size(Math.Max(150,ClientSize.Width-Padding.Horizontal-25),0);
             if (objects.Columns.Count > 1) objects.Columns[0].Width = Math.Max(120, objects.ClientSize.Width - 64);
             if (relations.Columns.Count > 2) relations.Columns[1].Width = Math.Max(80, relations.ClientSize.Width - 176);
         }

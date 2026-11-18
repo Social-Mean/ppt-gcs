@@ -27,7 +27,19 @@ namespace PptGcs.AddIn
                 Choice(ConstraintKind.FixedVerticalGap,"固定垂直间距",2,0,"边缘间距 (pt)",vertical.Count < 2 ? 20 : vertical[1].Top-vertical[0].Top-vertical[0].Height),
                 Choice(ConstraintKind.Offset,"相对偏移",2,2,"第二个相对第一个 X (pt)",a == null || b == null ? 0 : b.Left-a.Left,"相对 Y (pt)",a == null || b == null ? 0 : b.Top-a.Top),
                 Choice(ConstraintKind.SymmetricVertical,"关于垂直轴对称",2,2,"对称轴 X (pt)",a == null || b == null ? 480 : (a.Left+a.Width/2+b.Left+b.Width/2)/2),
-                Choice(ConstraintKind.SymmetricHorizontal,"关于水平轴对称",2,2,"对称轴 Y (pt)",a == null || b == null ? 270 : (a.Top+a.Height/2+b.Top+b.Height/2)/2)
+                Choice(ConstraintKind.SymmetricHorizontal,"关于水平轴对称",2,2,"对称轴 Y (pt)",a == null || b == null ? 270 : (a.Top+a.Height/2+b.Top+b.Height/2)/2),
+                ReferenceChoice(ConstraintKind.PageLeft,"页面左边距"),
+                ReferenceChoice(ConstraintKind.PageCenterX,"页面水平居中"),
+                ReferenceChoice(ConstraintKind.PageRight,"页面右边距"),
+                ReferenceChoice(ConstraintKind.PageTop,"页面上边距"),
+                ReferenceChoice(ConstraintKind.PageCenterY,"页面垂直居中"),
+                ReferenceChoice(ConstraintKind.PageBottom,"页面下边距"),
+                ReferenceChoice(ConstraintKind.ContainerLeft,"容器左内边距"),
+                ReferenceChoice(ConstraintKind.ContainerCenterX,"容器水平居中"),
+                ReferenceChoice(ConstraintKind.ContainerRight,"容器右内边距"),
+                ReferenceChoice(ConstraintKind.ContainerTop,"容器上内边距"),
+                ReferenceChoice(ConstraintKind.ContainerCenterY,"容器垂直居中"),
+                ReferenceChoice(ConstraintKind.ContainerBottom,"容器下内边距")
             };
         }
 
@@ -43,6 +55,20 @@ namespace PptGcs.AddIn
                     : kind == ConstraintKind.Offset ? "成员顺序按选择范围排列，偏移为第二个对象减第一个对象。"
                     : kind == ConstraintKind.SymmetricVertical || kind == ConstraintKind.SymmetricHorizontal
                     ? "两个对象的外接框关于固定轴对称，尺寸相等；内容方向不翻转。" : "单位为磅 (pt)，宽高比为无单位比值。" };
+        }
+
+        private static ConstraintPaneOption ReferenceChoice(ConstraintKind kind, string label)
+        {
+            var anchor=RelativeAnchor.For(kind);
+            bool centered=anchor.Fraction==0.5;
+            string valueLabel=centered?"中心偏移 (pt)":anchor.OnPage?"边距 (pt)":"内边距 (pt)";
+            var option=Choice(kind,label,anchor.OnPage?1:2,0,valueLabel,0);
+            string reference=anchor.OnPage?"参照当前幻灯片。":"从所选对象中指定一个参照容器。";
+            string direction=centered
+                ? "0 表示中心对齐，正值向"+(anchor.Horizontal?"右":"下")+"偏移。"
+                : "0 表示边缘对齐，正值朝内，负值朝外。";
+            option.Description=reference+direction;
+            return option;
         }
 
         public static string Label(ConstraintKind kind)

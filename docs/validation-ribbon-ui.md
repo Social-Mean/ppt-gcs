@@ -41,7 +41,7 @@ Ribbon 检查确认所有枚举各有一个按钮，无重复 ID，标签与图�
 
 [TestRibbonConstraints.ps1](../scripts/TestRibbonConstraints.ps1) 自建 20 页文稿，读取加载项实际提供的 Ribbon XML，再调用与原生 Ribbon 回调相同的入口分流，逐类验证。
 
-[最终报告](../artifacts/ribbon-ui/latest.json) 的 20 类全部通过。9 类参数入口在打开编辑器后，全部几何、标签和 XML 都保持不变，原生窗格可见、标题为“约束”，且类型定位正确；输入参数后才创建。11 类无参数入口直接创建正确类型和成员关系。每类都执行一次原生 Undo 和 Redo，精确比较所有页面的原生几何、身份标签及 XML，共 20 次 Undo、20 次 Redo。
+[v0.5 报告](../artifacts/ribbon-ui/run-20261116T105550933/acceptance.json) 的 20 类全部通过。9 类参数入口在打开编辑器后，全部几何、标签和 XML 都保持不变，原生窗格可见、标题为“约束”，且类型定位正确；输入参数后才创建。11 类无参数入口直接创建正确类型和成员关系。每类都执行一次原生 Undo 和 Redo，精确比较所有页面的原生几何、身份标签及 XML，共 20 次 Undo、20 次 Redo。
 
 该检查为真实 PowerPoint 中的程序化入口检查，`PhysicalMouseInput=false`、`ActualRibbonClicks=false`，不声称逐个人工点击全部 Ribbon 按钮。此前几何联动、文本边框实际鼠标历史验收见 [v0.4.2 记录](validation-text-border.md)；当前轮盘的像素及 Win32 呈现检查不作为所有中键物理交互都已重新人工遍历的证明。
 

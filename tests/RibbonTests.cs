@@ -23,8 +23,14 @@ internal static class RibbonTests
         Check(constraints.Count == kinds.Length && constraints.Select(button => (string)button.Attribute("tag")).Distinct().Count() == kinds.Length &&
             new HashSet<string>(constraints.Select(button => (string)button.Attribute("tag"))).SetEquals(kinds.Select(kind => kind.ToString())),
             "every constraint kind appears exactly once in the ribbon");
-        Check(constraints.All(button => button.Parent.Name == ns + "group") && !tab.Descendants(ns + "menu").Any(),
-            "all twenty constraints are directly accessible group buttons");
+        var referenceMenus=tab.Descendants(ns+"menu").ToList();
+        Check(referenceMenus.Select(menu=>(string)menu.Attribute("id")).SequenceEqual(new[]{"PageConstraints","ContainerConstraints"}) &&
+            referenceMenus.All(menu=>menu.Elements(ns+"button").Count()==6) &&
+            constraints.All(button=>{
+                var anchor=RelativeAnchor.For(RibbonDefinition.ParseKind((string)button.Attribute("tag")));
+                return anchor==null?button.Parent.Name==ns+"group":
+                    (string)button.Parent.Attribute("id")== (anchor.OnPage?"PageConstraints":"ContainerConstraints");
+            }), "reference constraints have their own two menus and original commands remain direct buttons");
         Check(root.DescendantsAndSelf().Attributes("id").Select(attribute => attribute.Value).Distinct().Count() == root.DescendantsAndSelf().Attributes("id").Count(),
             "all custom ribbon control identifiers are unique");
         Check(constraints.All(button => (string)button.Attribute("onAction") == "CreateConstraint" &&
@@ -41,14 +47,15 @@ internal static class RibbonTests
         var parameterKinds = new HashSet<ConstraintKind> {ConstraintKind.FixedWidth, ConstraintKind.FixedHeight,
             ConstraintKind.FixedPosition, ConstraintKind.AspectRatio, ConstraintKind.FixedHorizontalGap,
             ConstraintKind.FixedVerticalGap, ConstraintKind.Offset, ConstraintKind.SymmetricVertical, ConstraintKind.SymmetricHorizontal};
+        parameterKinds.UnionWith(kinds.Where(kind=>RelativeAnchor.For(kind)!=null));
         Check(kinds.All(kind => RibbonDefinition.RequiresParameterEditor(kind) == parameterKinds.Contains(kind)),
-            "all nine numeric constraints require the parameter editor and eleven do not");
+            "all numeric constraints, including page and container anchors, require the parameter editor");
         Check(constraints.Where(button => parameterKinds.Contains(RibbonDefinition.ParseKind((string)button.Attribute("tag"))))
             .All(button => ((string)button.Attribute("supertip")).Contains("设置参数并确认创建")),
             "numeric constraint tooltips explain explicit parameter confirmation");
         var groups = tab.Elements(ns + "group").ToList();
-        Check(groups.Select(group => (string)group.Attribute("label")).SequenceEqual(new[] {"位置约束","尺寸约束","间距约束","偏移与对称","管理","画布标记"}) &&
-            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,4,0}),
+        Check(groups.Select(group => (string)group.Attribute("label")).SequenceEqual(new[] {"位置约束","尺寸约束","间距约束","偏移与对称","参考框约束","管理","画布标记"}) &&
+            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,0,5,0}),
             "constraint creation, management and canvas display controls are grouped separately");
         var displayButtons=tab.Descendants(ns+"toggleButton").ToList();
         Check(displayButtons.Select(button=>(string)button.Attribute("tag")).SequenceEqual(new[]{"Selection","All","Hidden"}) &&
@@ -59,8 +66,8 @@ internal static class RibbonTests
         Check((string)paneButton.Attribute("label") == "约束窗格" && (string)paneButton.Attribute("onAction") == "ShowConstraintPane",
             "ribbon opens the renamed constraint pane");
         Check(buttons.Where(button => button.Attribute("tag") == null).Select(button => (string)button.Attribute("onAction"))
-            .SequenceEqual(new[] {"ShowConstraintPane","UnlinkSelected","CreateDemo","ShowStatus"}),
-            "existing management actions remain explicit and complete");
+            .SequenceEqual(new[] {"ShowConstraintPane","ShowPageResize","UnlinkSelected","CreateDemo","ShowStatus"}),
+            "management includes the page size command");
         Check(new[] {null,"","0","samex","SameX ","unknown"}.All(Rejected),
             "malformed or numeric callback tags cannot select an unintended constraint");
         bool invalidKind = false;

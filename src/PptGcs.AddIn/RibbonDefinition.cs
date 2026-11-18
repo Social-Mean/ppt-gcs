@@ -24,8 +24,12 @@ namespace PptGcs.AddIn
                     ConstraintKind.FixedHorizontalGap, ConstraintKind.FixedVerticalGap),
                 Group(options, "Relations", "偏移与对称", ConstraintKind.Offset,
                     ConstraintKind.SymmetricVertical, ConstraintKind.SymmetricHorizontal),
+                new XElement(Ns + "group", new XAttribute("id", "ReferenceFrame"), new XAttribute("label", "参考框约束"),
+                    ReferenceMenu(options, "PageConstraints", "相对幻灯片", true, "pageSize"),
+                    ReferenceMenu(options, "ContainerConstraints", "相对容器", false, "more")),
                 new XElement(Ns + "group", new XAttribute("id", "Manage"), new XAttribute("label", "管理"),
                     ManageButton("ConstraintsPane", "约束窗格", "view", "ShowConstraintPane"),
+                    ManageButton("ResizeGcsPage", "幻灯片尺寸…", "pageSize", "ShowPageResize"),
                     ManageButton("Remove", "移除选中对象的约束", "remove", "UnlinkSelected"),
                     ManageButton("Demo", "新建六组演示", "demo", "CreateDemo"),
                     ManageButton("Status", "状态", "status", "ShowStatus")),
@@ -64,6 +68,16 @@ namespace PptGcs.AddIn
                 new XAttribute("imageMso", OfficeIconProvider.ImageMso(option.Kind)),
                 new XAttribute("onAction", "CreateConstraint"), new XAttribute("screentip", option.Label + "约束"),
                 new XAttribute("supertip", members + action + Environment.NewLine + option.Description));
+        }
+
+        private static XElement ReferenceMenu(IDictionary<ConstraintKind, ConstraintPaneOption> options,
+            string id, string label, bool onPage, string icon)
+        {
+            var kinds=Enum.GetValues(typeof(ConstraintKind)).Cast<ConstraintKind>()
+                .Where(kind=>RelativeAnchor.For(kind)?.OnPage==onPage);
+            return new XElement(Ns+"menu",new XAttribute("id",id),new XAttribute("label",label),
+                new XAttribute("imageMso",OfficeIconProvider.ImageMso(icon)),
+                kinds.Select(kind=>ConstraintButton(kind,options[kind])));
         }
 
         private static XElement ManageButton(string id, string label, string icon, string action)

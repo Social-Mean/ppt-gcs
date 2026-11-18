@@ -17,6 +17,7 @@ internal static class PaneTests
         {
             using (var pane = new ConstraintPaneControl()) Run(pane);
             using (var pane = new ConstraintPaneControl()) RunGrid(pane);
+            using (var pane = new ConstraintPaneControl()) RunReferenceEditors(pane);
             Console.WriteLine("PASS: " + passed + " pane tests");
             return 0;
         }
@@ -41,8 +42,8 @@ internal static class PaneTests
         var viewport=Find<Panel>(pane,"约束类型");
         var apply=Find<Button>(pane,"创建约束");
         var buttons=grid.Controls.OfType<Button>().ToList();
-        Check(buttons.Count==20 && grid.ColumnCount==4 && grid.RowCount==5,
-            "twenty constraint buttons use four columns and five rows");
+        Check(buttons.Count==32 && grid.ColumnCount==4 && grid.RowCount==8,
+            "thirty-two constraint buttons use four columns and eight rows");
         Check(model.Options.Select((option,index)=>new {option,index}).All(item=>{
             var button=buttons.Single(control=>(string)control.Tag==item.option.Kind);
             var cell=grid.GetPositionFromControl(button);
@@ -93,6 +94,58 @@ internal static class PaneTests
             "narrow panes preserve readable button columns with horizontal scrolling");
         Check(grid.Controls.OfType<Button>().All(button=>!String.IsNullOrEmpty(button.AccessibleName) && button.AccessibleName.StartsWith("约束类型：")),
             "all type buttons expose meaningful accessible names");
+    }
+
+    private static void RunReferenceEditors(ConstraintPaneControl pane)
+    {
+        pane.CreateControl();
+        var model=Model("参考框测试","shape:256/");
+        model.Options=ConstraintCatalog.Options(new List<ShapeGeometry>());
+        model.Objects[1].Selected=true;
+        string chosen=null;
+        double suppliedMargin=0;
+        double suppliedWidth=0,suppliedHeight=0;
+        bool rejectSize=true;
+        pane.Bind(new ConstraintPaneActions {
+            AddContainer=(kind,margin,container)=>{chosen=kind+"/"+container;suppliedMargin=margin.Value;},
+            ResizePage=(newWidth,newHeight)=>{
+                if(rejectSize)throw new InvalidOperationException("边距冲突");
+                suppliedWidth=newWidth;suppliedHeight=newHeight;
+            }
+        });
+        pane.Render(model);
+        pane.ShowEditor("ContainerRight");
+        var containerBox=Find<ComboBox>(pane,"参照容器");
+        var apply=Find<Button>(pane,"创建约束");
+        Check(containerBox.Visible && containerBox.Items.Count==2 && containerBox.SelectedIndex<0 && !apply.Enabled,
+            "the reference must be explicitly chosen from selected shapes");
+        containerBox.SelectedIndex=1;
+        var value=Find<NumericUpDown>(pane,"第一个约束参数");
+        value.Value=22.5m;
+        pane.Render(model);
+        Check(apply.Enabled && containerBox.SelectedIndex==1 && value.Value==22.5m,
+            "refresh preserves the reference and entered margin");
+        apply.PerformClick();
+        Check(chosen=="ContainerRight/"+model.Objects[1].Id && suppliedMargin==22.5,
+            "creation forwards the explicit reference regardless of selection order");
+        pane.ShowEditor("PageLeft");
+        Check(!containerBox.Visible && apply.Enabled,"page constraints use the slide without a reference selector");
+        pane.ShowPageResize(960,540);
+        var pageEditor=Find<GroupBox>(pane,"幻灯片尺寸");
+        var width=Find<NumericUpDown>(pane,"幻灯片宽度 (pt)");
+        var height=Find<NumericUpDown>(pane,"幻灯片高度 (pt)");
+        var submit=Find<Button>(pane,"应用到全部幻灯片");
+        Check(pageEditor.Visible && pane.EditorKind==null && width.Value==960 && height.Value==540,
+            "page size opens with current dimensions and explicit units");
+        width.Value=1080;
+        height.Value=610.5m;
+        submit.PerformClick();
+        Check(pageEditor.Visible && Find<Label>(pane,"幻灯片尺寸操作结果").Text=="边距冲突",
+            "a page size conflict is visible beside the preserved draft");
+        rejectSize=false;
+        submit.PerformClick();
+        Check(!pageEditor.Visible && suppliedWidth==1080 && suppliedHeight==610.5,
+            "page size submits both dimensions once and closes the editor");
     }
 
     private static void Run(ConstraintPaneControl pane)

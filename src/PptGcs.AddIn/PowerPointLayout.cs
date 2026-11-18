@@ -11,6 +11,7 @@ namespace PptGcs.AddIn
         public object Presentation;
         public object Slide;
         public int SlideId;
+        public double PageWidth,PageHeight;
         public ConstraintDocument Document;
         public Dictionary<string, object> Shapes = new Dictionary<string, object>();
         public List<ShapeGeometry> Geometry = new List<ShapeGeometry>();
@@ -49,13 +50,28 @@ namespace PptGcs.AddIn
             if (window == null || (int)window.ViewType != 9) throw new InvalidOperationException("请切换到普通幻灯片编辑视图。");
             dynamic slide = window.View.Slide;
             object presentation = (object)window.Presentation;
-            var context = new LayoutContext
-            {
-                Window = windowObject, Presentation = presentation, Slide = slide,
-                SlideId = (int)slide.SlideID,
-                Document = ReadDocument(presentation)
-            };
-            context.Constraints = context.Document.Constraints.Where(c => c.SlideId == context.SlideId && c.Enabled).ToList();
+            return ReadSlide(presentation,(object)slide,windowObject,ReadDocument(presentation));
+        }
+
+        internal static LayoutContext NewContext(object presentation,object slide,object window,ConstraintDocument document)
+        {
+            dynamic page=((dynamic)presentation).PageSetup;
+            var context=new LayoutContext {Window=window,Presentation=presentation,Slide=slide,
+                SlideId=(int)((dynamic)slide).SlideID,Document=document,PageWidth=(double)page.SlideWidth,PageHeight=(double)page.SlideHeight};
+            context.Constraints=BindRelations(context,document);
+            return context;
+        }
+
+        internal static List<LayoutConstraint> BindRelations(LayoutContext context,ConstraintDocument document)
+        { return BindRelations(context.SlideId,document,context.PageWidth,context.PageHeight); }
+
+        internal static List<LayoutConstraint> BindRelations(int slideId,ConstraintDocument document,double width,double height)
+        { return document.Constraints.Where(c=>c.SlideId==slideId && c.Enabled).Select(c=>c.BindPageSize(width,height)).ToList(); }
+
+        internal static LayoutContext ReadSlide(object presentation,object slideObject,object window,ConstraintDocument document)
+        {
+            var context=NewContext(presentation,slideObject,window,document);
+            dynamic slide=slideObject;
             var required = new HashSet<string>(context.Constraints.SelectMany(c => c.ShapeIds));
             for (int i = 1; i <= (int)slide.Shapes.Count; i++)
             {

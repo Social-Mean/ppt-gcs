@@ -19,10 +19,10 @@ namespace PptGcs.AddIn
         public ConstraintCommands(object application, Action<object> normalizeIdentities, Action<string,string> log)
         { this.application=application; this.normalizeIdentities=normalizeIdentities; this.log=log; }
 
-        public string Add(string kind, double? value, double? second)
+        public string Add(string kind, double? value, double? second, string containerId=null)
         {
             NormalizeCurrent();
-            EditPlan plan=PlanAdd(ParseKind(kind),value,second);
+            EditPlan plan=PlanAdd(ParseKind(kind),value,second,containerId);
             Commit(plan);
             return plan.RelationId;
         }
@@ -65,7 +65,7 @@ namespace PptGcs.AddIn
             Commit(SolvePlan(new EditPlan {Context=context,Document=next,Attempted=replacement}));
         }
 
-        private EditPlan PlanAdd(ConstraintKind kind,double? value,double? second)
+        private EditPlan PlanAdd(ConstraintKind kind,double? value,double? second,string containerId=null)
         {
             LayoutContext context=ReadCurrent();
             if((bool)((dynamic)context.Window).Selection.HasChildShapeRange)
@@ -75,6 +75,12 @@ namespace PptGcs.AddIn
             if(selected.Count<minimum || (maximum>0 && selected.Count>maximum))
                 throw new InvalidOperationException(maximum==minimum ? "此约束需要选中 "+minimum+" 个对象。" : "请选中至少 "+minimum+" 个对象。");
             foreach(object shape in selected) PowerPointLayout.ValidateShape(shape);
+            if(RelativeAnchor.UsesContainer(kind))
+            {
+                object frame=selected.SingleOrDefault(shape=>UiKey(context.SlideId,(int)((dynamic)shape).Id)==containerId);
+                if(frame==null)throw new InvalidOperationException("请在已选对象中指定参照容器。");
+                selected.Remove(frame);selected.Insert(0,frame);
+            }
             if(ConstraintCatalog.IsHorizontalGap(kind)) selected=selected.OrderBy(s=>(double)((dynamic)s).Left).ToList();
             if(ConstraintCatalog.IsVerticalGap(kind)) selected=selected.OrderBy(s=>(double)((dynamic)s).Top).ToList();
             var tags=new List<NewIdentity>();
@@ -92,9 +98,9 @@ namespace PptGcs.AddIn
                 }
                 ids.Add(id);
             }
-            bool ordered=LayoutConstraint.PreservesOrder(kind);
+            string members=LayoutConstraint.MembershipKey(kind,ids);
             if(context.Document.Constraints.Any(r=>r.SlideId==context.SlideId && r.Kind==kind &&
-                (ordered?r.ShapeIds.SequenceEqual(ids):r.ShapeIds.Count==ids.Count && new HashSet<string>(r.ShapeIds).SetEquals(ids))))
+                LayoutConstraint.MembershipKey(kind,r.ShapeIds)==members))
                 throw new InvalidOperationException("这些对象已经存在“"+ConstraintCatalog.Label(kind)+"”关系，请在窗格中修改或启用它。");
             var relation=new LayoutConstraint(Guid.NewGuid().ToString("D"),context.SlideId,kind,ids,value,second);
             var next=new ConstraintDocument(context.Document.Constraints.Concat(new[]{relation}));
@@ -104,7 +110,7 @@ namespace PptGcs.AddIn
         private static EditPlan SolvePlan(EditPlan plan)
         {
             var context=plan.Context;
-            var active=plan.Document.Constraints.Where(r=>r.SlideId==context.SlideId && r.Enabled).ToList();
+            var active=PowerPointLayout.BindRelations(context,plan.Document);
             var missing=active.SelectMany(r=>r.ShapeIds).Where(id=>!context.Shapes.ContainsKey(id)).Distinct().ToList();
             if(missing.Count>0) throw new InvalidOperationException("存在引用缺失或不支持对象的约束，请先在约束窗格禁用或删除该关系。");
             try {plan.Solved=LayoutSolver.Normalize(context.Geometry,active);return plan;}
@@ -127,7 +133,8 @@ namespace PptGcs.AddIn
                 throw new InvalidOperationException("请选择当前冲突中可以停用的关系。");
             var current=ReadCurrent();
             if(!SameIdentity(current.Window,plan.Context.Window) || !SameIdentity(current.Presentation,plan.Context.Presentation) ||
-                current.SlideId!=plan.Context.SlideId || current.Document.ToXml()!=plan.Context.Document.ToXml())
+                current.SlideId!=plan.Context.SlideId || current.Document.ToXml()!=plan.Context.Document.ToXml() ||
+                current.PageWidth!=plan.Context.PageWidth || current.PageHeight!=plan.Context.PageHeight)
                 throw new InvalidOperationException("演示文稿中的约束已改变，请重新提交编辑。");
             // Retain the intended targets even if selection changes. Re-read
             // the slide so the retry minimizes movement from current geometry.
@@ -159,7 +166,7 @@ namespace PptGcs.AddIn
             finally{Marshal.Release(left);}
         }
 
-        private static string DescribeRelation(LayoutContext context,LayoutConstraint relation)
+        internal static string DescribeRelation(LayoutContext context,LayoutConstraint relation)
         {
             string name=ConstraintCatalog.Label(relation.Kind);
             var values=new[]{relation.Value,relation.SecondaryValue}.Where(value=>value.HasValue)
@@ -181,7 +188,7 @@ namespace PptGcs.AddIn
                 PowerPointLayout.Apply(plan.Context,plan.Solved);
                 normalizeIdentities(plan.Context.Presentation);
                 var actual=PowerPointLayout.Snapshot(plan.Context);
-                if(LayoutSolver.MaxResidual(actual,plan.Document.Constraints.Where(r=>r.SlideId==plan.Context.SlideId && r.Enabled))>LayoutSolver.PositionTolerance)
+                if(LayoutSolver.MaxResidual(actual,PowerPointLayout.BindRelations(plan.Context,plan.Document))>LayoutSolver.PositionTolerance)
                     throw new InvalidOperationException("PowerPoint 几何读回不满足约束。");
                 RefreshSelectionBounds(plan.Context);
                 log("constraint-command","{\"slideId\":"+plan.Context.SlideId+",\"constraints\":"+plan.Document.Constraints.Count+"}");
@@ -231,9 +238,8 @@ namespace PptGcs.AddIn
             dynamic window=application.ActiveWindow;
             if(window==null || (int)window.ViewType!=9) throw new InvalidOperationException("请切换到普通编辑视图。");
             dynamic slide=window.View.Slide;
-            var context=new LayoutContext {Window=window,Presentation=window.Presentation,Slide=slide,SlideId=(int)slide.SlideID,
-                Document=PowerPointLayout.ReadDocument((object)window.Presentation)};
-            context.Constraints=context.Document.Constraints.Where(r=>r.SlideId==context.SlideId && r.Enabled).ToList();
+            object presentation=window.Presentation;
+            var context=PowerPointLayout.NewContext(presentation,(object)slide,(object)window,PowerPointLayout.ReadDocument(presentation));
             for(int i=1;i<=(int)slide.Shapes.Count;i++)
             {
                 object shape=(object)slide.Shapes[i];
@@ -285,7 +291,7 @@ namespace PptGcs.AddIn
                 string status;
                 if(relation.ShapeIds.Any(id=>!context.Shapes.ContainsKey(id))) status="对象缺失或不支持";
                 else if(!relation.Enabled) status="已禁用";
-                else status=LayoutSolver.MaxResidual(context.Geometry,new[]{relation})<=LayoutSolver.PositionTolerance?"已满足":"未满足";
+                else status=LayoutSolver.MaxResidual(context.Geometry,new[]{relation.BindPageSize(context.PageWidth,context.PageHeight)})<=LayoutSolver.PositionTolerance?"已满足":"未满足";
                 model.Relations.Add(new ConstraintPaneRelation {Id=relation.Id,Kind=relation.Kind.ToString(),Label=ConstraintCatalog.Label(relation.Kind),
                     MemberIds=relation.ShapeIds.Select(id=>uiKeys.ContainsKey(id)?uiKeys[id]:id).ToList(),
                     MemberNames=relation.ShapeIds.Select(id=>names.ContainsKey(id)?names[id]:"（对象缺失）").ToList(),
@@ -302,6 +308,7 @@ namespace PptGcs.AddIn
             var members=new HashSet<string>(connected.SelectMany(relation=>relation.ShapeIds).Concat(ids),StringComparer.Ordinal);
             var geometry=context.Geometry.Where(shape=>members.Contains(shape.Id)).ToList();
             var key=new StringBuilder().Append(context.SlideId).Append('|').Append(String.Join(",",ids));
+            key.AppendFormat(CultureInfo.InvariantCulture,"|{0:R},{1:R}",context.PageWidth,context.PageHeight);
             foreach(var shape in geometry)key.AppendFormat(CultureInfo.InvariantCulture,"|{0}:{1:R},{2:R},{3:R},{4:R}",shape.Id,shape.Left,shape.Top,shape.Width,shape.Height);
             key.Append('|').Append(new ConstraintDocument(connected).ToXml());
             string signature=key.ToString();

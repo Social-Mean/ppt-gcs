@@ -8,6 +8,7 @@ artifacts/*.log
 artifacts/checker-pending.json
 # Generated local runs; scripts/TestEditingEntries.ps1 is the reproducible source.
 artifacts/editing-entries-*/
+artifacts/reference-constraints/
 *.user
 .packages/
 ~$*
