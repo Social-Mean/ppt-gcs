@@ -28,6 +28,8 @@ namespace PptGcs.AddIn
 
     internal sealed class LayerPaneControl : UserControl
     {
+        private enum Placement { Before, After, Into }
+
         private readonly LayerTree tree = new LayerTree {
             Dock = DockStyle.Fill, DrawMode = TreeViewDrawMode.OwnerDrawAll, FullRowSelect = true,
             HideSelection = false, ShowLines = false, AllowDrop = true, AccessibleName = "图层和对象"
@@ -39,17 +41,20 @@ namespace PptGcs.AddIn
         private readonly Dictionary<string, TreeNode> nodes = new Dictionary<string, TreeNode>();
         private HashSet<int> selected = new HashSet<int>();
         private string[] layers = Array.Empty<string>();
-        private string active, structure, dragLayer;
+        private string active, structure;
         private int slideId;
         private bool rendering;
-        private TreeNode dropTarget;
-        private bool dropAfter;
+        private TreeNode dragSource, dropTarget;
+        private Placement dropPlacement;
+        private Action pendingDrop;
+        private DateTime nextDragScroll;
         private Font layerFont;
 
         internal Action<LayerPaneRow> ActivateRow;
         internal Action<LayerPaneRow, bool> ToggleState;
         internal Action<string> AddLayer, RenameLayer, RemoveLayer;
         internal Action<string, int> ReorderLayer;
+        internal Action<LayerPaneRow, LayerPaneRow, int?, bool> DropObject;
         internal Action AssignSelection;
 
         internal LayerPaneControl()
@@ -127,38 +132,16 @@ namespace PptGcs.AddIn
                 args.SuppressKeyPress = true;
                 Perform(() => ToggleState(row, args.KeyCode == Keys.S));
             };
-            tree.ItemDrag += (sender, args) =>
-            {
-                var row = ((TreeNode)args.Item).Tag as LayerPaneRow;
-                if (layers.Length < 2 || row == null || row.ShapeId.HasValue || Column(tree.PointToClient(MousePosition).X) != 0 ||
-                    args.Button != MouseButtons.Left) return;
-                dragLayer = row.LayerId;
-                try { tree.DoDragDrop(dragLayer, DragDropEffects.Move); }
-                finally { dragLayer = null; ClearDrop(); }
-            };
-            tree.DragOver += (sender, args) =>
-            {
-                var point = tree.PointToClient(new Point(args.X, args.Y));
-                var target = NodeAt(point.Y);
-                bool allowed = target != null && target.Parent == null && dragLayer != null;
-                args.Effect = allowed ? DragDropEffects.Move : DragDropEffects.None;
-                dropTarget = allowed ? target : null;
-                dropAfter = allowed && point.Y >= target.Bounds.Top + tree.ItemHeight / 2;
-                tree.Invalidate();
-            };
+            tree.ItemDrag += BeginRowDrag;
+            tree.DragEnter += PreviewDrop;
+            tree.DragOver += PreviewDrop;
             tree.DragLeave += (sender, args) => ClearDrop();
-            tree.DragDrop += (sender, args) =>
-            {
-                if (dropTarget == null || dragLayer == null) return;
-                int from = Array.IndexOf(layers, dragLayer);
-                int insert = dropTarget.Index + (dropAfter ? 1 : 0);
-                if (from >= 0) Perform(() => ReorderLayer(dragLayer, insert > from ? insert - 1 : insert));
-                ClearDrop();
-            };
+            tree.DragDrop += AcceptDrop;
         }
 
         internal void Render(SlideLayers slide, string activeLayer)
         {
+            if (dragSource != null) return;
             var members = slide?.Members() ?? Array.Empty<SlideLayers.Member>();
             var roots = slide?.PaneRows(members) ?? Array.Empty<LayerPaneRow>();
             var ordered = Flatten(roots).ToArray();
@@ -174,7 +157,6 @@ namespace PptGcs.AddIn
             {
                 if (slideId != currentSlide || structure != signature)
                 {
-                    if (dragLayer != null) return;
                     var collapsed = slideId == currentSlide ? new HashSet<string>(nodes.Where(pair => pair.Value.Nodes.Count > 0 &&
                         !pair.Value.IsExpanded).Select(pair => pair.Key)) : new HashSet<string>();
                     var expanded = slideId == currentSlide ? new HashSet<string>(nodes.Where(pair => pair.Value.IsExpanded)
@@ -217,6 +199,98 @@ namespace PptGcs.AddIn
             assign.Enabled = index >= 0 && members.Any(member => member.LayerId != active && selectedRoots.Contains(member.Id));
         }
 
+        private void BeginRowDrag(object sender, ItemDragEventArgs args)
+        {
+            var node = args.Item as TreeNode;
+            var row = node?.Tag as LayerPaneRow;
+            if (row == null || args.Button != MouseButtons.Left || (node.Parent == null && layers.Length < 2)) return;
+            dragSource = node;
+            pendingDrop = null;
+            nextDragScroll = DateTime.MinValue;
+            Action accepted = null;
+            try
+            {
+                var data = new DataObject("PptGcs.LayerRow", row.Key);
+                if (tree.DoDragDrop(data, DragDropEffects.Move) == DragDropEffects.Move) accepted = pendingDrop;
+            }
+            finally
+            {
+                dragSource = null;
+                pendingDrop = null;
+                ClearDrop();
+            }
+            // The COM mutation and tree rebuild belong outside the Office/OLE
+            // drag loop, where the native tree can still be using both rows.
+            if (accepted != null) Perform(accepted);
+        }
+
+        private void PreviewDrop(object sender, DragEventArgs args)
+        {
+            var point = tree.PointToClient(new Point(args.X, args.Y));
+            if (dragSource != null && DateTime.UtcNow >= nextDragScroll)
+            {
+                TreeNode top = tree.TopNode;
+                var scroll = point.Y < tree.ItemHeight / 2 ? top?.PrevVisibleNode
+                    : point.Y > tree.ClientSize.Height - tree.ItemHeight / 2 ? top?.NextVisibleNode : null;
+                if (scroll != null)
+                {
+                    tree.TopNode = scroll;
+                    nextDragScroll = DateTime.UtcNow.AddMilliseconds(90);
+                }
+            }
+            Placement placement;
+            var target = ResolveDrop(point, out placement);
+            args.Effect = target != null ? DragDropEffects.Move : DragDropEffects.None;
+            if (target == dropTarget && placement == dropPlacement) return;
+            dropTarget = target;
+            dropPlacement = placement;
+            tree.Invalidate();
+        }
+
+        private TreeNode ResolveDrop(Point point, out Placement placement)
+        {
+            placement = Placement.Before;
+            if (dragSource == null || !tree.ClientRectangle.Contains(point)) return null;
+            var hit = NodeAt(point.Y);
+            if (hit == null) return null;
+            var target = hit;
+            if (dragSource.Parent == null)
+            {
+                while (target.Parent != null) target = target.Parent;
+            }
+            else if (dragSource.Parent.Parent == null)
+            {
+                if (target.Parent == null) { placement = Placement.Into; return target; }
+                while (target.Parent.Parent != null) target = target.Parent;
+            }
+            else if (target.Parent != dragSource.Parent) return null;
+            if (target == dragSource) return null;
+            if (target != hit || point.Y >= target.Bounds.Top + tree.ItemHeight / 2) placement = Placement.After;
+            return target;
+        }
+
+        private void AcceptDrop(object sender, DragEventArgs args)
+        {
+            Placement placement;
+            var target = ResolveDrop(tree.PointToClient(new Point(args.X, args.Y)), out placement);
+            args.Effect = target != null ? DragDropEffects.Move : DragDropEffects.None;
+            if (target == null) return;
+            var sourceRow = (LayerPaneRow)dragSource.Tag;
+            var targetRow = (LayerPaneRow)target.Tag;
+            bool after = placement == Placement.After;
+            if (dragSource.Parent == null)
+            {
+                int from = dragSource.Index;
+                int insert = target.Index + (after ? 1 : 0);
+                pendingDrop = () => ReorderLayer(sourceRow.LayerId, insert > from ? insert - 1 : insert);
+            }
+            else
+            {
+                int? parentGroup = ((LayerPaneRow)dragSource.Parent.Tag).ShapeId;
+                pendingDrop = () => DropObject(sourceRow, targetRow, parentGroup, after);
+            }
+        }
+
         private void AddNode(TreeNodeCollection collection, LayerPaneRow row, HashSet<string> collapsed, HashSet<string> expanded)
         {
             var node = collection.Add(row.Title);
@@ -244,7 +318,9 @@ namespace PptGcs.AddIn
             bool layer = !row.ShapeId.HasValue;
             bool isActive = layer ? row.LayerId == active : selected.Contains(row.ShapeId.Value);
             bool isFocused = args.Node == tree.SelectedNode && tree.Focused;
-            Color background = isFocused ? Color.FromArgb(219, 235, 252) : isActive ? Color.FromArgb(232, 240, 249) : tree.BackColor;
+            bool receiving = dropTarget == args.Node && dropPlacement == Placement.Into;
+            Color background = receiving || isFocused ? Color.FromArgb(219, 235, 252)
+                : isActive ? Color.FromArgb(232, 240, 249) : tree.BackColor;
             using (var brush = new SolidBrush(background)) args.Graphics.FillRectangle(brush, area);
             var color = row.Visible == LayerRowState.Off ? SystemColors.GrayText : tree.ForeColor;
             int left = args.Node.Bounds.Left;
@@ -266,10 +342,20 @@ namespace PptGcs.AddIn
                 TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
             DrawIcon(args.Graphics, right + iconWidth / 2 + 3, area.Top + area.Height / 2, row.Visible, true);
             DrawIcon(args.Graphics, right + iconWidth * 3 / 2 + 3, area.Top + area.Height / 2, row.Locked, false);
-            if (dropTarget == args.Node)
+            if (receiving)
             {
-                int y = dropAfter ? area.Bottom - 1 : area.Top;
-                using (var pen = new Pen(SystemColors.Highlight, 2)) args.Graphics.DrawLine(pen, 0, y, area.Right, y);
+                using (var pen = new Pen(SystemColors.Highlight)) args.Graphics.DrawRectangle(pen, 1, area.Top + 1, area.Width - 3, area.Height - 2);
+            }
+            else if (dropTarget != null && dropPlacement != Placement.Into)
+            {
+                var marker = dropTarget;
+                bool after = dropPlacement == Placement.After;
+                while (after && marker.IsExpanded && marker.LastNode != null) marker = marker.LastNode;
+                if (marker == args.Node)
+                {
+                    int y = after ? area.Bottom - 1 : area.Top;
+                    using (var pen = new Pen(SystemColors.Highlight, 2)) args.Graphics.DrawLine(pen, dropTarget.Bounds.Left, y, area.Right, y);
+                }
             }
         }
 

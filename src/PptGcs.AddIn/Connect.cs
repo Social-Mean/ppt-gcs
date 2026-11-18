@@ -598,6 +598,15 @@ namespace PptGcs.AddIn
                 owner.ActiveLayers[slide.SlideId] = id;
                 slide.Reorder((object)app, id, index);
             }));
+            ui.DropObject = (source, target, groupId, after) => InPaneWindow(handle, () => ExecuteShared(() =>
+            {
+                var slide = RequireLayerSlide();
+                if (!MatchesLayerRow(slide, source) || !MatchesLayerRow(slide, target)) return;
+                if (groupId.HasValue)
+                    slide.ReorderGroupMember((object)app, source.LayerId, groupId.Value, source.ShapeId.Value, target.ShapeId.Value, after);
+                else if (slide.MoveObject((object)app, source.LayerId, source.ShapeId.Value, target.LayerId, target.ShapeId, after))
+                    owner.ActiveLayers[slide.SlideId] = target.LayerId;
+            }));
             ui.AssignSelection = () => InPaneWindow(handle, () => ExecuteShared(() =>
             {
                 var slide = RequireLayerSlide();

@@ -242,9 +242,10 @@ namespace PptGcs.AddIn
         private static IEnumerable<object> Children(object shapeObject)
         {
             dynamic shape = shapeObject;
-            if ((int)shape.Type != 6) yield break;
+            if ((int)shape.Type != 6) return Array.Empty<object>();
             dynamic children = shape.GroupItems;
-            for (int i = (int)children.Count; i >= 1; i--) yield return (object)children[i];
+            return Enumerable.Range(1, (int)children.Count).Select(index => (object)children[index])
+                .OrderByDescending(child => (int)((dynamic)child).ZOrderPosition);
         }
 
         private static int ReadState(object shapeObject, bool visibility)
@@ -298,6 +299,51 @@ namespace PptGcs.AddIn
             var selected = Selected();
             if (selected.Count == 0) throw new InvalidOperationException("请先在幻灯片中选中要移动的对象或整个组合。");
             Commit(app, Stack, member => selected.Contains(member.Id) ? id : member.LayerId);
+        }
+
+        internal bool MoveObject(object app, string sourceLayer, int shapeId, string destinationLayer, int? anchorId, bool after)
+        {
+            if (!Stack.Any(layer => layer.Id == destinationLayer)) return false;
+            var members = Members();
+            var source = members.FirstOrDefault(member => member.Id == shapeId && member.LayerId == sourceLayer);
+            var anchor = members.FirstOrDefault(member => member.Id == anchorId && member.LayerId == destinationLayer);
+            if (source == null || source == anchor || (anchorId.HasValue && anchor == null)) return false;
+            Commit(app, Stack,
+                assign: member => member == source ? destinationLayer : member.LayerId,
+                arrange: list => list.Contains(source) ? InsertBeside(list, source, anchor, after) : list,
+                snapshot: members);
+            return true;
+        }
+
+        internal void ReorderGroupMember(object app, string layerId, int groupId, int shapeId, int anchorId, bool after)
+        {
+            object group = FindObject(layerId, groupId);
+            if (group == null || shapeId == anchorId) return;
+            var children = Children(group).ToArray();
+            var source = children.FirstOrDefault(shape => (int)((dynamic)shape).Id == shapeId);
+            var anchor = children.FirstOrDefault(shape => (int)((dynamic)shape).Id == anchorId);
+            if (source == null || anchor == null) return;
+            var desired = InsertBeside(children, source, anchor, after).ToArray();
+            if (children.SequenceEqual(desired)) return;
+            dynamic application = app;
+            application.StartNewUndoEntry();
+            try { SetShapeOrder(desired); }
+            catch (Exception error)
+            {
+                var failures = new List<Exception> { error };
+                Restore(() => SetShapeOrder(children), failures);
+                if (failures.Count > 1) throw new AggregateException("组合成员排序失败，且无法恢复原叠放顺序。", failures);
+                throw;
+            }
+            finally { application.StartNewUndoEntry(); }
+        }
+
+        private static IEnumerable<T> InsertBeside<T>(IEnumerable<T> items, T source, T anchor, bool after) where T : class
+        {
+            var order = items.ToList();
+            order.Remove(source);
+            order.Insert(anchor == null ? 0 : order.IndexOf(anchor) + (after ? 1 : 0), source);
+            return order;
         }
 
         internal void Remove(object app, string id)
@@ -382,9 +428,9 @@ namespace PptGcs.AddIn
         }
 
         private void Commit(object app, Layer[] next, Func<Member, string> assign = null,
-            Func<IEnumerable<Member>, IEnumerable<Member>> arrange = null)
+            Func<IEnumerable<Member>, IEnumerable<Member>> arrange = null, Member[] snapshot = null)
         {
-            var members = Members();
+            var members = snapshot ?? Members();
             var layerByMember = members.ToDictionary(member => member.Id, member => assign == null ? member.LayerId : assign(member));
             var grouped = members.ToLookup(member => layerByMember[member.Id]);
             var desired = next.SelectMany(layer => arrange == null ? grouped[layer.Id] : arrange(grouped[layer.Id])).ToArray();
@@ -458,16 +504,19 @@ namespace PptGcs.AddIn
         }
 
         private static void SetOrder(Member[] frontToBack)
+        { SetShapeOrder(frontToBack.Select(member => member.Shape)); }
+
+        private static void SetShapeOrder(IEnumerable<object> frontToBack)
         {
             var backToFront = frontToBack.Reverse().ToArray();
-            var positions = backToFront.Select(member => (int)((dynamic)member.Shape).ZOrderPosition).ToArray();
+            var positions = backToFront.Select(shape => (int)((dynamic)shape).ZOrderPosition).ToArray();
             int firstMove = 1;
             while (firstMove < positions.Length && positions[firstMove] > positions[firstMove - 1]) firstMove++;
-            for (int i = firstMove; i < backToFront.Length; i++) ((dynamic)backToFront[i].Shape).ZOrder(0);
+            for (int i = firstMove; i < backToFront.Length; i++) ((dynamic)backToFront[i]).ZOrder(0);
             int lastPosition = 0;
-            foreach (var member in backToFront)
+            foreach (var shape in backToFront)
             {
-                int position = (int)((dynamic)member.Shape).ZOrderPosition;
+                int position = (int)((dynamic)shape).ZOrderPosition;
                 if (position <= lastPosition)
                     throw new InvalidOperationException("PowerPoint 未能应用图层叠放顺序。");
                 lastPosition = position;
