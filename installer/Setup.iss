@@ -78,20 +78,14 @@ const
 function GetBinaryType(FileName: String; var BinaryType: Cardinal): Integer;
   external 'GetBinaryTypeW@kernel32.dll stdcall';
 
-function UrlCreateFromPath(Path, Url: String; var UrlLength: Cardinal; Flags: Cardinal): Integer;
-  external 'UrlCreateFromPathW@shlwapi.dll stdcall setuponly';
-
 function ManagedCodeBase(Param: String): String;
 var
-  Url: String;
-  UrlLength: Cardinal;
+  Path: String;
 begin
-  UrlLength := 4096;
-  SetLength(Url, UrlLength);
-  if UrlCreateFromPath(ExpandConstant('{app}\PptGcs.AddIn.dll'), Url, UrlLength, 0) <> 0 then
-    RaiseException('Could not convert the add-in path to a file URL.');
-  SetLength(Url, UrlLength);
-  Result := Url;
+  // Match RegAsm /codebase. The CLR COM loader expects literal spaces in this value.
+  Path := ExpandConstant('{app}\PptGcs.AddIn.dll');
+  StringChangeEx(Path, '\', '/', True);
+  Result := 'file:///' + Path;
 end;
 
 function HasPowerPoint64(RegistryRoot: Integer): Boolean;

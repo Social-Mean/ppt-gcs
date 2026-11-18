@@ -51,9 +51,13 @@ internal static class RadialRenderingTests
                 for(int y=(int)(100*scale);y<(int)(391*scale);y++)for(int x=(int)(150*scale);x<(int)(450*scale);x++)
                 {
                     double distance=Math.Sqrt(Math.Pow(x-300*scale,2)+Math.Pow(y-250*scale,2));
-                    if(distance>138*scale && distance<150*scale && image.GetPixel(x,y).A!=0)escapedLabels++;
+                    // The information card can be above the wheel when the
+                    // desktop limits the HUD height. Probe only the clear gap
+                    // between the wheel (136) and the card (146).
+                    if(distance>138*scale && distance<145*scale && image.GetPixel(x,y).A!=0)escapedLabels++;
                 }
-                Check(escapedLabels==0,"long catalog labels stay inside the wheel perimeter at scale "+scale);
+                Check(escapedLabels==0,"long catalog labels stay inside the wheel perimeter at scale "+scale+
+                    " (HUD " + image.Width + " × " + image.Height + ", escaped pixels " + escapedLabels + ")");
                 using(var light=Composite(image,Color.White))
                 using(var dark=Composite(image,Color.FromArgb(30,34,40)))
                 {

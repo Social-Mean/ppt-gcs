@@ -469,31 +469,41 @@ namespace PptGcs.AddIn
                     foreach (var box in owner.previewBounds) graphics.DrawRectangle(previewPen, box.X, box.Y, box.Width, box.Height);
                 RectangleF outside = new RectangleF(center.X - outer, center.Y - outer, outer * 2, outer * 2);
                 RectangleF inside = new RectangleF(center.X - inner, center.Y - inner, inner * 2, inner * 2);
-                for (int index = 0; index < owner.slots.Length; index++)
+                using (var labelClip = new GraphicsPath())
                 {
-                    Slot slot = owner.slots[index];
-                    bool hover = owner.currentSlot == index;
-                    using (var path = new GraphicsPath())
-                    using (var fill = new SolidBrush(!slot.Enabled ? Color.FromArgb(237, 239, 242) : hover ? Color.FromArgb(216, 234, 255) : Color.FromArgb(250, 251, 253)))
-                    using (var outline = new Pen(hover && slot.Enabled ? Color.FromArgb(25, 102, 202) : Color.FromArgb(147, 157, 171), hover ? 2 * scale : scale))
+                    labelClip.AddEllipse(outside);
+                    for (int index = 0; index < owner.slots.Length; index++)
                     {
-                        float start = index * 45 - 112.5f;
-                        path.AddArc(outside, start, 45); path.AddArc(inside, start + 45, -45); path.CloseFigure();
-                        graphics.FillPath(fill, path); graphics.DrawPath(outline, path);
+                        Slot slot = owner.slots[index];
+                        bool hover = owner.currentSlot == index;
+                        using (var path = new GraphicsPath())
+                        using (var fill = new SolidBrush(!slot.Enabled ? Color.FromArgb(237, 239, 242) : hover ? Color.FromArgb(216, 234, 255) : Color.FromArgb(250, 251, 253)))
+                        using (var outline = new Pen(hover && slot.Enabled ? Color.FromArgb(25, 102, 202) : Color.FromArgb(147, 157, 171), hover ? 2 * scale : scale))
+                        {
+                            float start = index * 45 - 112.5f;
+                            path.AddArc(outside, start, 45); path.AddArc(inside, start + 45, -45); path.CloseFigure();
+                            graphics.FillPath(fill, path); graphics.DrawPath(outline, path);
+                        }
+                        double angle = (index * 45 - 90) * Math.PI / 180;
+                        float anchorX=(float)(center.X+Math.Cos(angle)*outer*SlotAnchorRadius);
+                        float anchorY=(float)(center.Y+Math.Sin(angle)*outer*SlotAnchorRadius);
+                        Image icon=icons[index];
+                        if(icon!=null)
+                        {
+                            int iconX=(int)(anchorX-icon.Width/2f), iconY=(int)(anchorY-28*scale);
+                            if(slot.Enabled) graphics.DrawImageUnscaled(icon,iconX,iconY);
+                            else graphics.DrawImage(icon,new Rectangle(iconX,iconY,icon.Width,icon.Height),0,0,icon.Width,icon.Height,GraphicsUnit.Pixel,disabledIcon);
+                        }
+                        var label = new Rectangle((int)(anchorX-41*scale),
+                            (int)(anchorY+(icon==null?-18:7)*scale), (int)(82*scale), (int)(30*scale));
+                        var labelState = graphics.Save();
+                        try
+                        {
+                            graphics.SetClip(labelClip, CombineMode.Intersect);
+                            DrawText(graphics,slot.Label,labelFont,label,slot.Enabled ? Color.FromArgb(25,34,47) : Color.FromArgb(130,136,145));
+                        }
+                        finally { graphics.Restore(labelState); }
                     }
-                    double angle = (index * 45 - 90) * Math.PI / 180;
-                    float anchorX=(float)(center.X+Math.Cos(angle)*outer*SlotAnchorRadius);
-                    float anchorY=(float)(center.Y+Math.Sin(angle)*outer*SlotAnchorRadius);
-                    Image icon=icons[index];
-                    if(icon!=null)
-                    {
-                        int iconX=(int)(anchorX-icon.Width/2f), iconY=(int)(anchorY-28*scale);
-                        if(slot.Enabled) graphics.DrawImageUnscaled(icon,iconX,iconY);
-                        else graphics.DrawImage(icon,new Rectangle(iconX,iconY,icon.Width,icon.Height),0,0,icon.Width,icon.Height,GraphicsUnit.Pixel,disabledIcon);
-                    }
-                    var label = new Rectangle((int)(anchorX-41*scale),
-                        (int)(anchorY+(icon==null?-18:7)*scale), (int)(82*scale), (int)(30*scale));
-                    DrawText(graphics,slot.Label,labelFont,label,slot.Enabled ? Color.FromArgb(25,34,47) : Color.FromArgb(130,136,145));
                 }
                 using (var fill = new SolidBrush(Color.White)) graphics.FillEllipse(fill, inside);
                 var centerTop = new Rectangle((int)(center.X - inner + 2 * scale), (int)(center.Y - 18 * scale), (int)(2 * inner - 4 * scale), (int)(20 * scale));
