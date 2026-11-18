@@ -38,7 +38,7 @@ namespace PptGcs.AddIn
             {"PageTop", "ObjectsAlignTopSmart"}, {"ContainerTop", "ObjectsAlignTopSmart"},
             {"PageCenterY", "ObjectsAlignMiddleVerticalSmart"}, {"ContainerCenterY", "ObjectsAlignMiddleVerticalSmart"},
             {"PageBottom", "ObjectsAlignBottomSmart"}, {"ContainerBottom", "ObjectsAlignBottomSmart"},
-            {"more", "ObjectAlignMenu"}, {"view", "SelectionPane"}, {"pageSize", "PowerPointPageSetup"},
+            {"more", "ObjectAlignMenu"}, {"view", "SelectionPane"}, {"layers", "ObjectBringToFront"}, {"pageSize", "PowerPointPageSetup"},
             {"copyComponent", "Copy"}, {"parameters", "ObjectSizeAndPositionDialog"},
             {"remove", "Clear"}, {"demo", "SlideNew"}, {"status", "FileProperties"}
         };

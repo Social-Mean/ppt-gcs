@@ -33,6 +33,7 @@ namespace PptGcs.AddIn
         internal string ActiveDriverId { get { return gesture==null?null:gesture.Driver.Id; } }
         internal IReadOnlyList<LayoutConstraint> ActiveRestrictions { get { return gesture?.Restrictions; } }
         public Func<int,int,int,IntPtr,bool> AlternateMouseInput { get; set; }
+        public Func<int,int,IntPtr,bool> UnhandledCanvasDown { get; set; }
         public Func<int,bool,bool> AlternateKeyboardInput { get; set; }
         public Func<bool> AlternateInputActive { get; set; }
         internal Action<int,int,IntPtr> CanvasPointerStarting { get; set; }
@@ -322,6 +323,9 @@ namespace PptGcs.AddIn
                         RunGestureLoop();
                         return new IntPtr(1);
                     }
+                    if (kind == WmLeftDown && UnhandledCanvasDown != null &&
+                        UnhandledCanvasDown(mouse.Position.X, mouse.Position.Y, mouse.Window))
+                        return new IntPtr(1);
                 }
             }
             catch (Exception exception)
@@ -1188,7 +1192,7 @@ namespace PptGcs.AddIn
             return count == expected.Count;
         }
 
-        private static int ActivateSlidePane(dynamic window)
+        internal static int ActivateSlidePane(dynamic window)
         {
             int previous = (int)window.ActivePane.ViewType;
             if (previous != 1)
@@ -1319,7 +1323,7 @@ namespace PptGcs.AddIn
             return name.ToString();
         }
 
-        private static bool IsCanvasWindow(IntPtr window)
+        internal static bool IsCanvasWindow(IntPtr window)
         {
             // The tested slide canvas is the leaf mdiClass. Testing ancestors
             // also admits thumbnail/notes panes, which cannot map slide points.
@@ -1409,7 +1413,7 @@ namespace PptGcs.AddIn
             public GroupChildNativeEdit Edit;
             public bool PendingSelection;
         }
-        private sealed class ScreenMap
+        internal sealed class ScreenMap
         {
             public double OriginX, OriginY, ScaleX, ScaleY;
             public static ScreenMap From(object windowObject)
@@ -1430,7 +1434,7 @@ namespace PptGcs.AddIn
                 return new Point { X = (int)Math.Round(OriginX + x * ScaleX), Y = (int)Math.Round(OriginY + y * ScaleY) };
             }
         }
-        [StructLayout(LayoutKind.Sequential)] private struct Point { public int X, Y; }
+        [StructLayout(LayoutKind.Sequential)] internal struct Point { public int X, Y; }
         [StructLayout(LayoutKind.Sequential)] private struct MouseHookData
         {
             public Point Position;

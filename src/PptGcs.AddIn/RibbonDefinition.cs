@@ -29,6 +29,7 @@ namespace PptGcs.AddIn
                     ReferenceMenu(options, "ContainerConstraints", "相对容器", false, "more")),
                 new XElement(Ns + "group", new XAttribute("id", "Manage"), new XAttribute("label", "管理"),
                     ManageButton("ConstraintsPane", "约束窗格", "view", "ShowConstraintPane"),
+                    ManageButton("LayersPane", "图层窗格", "layers", "ShowLayerPane"),
                     ManageButton("ResizeGcsPage", "幻灯片尺寸…", "pageSize", "ShowPageResize"),
                     ManageButton("Remove", "移除选中对象的约束", "remove", "UnlinkSelected"),
                     ManageButton("Demo", "新建六组演示", "demo", "CreateDemo"),
@@ -38,7 +39,10 @@ namespace PptGcs.AddIn
                     ManageButton("NamedGcsParameters", "命名参数…", "parameters", "ShowNamedParameters")),
                 new XElement(Ns+"group",new XAttribute("id","CanvasConstraints"),new XAttribute("label","画布标记"),
                     CanvasDisplayButton("Selection","仅所选对象","AutoLinkingStart"),CanvasDisplayButton("All","显示全部","HyperlinksVerify"),CanvasDisplayButton("Hidden","隐藏标记","AutoLinkingStop")));
-            return new XElement(Ns + "customUI", new XAttribute("onLoad","OnRibbonLoad"),new XElement(Ns + "ribbon", new XElement(Ns + "tabs", tab)))
+            return new XElement(Ns + "customUI", new XAttribute("onLoad","OnRibbonLoad"),
+                new XElement(Ns + "commands", SlideLayers.ArrangeCommands.Select(command =>
+                    new XElement(Ns + "command", new XAttribute("idMso", command), new XAttribute("onAction", "OnLayerArrange")))),
+                new XElement(Ns + "ribbon", new XElement(Ns + "tabs", tab)))
                 .ToString(SaveOptions.DisableFormatting);
         }
 

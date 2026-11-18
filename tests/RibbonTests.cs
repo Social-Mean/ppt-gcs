@@ -55,8 +55,11 @@ internal static class RibbonTests
             "numeric constraint tooltips explain explicit parameter confirmation");
         var groups = tab.Elements(ns + "group").ToList();
         Check(groups.Select(group => (string)group.Attribute("label")).SequenceEqual(new[] {"位置约束","尺寸约束","间距约束","偏移与对称","参考框约束","管理","组件与参数","画布标记"}) &&
-            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,0,5,2,0}),
+            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,0,6,2,0}),
             "constraint creation, management and canvas display controls are grouped separately");
+        Check(buttons.Any(button => (string)button.Attribute("id") == "LayersPane" &&
+            (string)button.Attribute("label") == "图层窗格" && (string)button.Attribute("onAction") == "ShowLayerPane"),
+            "the layer tab can be opened from the Ribbon");
         var displayButtons=tab.Descendants(ns+"toggleButton").ToList();
         Check(displayButtons.Select(button=>(string)button.Attribute("tag")).SequenceEqual(new[]{"Selection","All","Hidden"}) &&
             displayButtons.All(button=>(string)button.Attribute("getPressed")=="GetCanvasConstraintDisplay" && (string)button.Attribute("onAction")=="ChangeCanvasConstraintDisplay"),
@@ -66,8 +69,13 @@ internal static class RibbonTests
         Check((string)paneButton.Attribute("label") == "约束窗格" && (string)paneButton.Attribute("onAction") == "ShowConstraintPane",
             "ribbon opens the renamed constraint pane");
         Check(buttons.Where(button => button.Attribute("tag") == null).Select(button => (string)button.Attribute("onAction"))
-            .SequenceEqual(new[] {"ShowConstraintPane","ShowPageResize","UnlinkSelected","CreateDemo","ShowStatus","ShowComponentCopy","ShowNamedParameters"}),
+            .SequenceEqual(new[] {"ShowConstraintPane","ShowLayerPane","ShowPageResize","UnlinkSelected","CreateDemo","ShowStatus","ShowComponentCopy","ShowNamedParameters"}),
             "management includes the page size, copy and named parameter commands");
+        var arrange = root.Element(ns + "commands").Elements(ns + "command").ToArray();
+        Check(arrange.Select(command => (string)command.Attribute("idMso")).SequenceEqual(new[] {
+            "ObjectBringToFront", "ObjectBringForward", "ObjectSendBackward", "ObjectSendToBack"
+        }) && arrange.All(command => (string)command.Attribute("onAction") == "OnLayerArrange"),
+            "native arrange commands share the layer-aware route");
         Check(new[] {null,"","0","samex","SameX ","unknown"}.All(Rejected),
             "malformed or numeric callback tags cannot select an unintended constraint");
         bool invalidKind = false;
