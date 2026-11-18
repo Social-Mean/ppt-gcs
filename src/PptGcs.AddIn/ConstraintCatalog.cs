@@ -48,6 +48,7 @@ namespace PptGcs.AddIn
         {
             return new ConstraintPaneOption { Kind=kind.ToString(),Label=label,MinimumMembers=minimum,MaximumMembers=maximum,
                 ValueLabel=valueLabel,SecondLabel=secondLabel,DefaultValue=value,DefaultSecond=second,MinimumValue=minValue,
+                SupportsNamedParameter=LayoutConstraint.SupportsNamedParameter(kind),
                 Description=kind == ConstraintKind.EqualHorizontalGap || kind == ConstraintKind.EqualVerticalGap
                     ? "按建立时的顺序保持边缘间距相等，间距值可以变化。"
                     : kind == ConstraintKind.FixedHorizontalGap || kind == ConstraintKind.FixedVerticalGap

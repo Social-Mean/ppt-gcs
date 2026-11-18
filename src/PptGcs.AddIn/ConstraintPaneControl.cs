@@ -27,6 +27,8 @@ namespace PptGcs.AddIn
         private readonly Button deleteButton = new Button();
         private readonly GroupBox editor = new GroupBox();
         private readonly GroupBox pageResizeEditor = new GroupBox();
+        private readonly ComponentCopyControl copyEditor = new ComponentCopyControl();
+        private readonly NamedParameterControl parameterEditor = new NamedParameterControl();
         private readonly NumericUpDown pageWidth = new NumericUpDown();
         private readonly NumericUpDown pageHeight = new NumericUpDown();
         private readonly Label pageResizeError = new Label();
@@ -36,6 +38,8 @@ namespace PptGcs.AddIn
         private readonly Label editorHint = new Label();
         private readonly Label containerLabel = new Label();
         private readonly ComboBox containerBox = new ComboBox();
+        private readonly Label bindingLabel = new Label();
+        private readonly ComboBox bindingBox = new ComboBox();
         private readonly Label valueLabel = new Label();
         private readonly Label secondLabel = new Label();
         private readonly NumericUpDown valueBox = new NumericUpDown();
@@ -51,6 +55,8 @@ namespace PptGcs.AddIn
         private bool selectionQueued;
         private int selectionGeneration;
         private string editingId;
+        private string pendingParameterId;
+        private bool populatingBindings;
         private string selectedRelationId;
         private string listSignature;
         private string operationMessage;
@@ -97,6 +103,11 @@ namespace PptGcs.AddIn
             content.Controls.Add(conflictControl);
             BuildPageResizeEditor();
             content.Controls.Add(pageResizeEditor);
+            copyEditor.Copy += CopyComponent;
+            content.Controls.Add(copyEditor);
+            parameterEditor.Save += SaveNamedParameter;
+            parameterEditor.Delete += DeleteNamedParameter;
+            content.Controls.Add(parameterEditor);
 
             content.Controls.Add(SectionLabel("对象"));
             ConfigureList(objects, true, 122, "当前页对象");
@@ -197,6 +208,7 @@ namespace PptGcs.AddIn
                 editingId = null;
                 selectedRelationId = null;
                 editor.Visible = false;
+                copyEditor.Visible = false;
                 operationMessage = null;
                 conflictControl.ClearDraft();
                 listSignature = null;
@@ -206,6 +218,8 @@ namespace PptGcs.AddIn
             model = snapshot;
             int selected = model.Objects.Count(item => item.Selected);
             pageLabel.Text = (model.PageLabel ?? "当前页") + " · 已选 " + selected;
+            if(copyEditor.Visible)copyEditor.ShowSelection(selected);
+            if(parameterEditor.Visible)parameterEditor.Render(model.Parameters);
             freedomLabel.Text=String.Join(Environment.NewLine,model.Objects.Where(item=>item.Selected).Select(DescribeFreedom));
             freedomLabel.Visible=selected>0;
             RefreshMessage();
@@ -228,7 +242,7 @@ namespace PptGcs.AddIn
 
         public void ShowEditor(string kind = null)
         {
-            pageResizeEditor.Visible=false;
+            CloseAlternateEditors();
             conflictControl.ClearDraft();
             operationMessage = null;
             RefreshMessage();
@@ -251,6 +265,7 @@ namespace PptGcs.AddIn
 
         public void ShowPageResize(double width,double height)
         {
+            CloseAlternateEditors();
             editor.Visible=false;
             editingId=null;
             conflictControl.ClearDraft();
@@ -260,6 +275,55 @@ namespace PptGcs.AddIn
             pageResizeEditor.Visible=true;
             ScrollControlIntoView(pageResizeEditor);
             if(pageWidth.Focus())pageWidth.Select(0,pageWidth.Text.Length);
+        }
+
+        public void ShowCopyEditor(IReadOnlyList<ConstraintPaneSlide> slides,int currentId)
+        {
+            OpenAlternateEditor();
+            copyEditor.Open(slides,currentId,model.Objects.Count(item=>item.Selected));
+            ScrollControlIntoView(copyEditor);
+        }
+
+        public void ShowNamedParameters()
+        {
+            OpenAlternateEditor();
+            parameterEditor.Open(model.Parameters);
+            ScrollControlIntoView(parameterEditor);
+        }
+
+        private void CloseAlternateEditors()
+        { pageResizeEditor.Visible=copyEditor.Visible=parameterEditor.Visible=false; }
+
+        private void OpenAlternateEditor()
+        {
+            CloseAlternateEditors();
+            editor.Visible=false;
+            editingId=null;
+            conflictControl.ClearDraft();
+            operationMessage=null;
+            RefreshMessage();
+        }
+
+        private void CopyComponent(int slideId,bool shareParameters)
+        {
+            if(actions?.CopyComponent==null)return;
+            if(InvokeCommand(()=>actions.CopyComponent(slideId,shareParameters)))copyEditor.Visible=false;
+            else copyEditor.ShowError(operationMessage);
+        }
+
+        private void SaveNamedParameter(string id,string name,double value)
+        {
+            if(actions?.SaveParameter==null)return;
+            string saved=null;
+            if(InvokeCommand(()=>saved=actions.SaveParameter(id,name,value)))parameterEditor.Select(saved);
+            else parameterEditor.ShowError(operationMessage);
+        }
+
+        private void DeleteNamedParameter(string id)
+        {
+            if(actions?.DeleteParameter==null)return;
+            if(InvokeCommand(()=>actions.DeleteParameter(id)))parameterEditor.Select(null);
+            else parameterEditor.ShowError(operationMessage);
         }
 
         private void BuildPageResizeEditor()
@@ -389,19 +453,32 @@ namespace PptGcs.AddIn
             containerBox.AccessibleName=containerLabel.Text;
             containerBox.SelectedIndexChanged+=(sender,args)=>UpdateApplyButton();
             fields.Controls.Add(containerLabel,0,2);fields.Controls.Add(containerBox,1,2);
+            bindingLabel.Text="参数来源";
+            bindingLabel.AutoSize=true;
+            bindingLabel.Anchor=AnchorStyles.Left;
+            bindingBox.DropDownStyle=ComboBoxStyle.DropDownList;
+            bindingBox.Dock=DockStyle.Fill;
+            bindingBox.AccessibleName=bindingLabel.Text;
+            bindingBox.SelectedIndexChanged+=(sender,args)=>{
+                if(populatingBindings)return;
+                pendingParameterId=(bindingBox.SelectedItem as ConstraintPaneParameter)?.Id;
+                UpdateBindingValue();
+                UpdateApplyButton();
+            };
+            fields.Controls.Add(bindingLabel,0,3);fields.Controls.Add(bindingBox,1,3);
             ConfigureNumeric(valueBox, "第一个约束参数");
             ConfigureNumeric(secondBox, "第二个约束参数");
             valueBox.KeyDown += CommitWithEnter;
             secondBox.KeyDown += CommitWithEnter;
             valueLabel.AutoSize = true; valueLabel.Anchor = AnchorStyles.Left;
             secondLabel.AutoSize = true; secondLabel.Anchor = AnchorStyles.Left;
-            fields.Controls.Add(valueLabel, 0, 3); fields.Controls.Add(valueBox, 1, 3);
-            fields.Controls.Add(secondLabel, 0, 4); fields.Controls.Add(secondBox, 1, 4);
+            fields.Controls.Add(valueLabel, 0, 4); fields.Controls.Add(valueBox, 1, 4);
+            fields.Controls.Add(secondLabel, 0, 5); fields.Controls.Add(secondBox, 1, 5);
             var buttons = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 8, 0, 0) };
             ConfigureButton(applyButton, "创建约束", 88, ApplyEditor);
             buttons.Controls.Add(applyButton);
             buttons.Controls.Add(MakeButton("取消", 60, () => { editor.Visible = false; editingId = null; }));
-            fields.Controls.Add(buttons, 0, 5); fields.SetColumnSpan(buttons, 2);
+            fields.Controls.Add(buttons, 0, 6); fields.SetColumnSpan(buttons, 2);
             editor.Controls.Add(fields);
         }
 
@@ -503,7 +580,7 @@ namespace PptGcs.AddIn
         private void EditRelation(ConstraintPaneRelation relation)
         {
             if (!HasEditableParameters(relation)) return;
-            pageResizeEditor.Visible=false;
+            CloseAlternateEditors();
             conflictControl.ClearDraft();
             operationMessage = null;
             RefreshMessage();
@@ -604,6 +681,7 @@ namespace PptGcs.AddIn
         private void LoadEditorValues(ConstraintPaneRelation relation)
         {
             var option = EditorOption();
+            pendingParameterId=relation?.ParameterId;
             valueLabel.Text = option == null ? String.Empty : option.ValueLabel;
             secondLabel.Text = option == null ? String.Empty : option.SecondLabel;
             valueLabel.Visible = valueBox.Visible = option != null && !String.IsNullOrEmpty(option.ValueLabel);
@@ -632,7 +710,37 @@ namespace PptGcs.AddIn
             }
             containerLabel.Visible=containerBox.Visible=NeedsContainer(option);
             if(NeedsContainer(option))RefreshContainerChoices();
+            RefreshBindingChoices(option);
             UpdateApplyButton();
+        }
+
+        private void RefreshBindingChoices(ConstraintPaneOption option)
+        {
+            bool show=option?.SupportsNamedParameter==true && (model.Parameters.Count>0 || pendingParameterId!=null);
+            bindingLabel.Visible=bindingBox.Visible=show;
+            if(!show){valueBox.Enabled=true;return;}
+            var choices=new List<ConstraintPaneParameter> { new ConstraintPaneParameter { Name="直接输入数值" } };
+            choices.AddRange(model.Parameters.Where(item=>item.Value>=option.MinimumValue && item.Value<=option.MaximumValue));
+            var old=bindingBox.Items.Cast<ConstraintPaneParameter>().ToList();
+            populatingBindings=true;
+            try
+            {
+                if(old.Count!=choices.Count || !old.Zip(choices,(a,b)=>a.Id==b.Id && a.Name==b.Name && a.Value==b.Value).All(same=>same))
+                {
+                    bindingBox.Items.Clear();
+                    bindingBox.Items.AddRange(choices.Cast<object>().ToArray());
+                }
+                bindingBox.SelectedIndex=choices.FindIndex(item=>item.Id==pendingParameterId);
+            }
+            finally {populatingBindings=false;}
+            UpdateBindingValue();
+        }
+
+        private void UpdateBindingValue()
+        {
+            var chosen=bindingBox.SelectedItem as ConstraintPaneParameter;
+            valueBox.Enabled=pendingParameterId==null;
+            if(chosen?.Id!=null)valueBox.Value=(decimal)chosen.Value;
         }
 
         private bool NeedsContainer(ConstraintPaneOption option)
@@ -658,8 +766,9 @@ namespace PptGcs.AddIn
             var selected=model.Objects.Where(item=>item.Selected).ToList();
             bool eligible=option!=null && selected.Count>=option.MinimumMembers &&
                 (option.MaximumMembers<=0 || selected.Count<=option.MaximumMembers) && selected.All(item=>item.UnsupportedReason==null);
-            applyButton.Enabled=actions!=null && option!=null && (editingId!=null || eligible &&
-                (!NeedsContainer(option) || actions.AddContainer!=null && containerBox.SelectedIndex>=0));
+            bool hasParameter=option?.SupportsNamedParameter!=true || pendingParameterId==null || bindingBox.SelectedIndex>=0;
+            applyButton.Enabled=actions!=null && option!=null && hasParameter && (editingId!=null || eligible &&
+                (!NeedsContainer(option) || containerBox.SelectedIndex>=0));
         }
 
         private void ApplyEditor()
@@ -670,10 +779,10 @@ namespace PptGcs.AddIn
             double? second = String.IsNullOrEmpty(option.SecondLabel) ? (double?)null : (double)secondBox.Value;
             string id = editingId;
             string container=NeedsContainer(option)?((ConstraintPaneObject)containerBox.SelectedItem).Id:null;
+            string parameter=option.SupportsNamedParameter?pendingParameterId:null;
             if (InvokeCommand(() => {
-                if(id!=null)actions.Update?.Invoke(id,first,second);
-                else if(container!=null)actions.AddContainer(option.Kind,first,container);
-                else actions.Add?.Invoke(option.Kind,first,second);
+                if(id!=null)actions.Update?.Invoke(id,first,second,parameter);
+                else actions.Add?.Invoke(option.Kind,first,second,container,parameter);
             }))
             { editor.Visible = false; editingId = null; }
         }
@@ -730,6 +839,7 @@ namespace PptGcs.AddIn
             string label = relation.Label ?? relation.Kind;
             if (relation.Value.HasValue) label += " " + relation.Value.Value.ToString("0.###", CultureInfo.CurrentCulture);
             if (relation.Second.HasValue) label += ", " + relation.Second.Value.ToString("0.###", CultureInfo.CurrentCulture);
+            if (relation.ParameterName!=null) label += " · " + relation.ParameterName;
             return label;
         }
 

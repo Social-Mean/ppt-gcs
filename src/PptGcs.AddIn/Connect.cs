@@ -23,6 +23,7 @@ namespace PptGcs.AddIn
         private NativeFieldController nativeFields;
         private ShapeIdentityManager identities;
         private ConstraintCommands commands;
+        private ParameterCommands parameters;
         private RadialMenuController radial;
         private OfficeIconProvider officeIcons;
         private CanvasConstraintOverlay canvasOverlay;
@@ -64,6 +65,7 @@ namespace PptGcs.AddIn
             identities = new ShapeIdentityManager();
             officeIcons = new OfficeIconProvider(application, (id,error)=>Log("office-icon-error",json.Serialize(new { imageMso=id,error })));
             commands = new ConstraintCommands(application, NormalizeIdentities, Log);
+            parameters = new ParameterCommands(application);
             nativeFields = new NativeFieldController(application, Log, NormalizeActiveIdentities);
             keyboard = new KeyboardNudgeController(application, Log, NormalizeActiveIdentities);
             keyboard.Finished += OnKeyboardFinished;
@@ -125,7 +127,7 @@ namespace PptGcs.AddIn
                 if (presentationClosed != null) Cleanup("close-event",()=>ComEventsHelper.Remove((object)app, ApplicationEvents, 2004, presentationClosed));
             }
             selectionChanged = null; presentationOpened = null;presentationClosed=null;
-            Cleanup("disconnect-log",()=>Log("disconnected", "{}"));commands=null;identities=null;app = null;
+            Cleanup("disconnect-log",()=>Log("disconnected", "{}"));commands=null;parameters=null;identities=null;app = null;
         }
 
         private void Cleanup(string resource,Action release)
@@ -314,10 +316,10 @@ namespace PptGcs.AddIn
                     if (id == null) continue;
                     geometry.Add(new { Id=id, Name=(string)shape.Name, Left=(double)shape.Left, Top=(double)shape.Top, Width=(double)shape.Width, Height=(double)shape.Height });
                 }
-                var constraints = document.Constraints.Where(c => c.SlideId == slideId).Select(c => new { c.Id,c.SlideId,Kind=c.Kind.ToString(),c.ShapeIds,c.Value,c.SecondaryValue,c.Enabled }).ToList();
+                var constraints = document.Constraints.Where(c => c.SlideId == slideId).Select(c => new { c.Id,c.SlideId,Kind=c.Kind.ToString(),c.ShapeIds,c.Value,c.SecondaryValue,c.Enabled,c.ParameterId }).ToList();
                 slides.Add(new { slideId, name=(string)slide.Name, kind=(string)slide.Tags["PPTGCS_CASE"], geometry, constraints });
             }
-            return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
+            return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), parameters=document.Parameters, slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
         public string GetStatus() { return "几何约束 v0.7.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
@@ -332,7 +334,7 @@ namespace PptGcs.AddIn
         public string AddConstraintCommand(string kind,string parameters)
         {
             string id=null;var values=ReadParameters(parameters);
-            ExecuteShared(()=>id=commands.Add(kind,values.Item1,values.Item2));return id;
+            ExecuteShared(()=>id=commands.Add(kind,values.value,values.second,values.containerId,values.parameterId));return id;
         }
         public string AddContainerConstraintCommand(string kind,double value,string containerId)
         {
@@ -342,17 +344,40 @@ namespace PptGcs.AddIn
         }
         public void ResizePageCommand(double width,double height)
         { ExecuteShared(()=>PageResize.Apply((object)app,width,height)); }
+        public string CopyConstrainedComponent(int targetSlideId,bool shareParameters)
+        {
+            IReadOnlyList<string> ids=null;
+            ExecuteShared(()=>ids=ComponentCopyCommand.Apply((object)app,targetSlideId,shareParameters));
+            return json.Serialize(ids);
+        }
+        public string AddNamedParameterCommand(string name,double value)
+        {
+            string id=null;
+            ExecuteShared(()=>id=parameters.Add(name,value));
+            return id;
+        }
+        public void UpdateNamedParameterCommand(string id,string name,double value)
+        { ExecuteShared(()=>parameters.Update(id,name,value)); }
+        public void DeleteNamedParameterCommand(string id)
+        { ExecuteShared(()=>parameters.Delete(id)); }
         public void UpdateConstraintCommand(string id,string parameters)
-        { var values=ReadParameters(parameters);ExecuteShared(()=>commands.Update(id,values.Item1,values.Item2)); }
+        { var values=ReadParameters(parameters);ExecuteShared(()=>commands.Update(id,values.value,values.second,values.parameterId)); }
         public void SetConstraintEnabled(string id,bool enabled) { ExecuteShared(()=>commands.SetEnabled(id,enabled)); }
         public void DeleteConstraintCommand(string id) { ExecuteShared(()=>commands.Delete(id)); }
         public void SelectConstraintObjects(string idsJson)
         { commands.SelectShapes(json.Deserialize<List<string>>(idsJson));RefreshPane(); }
 
-        private Tuple<double?,double?> ReadParameters(string parameters)
+        private sealed class ConstraintInput
         {
-            var values=String.IsNullOrWhiteSpace(parameters)?new Dictionary<string,double>():json.Deserialize<Dictionary<string,double>>(parameters);
-            return Tuple.Create(values.ContainsKey("value")?(double?)values["value"]:null,values.ContainsKey("second")?(double?)values["second"]:null);
+            public double? value { get; set; }
+            public double? second { get; set; }
+            public string containerId { get; set; }
+            public string parameterId { get; set; }
+        }
+
+        private ConstraintInput ReadParameters(string parameters)
+        {
+            return String.IsNullOrWhiteSpace(parameters)?new ConstraintInput():json.Deserialize<ConstraintInput>(parameters)??new ConstraintInput();
         }
 
         public void CTPFactoryAvailable(ICTPFactory factory) { paneFactory=factory; }
@@ -364,6 +389,32 @@ namespace PptGcs.AddIn
                 dynamic page=app.ActivePresentation.PageSetup;
                 pane.Pane.Visible=true;
                 pane.Control.ShowPageResize((double)page.SlideWidth,(double)page.SlideHeight);
+            });
+        }
+        public void ShowComponentCopy(object control)
+        {
+            RunCommand(()=>{
+                var pane=EnsurePane();
+                dynamic window=app.ActiveWindow;
+                dynamic presentation=window.Presentation;
+                int current=(int)window.View.Slide.SlideID;
+                var slides=new List<ConstraintPaneSlide>();
+                for(int index=1;index<=(int)presentation.Slides.Count;index++)
+                {
+                    dynamic slide=presentation.Slides[index];
+                    int id=(int)slide.SlideID;
+                    slides.Add(new ConstraintPaneSlide {Id=id,Label="第 "+index+" 页 · "+(string)slide.Name+(id==current?"（当前页）":"")});
+                }
+                pane.Pane.Visible=true;
+                pane.Control.ShowCopyEditor(slides,current);
+            });
+        }
+        public void ShowNamedParameters(object control)
+        {
+            RunCommand(()=>{
+                var pane=EnsurePane();
+                pane.Pane.Visible=true;
+                pane.Control.ShowNamedParameters();
             });
         }
         public string OpenConstraintPane()
@@ -389,10 +440,19 @@ namespace PptGcs.AddIn
                 var ui=new ConstraintPaneControl();
                 instance=new PaneInstance {Pane=pane,Control=ui,Window=(object)window,Presentation=(object)window.Presentation};
                 ui.Bind(new ConstraintPaneActions {
-                    Add=(kind,value,second)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Add(kind,value,second))),
-                    AddContainer=(kind,value,containerId)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Add(kind,value,null,containerId))),
-                    Update=(id,value,second)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Update(id,value,second))),
+                    Add=(kind,value,second,containerId,parameterId)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Add(kind,value,second,containerId,parameterId))),
+                    Update=(id,value,second,parameterId)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.Update(id,value,second,parameterId))),
                     ResizePage=(width,height)=>InPaneWindow(handle,()=>ResizePageCommand(width,height)),
+                    CopyComponent=(slide,share)=>InPaneWindow(handle,()=>CopyConstrainedComponent(slide,share)),
+                    SaveParameter=(id,name,value)=>{
+                        string saved=id;
+                        InPaneWindow(handle,()=>{
+                            if(id==null)saved=AddNamedParameterCommand(name,value);
+                            else UpdateNamedParameterCommand(id,name,value);
+                        });
+                        return saved;
+                    },
+                    DeleteParameter=id=>InPaneWindow(handle,()=>DeleteNamedParameterCommand(id)),
                     SetEnabled=(id,enabled)=>InPaneWindow(handle,()=>ExecuteInteractive(()=>commands.SetEnabled(id,enabled))),
                     Delete=id=>InPaneWindow(handle,()=>ExecuteShared(()=>commands.Delete(id))),
                     SelectShapes=ids=>InPaneWindow(handle,()=> { if(selectingFromPane)return;selectingFromPane=true;try{commands.SelectShapes(ids);}finally{selectingFromPane=false;}RefreshPane(); }),

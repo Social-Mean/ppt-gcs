@@ -65,6 +65,8 @@ internal static class CoreTests
         Run("edit restriction explains a rejected direction and a projected corner", EditRestriction);
         Run("page anchors use the current dimensions and preserve both margins", PageAnchors);
         Run("moving and resizing a container preserves its members' insets", ContainerAnchors);
+        Run("named dimensions store one value and resolve every reference", NamedParameters);
+        Run("component copies remap internal relations and can share or clone parameters", CopyComponent);
         Console.WriteLine("PASS: " + passed + " core tests");
     }
 
@@ -234,6 +236,60 @@ internal static class CoreTests
         Throws<ConstraintConflictException>(() => Edit(resized.Values, relations, Shape(B, 96, 138, 215, 20), GeometryEditMode.Move));
         Throws<ArgumentException>(() => new ConstraintDocument(new[] { left, Parameter(ConstraintKind.ContainerLeft, 15, null, A, C, B) }));
         Throws<ConstraintConflictException>(() => Normalize(input, left, Parameter(ConstraintKind.ContainerLeft, 15, null, B, A)));
+    }
+
+    private static void NamedParameters()
+    {
+        var parameter = new LayoutParameter(D, "  卡片间距  ", 32.5);
+        var width = new LayoutConstraint(A, 256, ConstraintKind.FixedWidth, new[] { A }, 12, parameterId: D);
+        var gap = new LayoutConstraint(B, 257, ConstraintKind.FixedHorizontalGap, new[] { B, C }, 1, parameterId: D);
+        var doc = new ConstraintDocument(new[] { width, gap }, new[] { parameter });
+        var xml = doc.ToXml();
+        var reopened = ConstraintDocument.Parse(xml);
+        Assert(reopened.ToXml() == xml && reopened.Parameters.Single().Name == "卡片间距");
+        Assert(reopened.Constraints.All(item => item.ParameterId == parameter.Id && item.Value == 32.5));
+        var updated = new ConstraintDocument(reopened.Constraints, new[] { new LayoutParameter(D, "宽度和间距", 42.75) });
+        Assert(updated.Constraints.All(item => item.Value == 42.75));
+        Assert(updated.Constraints[0].WithEnabled(false).ParameterId == parameter.Id);
+        Near(Get(Normalize(new[] { Shape(A) }, updated.Constraints[0]), A).Width, 42.75);
+        Near(LayoutSolver.MaxResidual(new[] { Shape(B), Shape(C, 62.75) }, new[] { updated.Constraints[1] }), 0);
+        Throws<ArgumentException>(() => new ConstraintDocument(reopened.Constraints));
+        Throws<ArgumentException>(() => new ConstraintDocument(reopened.Constraints, new[] { parameter, new LayoutParameter(E, parameter.Name, 21) }));
+        Throws<ArgumentException>(() => new LayoutConstraint(E, 257, ConstraintKind.AspectRatio, new[] { A }, 2, parameterId: D));
+        Throws<ArgumentOutOfRangeException>(() => new ConstraintDocument(reopened.Constraints, new[] { new LayoutParameter(D, parameter.Name, 0) }));
+        Throws<FormatException>(() => ConstraintDocument.Parse(xml.Replace(" parameterId=", " value=\"1\" parameterId=")));
+        Throws<FormatException>(() => ConstraintDocument.Parse(xml.Replace("parameterId=\"" + parameter.Id, "parameterId=\"" + E)));
+    }
+
+    private static void CopyComponent()
+    {
+        var parameter = new LayoutParameter(D, "Step", 30);
+        var occupied = new LayoutParameter(E, "Step（副本）", 9);
+        var source = new[] {
+            new LayoutConstraint(A, 256, ConstraintKind.FixedWidth, new[] { A }, 30, parameterId: D),
+            new LayoutConstraint(B, 256, ConstraintKind.FixedHorizontalGap, new[] { B, A }, 30, enabled: false, parameterId: D),
+            Constraint(ConstraintKind.SameY, A, C)
+        };
+        var doc = new ConstraintDocument(source, new[] { parameter, occupied });
+        string newA = Guid.NewGuid().ToString("D").ToUpperInvariant(), newB = Guid.NewGuid().ToString("D").ToUpperInvariant();
+        var mapping = new Dictionary<string, string> { { A, newA }, { B, newB } };
+        foreach (bool share in new[] { false, true })
+        {
+            var result = ComponentCopy.Plan(doc, 256, 257, mapping, share);
+            Assert(result.Constraints.Count == 5 && result.Constraints.Take(3).SequenceEqual(doc.Constraints));
+            var copied = result.Constraints.Skip(3).ToArray();
+            Assert(copied.All(item => item.SlideId == 257 && !source.Select(old => old.Id).Contains(item.Id)));
+            Assert(copied[0].ShapeIds.SequenceEqual(new[] { newA }));
+            Assert(copied[1].ShapeIds.SequenceEqual(new[] { newB, newA }) && !copied[1].Enabled);
+            Assert(copied[0].ParameterId == copied[1].ParameterId && copied[0].Value == 30);
+            if (share) Assert(result.Parameters.Count == 2 && copied[0].ParameterId == parameter.Id);
+            else Assert(result.Parameters.Count == 3 && copied[0].ParameterId != parameter.Id && result.Parameters.Last().Name == "Step（副本 2）");
+            var updated = new ConstraintDocument(result.Constraints, result.Parameters.Select(item => item.Id == parameter.Id ?
+                new LayoutParameter(item.Id, item.Name, 40) : item));
+            Assert(updated.Constraints[0].Value == 40 && updated.Constraints[3].Value == (share ? 40 : 30));
+            Assert(ConstraintDocument.Parse(result.ToXml()).ToXml() == result.ToXml());
+        }
+        Throws<ArgumentException>(() => ComponentCopy.Plan(doc, 256, 256, new Dictionary<string, string> { { A, C } }, false));
     }
 
     private static void RejectV1()

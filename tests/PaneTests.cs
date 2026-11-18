@@ -18,6 +18,7 @@ internal static class PaneTests
             using (var pane = new ConstraintPaneControl()) Run(pane);
             using (var pane = new ConstraintPaneControl()) RunGrid(pane);
             using (var pane = new ConstraintPaneControl()) RunReferenceEditors(pane);
+            using (var pane = new ConstraintPaneControl()) RunComponentAndParameters(pane);
             Console.WriteLine("PASS: " + passed + " pane tests");
             return 0;
         }
@@ -35,7 +36,7 @@ internal static class PaneTests
         model.Options=ConstraintCatalog.Options(new List<ShapeGeometry>());
         model.Objects[1].Selected=true;
         string created=null;
-        pane.Bind(new ConstraintPaneActions {Add=(kind,value,second)=>created=kind});
+        pane.Bind(new ConstraintPaneActions {Add=(kind,value,second,container,parameter)=>created=kind});
         pane.Render(model);
         pane.ShowEditor("SameWidth");
         var grid=Find<TableLayoutPanel>(pane,"约束类型按钮");
@@ -107,7 +108,7 @@ internal static class PaneTests
         double suppliedWidth=0,suppliedHeight=0;
         bool rejectSize=true;
         pane.Bind(new ConstraintPaneActions {
-            AddContainer=(kind,margin,container)=>{chosen=kind+"/"+container;suppliedMargin=margin.Value;},
+            Add=(kind,margin,second,container,parameter)=>{chosen=kind+"/"+container;suppliedMargin=margin.Value;},
             ResizePage=(newWidth,newHeight)=>{
                 if(rejectSize)throw new InvalidOperationException("边距冲突");
                 suppliedWidth=newWidth;suppliedHeight=newHeight;
@@ -148,6 +149,67 @@ internal static class PaneTests
             "page size submits both dimensions once and closes the editor");
     }
 
+    private static void RunComponentAndParameters(ConstraintPaneControl pane)
+    {
+        pane.CreateControl();
+        var model=Model("命名参数测试","shape:256/");
+        model.Options=ConstraintCatalog.Options(new List<ShapeGeometry>());
+        var named=new ConstraintPaneParameter {Id="P1",Name="卡片宽度",Value=84,References=2};
+        var negative=new ConstraintPaneParameter {Id="P2",Name="有符号间距",Value=-7};
+        model.Parameters.Add(named);
+        model.Parameters.Add(negative);
+        int copiedTo=0;
+        bool shared=false;
+        string binding=null, savedId=null, savedName=null;
+        double boundValue=0,savedValue=0;
+        pane.Bind(new ConstraintPaneActions {
+            Add=(kind,value,second,container,parameter)=>{binding=parameter;boundValue=value.Value;},
+            CopyComponent=(slide,share)=>{copiedTo=slide;shared=share;},
+            SaveParameter=(id,name,value)=>{savedId=id;savedName=name;savedValue=value;return id;}
+        });
+        pane.Render(model);
+        var pages=new[] {new ConstraintPaneSlide {Id=256,Label="当前页"},new ConstraintPaneSlide {Id=257,Label="下一页"}};
+        pane.ShowCopyEditor(pages,256);
+        var target=Find<ComboBox>(pane,"目标幻灯片");
+        var shareBox=Find<CheckBox>(pane,"与原件共享命名参数");
+        Check((target.SelectedItem as ConstraintPaneSlide).Id==256 && !shareBox.Checked,
+            "copy defaults to the current slide and independent parameters");
+        target.SelectedIndex=1;
+        Find<Button>(pane,"复制所选对象").PerformClick();
+        Check(copiedTo==257 && !shared,"copy submits the selected destination and independence setting");
+        pane.ShowCopyEditor(pages,256);
+        shareBox.Checked=true;
+        Find<Button>(pane,"复制所选对象").PerformClick();
+        Check(copiedTo==256 && shared,"explicit sharing reaches the copy command");
+        pane.ShowCopyEditor(pages,256);
+        Check(!shareBox.Checked,"sharing is reset when opening a new copy");
+
+        pane.ShowEditor("FixedWidth");
+        var source=Find<ComboBox>(pane,"参数来源");
+        var valueEditor=Find<NumericUpDown>(pane,"第一个约束参数");
+        Check(source.Visible && source.Items.Count==2 && source.SelectedIndex==0 && valueEditor.Enabled,
+            "fixed width offers eligible names and starts with a literal input");
+        source.SelectedIndex=1;
+        pane.Render(model);
+        Check(!valueEditor.Enabled && valueEditor.Value==84 && source.SelectedIndex==1,
+            "a binding displays the shared number and is preserved by refresh");
+        Find<Button>(pane,"创建约束").PerformClick();
+        Check(binding=="P1" && boundValue==84,"constraint creation forwards the named parameter identity");
+
+        pane.ShowNamedParameters();
+        var library=Find<ComboBox>(pane,"文稿参数");
+        var nameEditor=Find<TextBox>(pane,"参数名称");
+        var numeric=Find<NumericUpDown>(pane,"命名参数数值 (pt)");
+        Check(library.Items.Count==2 && nameEditor.Text==named.Name && !Find<Button>(pane,"删除未使用的参数").Enabled,
+            "parameter management protects referenced values and shows the current name");
+        nameEditor.Text="调整后的宽度";
+        numeric.Value=95;
+        pane.Render(model);
+        Find<Button>(pane,"保存参数").PerformClick();
+        Check(savedId=="P1" && savedName=="调整后的宽度" && savedValue==95,
+            "editing a named parameter retains its identity and entered draft");
+    }
+
     private static void Run(ConstraintPaneControl pane)
     {
         // A UserControl can create its child handles without a visible Form.
@@ -177,8 +239,8 @@ internal static class PaneTests
         bool? enabled = null;
         pane.Bind(new ConstraintPaneActions {
             SelectShapes = ids => { selection = ids.ToArray(); selectionCalls++; },
-            Add = (kind, value, second) => { addKind = kind; addValue = value; },
-            Update = (id, value, second) => { updatedId = id; updatedValue = value; },
+            Add = (kind, value, second, container, parameter) => { addKind = kind; addValue = value; },
+            Update = (id, value, second, parameter) => { updatedId = id; updatedValue = value; },
             Delete = id => deletedId = id,
             SetEnabled = (id, value) => enabled = value
         });
@@ -240,7 +302,7 @@ internal static class PaneTests
 
         model.Message = "已选 1 个对象 · 当前页 2 条关系";
         pane.Bind(new ConstraintPaneActions {
-            Add = (kind, value, second) => {
+            Add = (kind, value, second, container, parameter) => {
                 // The host refreshes from its finally block before propagating
                 // the command error. A later idle refresh must not erase it.
                 pane.Render(model);

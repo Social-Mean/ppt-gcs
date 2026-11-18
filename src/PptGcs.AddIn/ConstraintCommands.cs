@@ -19,10 +19,10 @@ namespace PptGcs.AddIn
         public ConstraintCommands(object application, Action<object> normalizeIdentities, Action<string,string> log)
         { this.application=application; this.normalizeIdentities=normalizeIdentities; this.log=log; }
 
-        public string Add(string kind, double? value, double? second, string containerId=null)
+        public string Add(string kind, double? value, double? second, string containerId=null, string parameterId=null)
         {
             NormalizeCurrent();
-            EditPlan plan=PlanAdd(ParseKind(kind),value,second,containerId);
+            EditPlan plan=PlanAdd(ParseKind(kind),value,second,containerId,parameterId);
             Commit(plan);
             return plan.RelationId;
         }
@@ -35,11 +35,17 @@ namespace PptGcs.AddIn
             return plan.Solved.Where(s=>LayoutSolver.NeedsUpdate(before[s.Id],s)).ToList();
         }
 
-        public void Update(string id, double? value, double? second)
-        { Change(id, r=>new LayoutConstraint(r.Id,r.SlideId,r.Kind,r.ShapeIds,value,second,r.Enabled)); }
+        public void Update(string id, double? value, double? second, string parameterId=null)
+        {
+            Change(id,(document,relation)=>{
+                var parameter=ParameterCommands.Find(document,parameterId);
+                return new LayoutConstraint(relation.Id,relation.SlideId,relation.Kind,relation.ShapeIds,
+                    parameter?.Value??value,second,relation.Enabled,parameter?.Id);
+            });
+        }
         public void SetEnabled(string id,bool enabled)
-        { Change(id,r=>new LayoutConstraint(r.Id,r.SlideId,r.Kind,r.ShapeIds,r.Value,r.SecondaryValue,enabled)); }
-        public void Delete(string id) { Change(id,r=>null); }
+        { Change(id,(document,relation)=>relation.WithEnabled(enabled)); }
+        public void Delete(string id) { Change(id,(document,relation)=>null); }
 
         public void DeleteForSelection()
         {
@@ -47,25 +53,25 @@ namespace PptGcs.AddIn
             LayoutContext context=ReadCurrent();
             var ids=new HashSet<string>(SelectedShapes(context.Window).Select(PowerPointLayout.ReadId).Where(id=>id!=null));
             if(ids.Count==0) throw new InvalidOperationException("请选择有约束的对象。");
-            var next=new ConstraintDocument(context.Document.Constraints.Where(r=>r.SlideId!=context.SlideId || !r.ShapeIds.Any(ids.Contains)));
+            var next=context.Document.WithConstraints(context.Document.Constraints.Where(r=>r.SlideId!=context.SlideId || !r.ShapeIds.Any(ids.Contains)));
             if(next.ToXml()==context.Document.ToXml()) return;
             Commit(SolvePlan(new EditPlan {Context=context,Document=next}));
         }
 
-        private void Change(string id,Func<LayoutConstraint,LayoutConstraint> change)
+        private void Change(string id,Func<ConstraintDocument,LayoutConstraint,LayoutConstraint> change)
         {
             NormalizeCurrent();
             LayoutContext context=ReadCurrent();
             string normalized=ShapeIdentity.Normalize(id);
             LayoutConstraint current=context.Document.Constraints.SingleOrDefault(r=>r.Id==normalized && r.SlideId==context.SlideId);
             if(current==null) throw new InvalidOperationException("该约束已不存在或不属于当前页。");
-            LayoutConstraint replacement=change(current);
-            var next=new ConstraintDocument(context.Document.Constraints.Select(r=>r.Id==current.Id?replacement:r).Where(r=>r!=null));
+            LayoutConstraint replacement=change(context.Document,current);
+            var next=context.Document.WithConstraints(context.Document.Constraints.Select(r=>r.Id==current.Id?replacement:r).Where(r=>r!=null));
             if(next.ToXml()==context.Document.ToXml()) return;
             Commit(SolvePlan(new EditPlan {Context=context,Document=next,Attempted=replacement}));
         }
 
-        private EditPlan PlanAdd(ConstraintKind kind,double? value,double? second,string containerId=null)
+        private EditPlan PlanAdd(ConstraintKind kind,double? value,double? second,string containerId=null,string parameterId=null)
         {
             LayoutContext context=ReadCurrent();
             if((bool)((dynamic)context.Window).Selection.HasChildShapeRange)
@@ -102,8 +108,9 @@ namespace PptGcs.AddIn
             if(context.Document.Constraints.Any(r=>r.SlideId==context.SlideId && r.Kind==kind &&
                 LayoutConstraint.MembershipKey(kind,r.ShapeIds)==members))
                 throw new InvalidOperationException("这些对象已经存在“"+ConstraintCatalog.Label(kind)+"”关系，请在窗格中修改或启用它。");
-            var relation=new LayoutConstraint(Guid.NewGuid().ToString("D"),context.SlideId,kind,ids,value,second);
-            var next=new ConstraintDocument(context.Document.Constraints.Concat(new[]{relation}));
+            var parameter=ParameterCommands.Find(context.Document,parameterId);
+            var relation=new LayoutConstraint(Guid.NewGuid().ToString("D"),context.SlideId,kind,ids,parameter?.Value??value,second,parameterId:parameter?.Id);
+            var next=context.Document.WithConstraints(context.Document.Constraints.Concat(new[]{relation}));
             return SolvePlan(new EditPlan {Context=context,Document=next,Attempted=relation,NewIdentities=tags,RelationId=relation.Id});
         }
 
@@ -153,8 +160,8 @@ namespace PptGcs.AddIn
                 current.Geometry.Add(PowerPointLayout.Geometry(shape,tag.Id));
             }
             var disabled=new HashSet<string>(disableIds,StringComparer.Ordinal);
-            var next=new ConstraintDocument(plan.Document.Constraints.Select(item=>disabled.Contains(item.Id)
-                ? new LayoutConstraint(item.Id,item.SlideId,item.Kind,item.ShapeIds,item.Value,item.SecondaryValue,false) : item));
+            var next=plan.Document.WithConstraints(plan.Document.Constraints.Select(item=>disabled.Contains(item.Id)
+                ? item.WithEnabled(false) : item));
             Commit(SolvePlan(new EditPlan {Context=current,Document=next,Attempted=plan.Attempted,
                 NewIdentities=plan.NewIdentities,RelationId=plan.RelationId}));
         }
@@ -212,7 +219,7 @@ namespace PptGcs.AddIn
             finally { application.StartNewUndoEntry(); }
         }
 
-        private static void RestoreTag(object target,string key,string value)
+        internal static void RestoreTag(object target,string key,string value)
         { if(String.IsNullOrEmpty(value)) ((dynamic)target).Tags.Delete(key); else ((dynamic)target).Tags.Add(key,value); }
 
         private void NormalizeCurrent()
@@ -221,7 +228,7 @@ namespace PptGcs.AddIn
             normalizeIdentities((object)application.ActivePresentation);
         }
 
-        private static void RefreshSelectionBounds(LayoutContext context)
+        internal static void RefreshSelectionBounds(LayoutContext context)
         {
             var selected=new HashSet<int>(SelectedShapes(context.Window).Select(s=>(int)((dynamic)s).Id));
             if(selected.Count==0)return;
@@ -262,6 +269,15 @@ namespace PptGcs.AddIn
             var selectedNative=new HashSet<int>(selected.Select(s=>(int)((dynamic)s).Id));
             var defaults=selected.Where(IsSupported).ToDictionary(s=>(int)((dynamic)s).Id,s=>PowerPointLayout.Geometry(s,PowerPointLayout.ReadId(s)??Guid.NewGuid().ToString("D")));
             var model=new ConstraintPaneModel {PageLabel="第 "+(int)slide.SlideIndex+" 页 · "+(string)slide.Name,Options=ConstraintCatalog.Options(defaults.Values.ToList())};
+            var parameterById=context.Document.Parameters.ToDictionary(item=>item.Id,StringComparer.Ordinal);
+            if(includeFreedom)
+            {
+                var counts=context.Document.Constraints.Where(item=>item.ParameterId!=null)
+                    .GroupBy(item=>item.ParameterId,StringComparer.Ordinal).ToDictionary(group=>group.Key,group=>group.Count(),StringComparer.Ordinal);
+                foreach(var item in context.Document.Parameters)
+                    model.Parameters.Add(new ConstraintPaneParameter {Id=item.Id,Name=item.Name,Value=item.Value,
+                        References=counts.ContainsKey(item.Id)?counts[item.Id]:0});
+            }
             var names=new Dictionary<string,string>(StringComparer.Ordinal);
             var uiKeys=new Dictionary<string,string>(StringComparer.Ordinal);
             var geometryById=context.Geometry.ToDictionary(s=>s.Id,StringComparer.Ordinal);
@@ -295,7 +311,8 @@ namespace PptGcs.AddIn
                 model.Relations.Add(new ConstraintPaneRelation {Id=relation.Id,Kind=relation.Kind.ToString(),Label=ConstraintCatalog.Label(relation.Kind),
                     MemberIds=relation.ShapeIds.Select(id=>uiKeys.ContainsKey(id)?uiKeys[id]:id).ToList(),
                     MemberNames=relation.ShapeIds.Select(id=>names.ContainsKey(id)?names[id]:"（对象缺失）").ToList(),
-                    Value=relation.Value,Second=relation.SecondaryValue,Enabled=relation.Enabled,Status=status});
+                    Value=relation.Value,Second=relation.SecondaryValue,Enabled=relation.Enabled,Status=status,
+                    ParameterId=relation.ParameterId,ParameterName=relation.ParameterId==null?null:parameterById[relation.ParameterId].Name});
             }
             model.Message="已选 "+selected.Count+" 个对象 · 当前页 "+relations.Count+" 条关系";
             return model;
@@ -310,7 +327,8 @@ namespace PptGcs.AddIn
             var key=new StringBuilder().Append(context.SlideId).Append('|').Append(String.Join(",",ids));
             key.AppendFormat(CultureInfo.InvariantCulture,"|{0:R},{1:R}",context.PageWidth,context.PageHeight);
             foreach(var shape in geometry)key.AppendFormat(CultureInfo.InvariantCulture,"|{0}:{1:R},{2:R},{3:R},{4:R}",shape.Id,shape.Left,shape.Top,shape.Width,shape.Height);
-            key.Append('|').Append(new ConstraintDocument(connected).ToXml());
+            var used=new HashSet<string>(connected.Select(relation=>relation.ParameterId).Where(id=>id!=null),StringComparer.Ordinal);
+            key.Append('|').Append(new ConstraintDocument(connected,context.Document.Parameters.Where(parameter=>used.Contains(parameter.Id))).ToXml());
             string signature=key.ToString();
             if(freedomKey==signature)return;
             freedomByShape=new Dictionary<string,GeometryFreedom>(StringComparer.Ordinal);

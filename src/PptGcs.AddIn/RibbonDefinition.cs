@@ -33,6 +33,9 @@ namespace PptGcs.AddIn
                     ManageButton("Remove", "移除选中对象的约束", "remove", "UnlinkSelected"),
                     ManageButton("Demo", "新建六组演示", "demo", "CreateDemo"),
                     ManageButton("Status", "状态", "status", "ShowStatus")),
+                new XElement(Ns + "group", new XAttribute("id", "ComponentsAndParameters"), new XAttribute("label", "组件与参数"),
+                    ManageButton("CopyGcsComponent", "复制对象及内部约束…", "copyComponent", "ShowComponentCopy"),
+                    ManageButton("NamedGcsParameters", "命名参数…", "parameters", "ShowNamedParameters")),
                 new XElement(Ns+"group",new XAttribute("id","CanvasConstraints"),new XAttribute("label","画布标记"),
                     CanvasDisplayButton("Selection","仅所选对象","AutoLinkingStart"),CanvasDisplayButton("All","显示全部","HyperlinksVerify"),CanvasDisplayButton("Hidden","隐藏标记","AutoLinkingStop")));
             return new XElement(Ns + "customUI", new XAttribute("onLoad","OnRibbonLoad"),new XElement(Ns + "ribbon", new XElement(Ns + "tabs", tab)))

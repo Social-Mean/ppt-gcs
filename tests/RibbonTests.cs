@@ -54,8 +54,8 @@ internal static class RibbonTests
             .All(button => ((string)button.Attribute("supertip")).Contains("设置参数并确认创建")),
             "numeric constraint tooltips explain explicit parameter confirmation");
         var groups = tab.Elements(ns + "group").ToList();
-        Check(groups.Select(group => (string)group.Attribute("label")).SequenceEqual(new[] {"位置约束","尺寸约束","间距约束","偏移与对称","参考框约束","管理","画布标记"}) &&
-            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,0,5,0}),
+        Check(groups.Select(group => (string)group.Attribute("label")).SequenceEqual(new[] {"位置约束","尺寸约束","间距约束","偏移与对称","参考框约束","管理","组件与参数","画布标记"}) &&
+            groups.Select(group => group.Elements(ns + "button").Count()).SequenceEqual(new[] {8,5,4,3,0,5,2,0}),
             "constraint creation, management and canvas display controls are grouped separately");
         var displayButtons=tab.Descendants(ns+"toggleButton").ToList();
         Check(displayButtons.Select(button=>(string)button.Attribute("tag")).SequenceEqual(new[]{"Selection","All","Hidden"}) &&
@@ -66,8 +66,8 @@ internal static class RibbonTests
         Check((string)paneButton.Attribute("label") == "约束窗格" && (string)paneButton.Attribute("onAction") == "ShowConstraintPane",
             "ribbon opens the renamed constraint pane");
         Check(buttons.Where(button => button.Attribute("tag") == null).Select(button => (string)button.Attribute("onAction"))
-            .SequenceEqual(new[] {"ShowConstraintPane","ShowPageResize","UnlinkSelected","CreateDemo","ShowStatus"}),
-            "management includes the page size command");
+            .SequenceEqual(new[] {"ShowConstraintPane","ShowPageResize","UnlinkSelected","CreateDemo","ShowStatus","ShowComponentCopy","ShowNamedParameters"}),
+            "management includes the page size, copy and named parameter commands");
         Check(new[] {null,"","0","samex","SameX ","unknown"}.All(Rejected),
             "malformed or numeric callback tags cannot select an unintended constraint");
         bool invalidKind = false;
