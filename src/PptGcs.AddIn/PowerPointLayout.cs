@@ -40,14 +40,20 @@ namespace PptGcs.AddIn
         {
             dynamic application = applicationObject;
             if ((int)application.Presentations.Count == 0) throw new InvalidOperationException("请先打开演示文稿。");
-            dynamic window = application.ActiveWindow;
+            return ReadWindow((object)application.ActiveWindow);
+        }
+
+        public static LayoutContext ReadWindow(object windowObject)
+        {
+            dynamic window = windowObject;
             if (window == null || (int)window.ViewType != 9) throw new InvalidOperationException("请切换到普通幻灯片编辑视图。");
             dynamic slide = window.View.Slide;
+            object presentation = (object)window.Presentation;
             var context = new LayoutContext
             {
-                Window = window, Presentation = window.Presentation, Slide = slide,
+                Window = windowObject, Presentation = presentation, Slide = slide,
                 SlideId = (int)slide.SlideID,
-                Document = ReadDocument((object)window.Presentation)
+                Document = ReadDocument(presentation)
             };
             context.Constraints = context.Document.Constraints.Where(c => c.SlideId == context.SlideId && c.Enabled).ToList();
             var required = new HashSet<string>(context.Constraints.SelectMany(c => c.ShapeIds));

@@ -1,5 +1,8 @@
 [CmdletBinding()]
-param([ValidateSet('Debug', 'Release')][string]$Configuration = 'Debug')
+param(
+    [ValidateSet('Debug', 'Release')][string]$Configuration = 'Debug',
+    [string]$OutputDirectory
+)
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -9,14 +12,15 @@ $msbuildPath = & $vswherePath -latest -products '*' -requires Microsoft.Componen
 if (-not $msbuildPath) { throw 'MSBuild was not found. Install the Visual Studio .NET desktop build tools.' }
 $compilerPath = Join-Path (Split-Path -Parent $msbuildPath) 'Roslyn\csc.exe'
 if (-not (Test-Path -LiteralPath $compilerPath)) { throw "C# compiler not found: $compilerPath" }
-$outputDirectory = Join-Path $projectRoot 'bin'
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $projectRoot 'bin' }
+$outputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 $packageDirectory = Join-Path $projectRoot '.packages'
 New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
 $projectPath = Join-Path $projectRoot 'src\PptGcs.AddIn\PptGcs.AddIn.csproj'
 & $msbuildPath $projectPath /restore /m /nologo /verbosity:minimal "/p:Configuration=$Configuration" "/p:OutDir=$outputDirectory\" "/p:RestorePackagesPath=$packageDirectory"
 if ($LASTEXITCODE -ne 0) { throw "Build failed with exit code $LASTEXITCODE." }
 
-foreach ($testName in @('CoreTests', 'IdentityTests', 'NativeConstraintStoreTests', 'PaneTests', 'RadialTests', 'ShapeSupportTests', 'OfficeIconTests', 'TextPointerTests', 'RibbonTests', 'RadialRenderingTests', 'CanvasConstraintTests', 'GroupPointerTests')) {
+foreach ($testName in @('CoreTests', 'MultiEditTests', 'SelectionMoveTests', 'KeyboardNudgeTests', 'GroupChildTests', 'NativeFieldValueTests', 'NativeFieldGeometryTests', 'NativeFieldTargetTests', 'NativeFieldDirtyTests', 'NativeFieldContextTests', 'IdentityTests', 'NativeConstraintStoreTests', 'PaneTests', 'RadialTests', 'ShapeSupportTests', 'OfficeIconTests', 'TextPointerTests', 'RibbonTests', 'RadialRenderingTests', 'CanvasConstraintTests', 'GroupPointerTests')) {
     $testPath = Join-Path $projectRoot "tests\$testName.cs"
     $referenceDirectory = Join-Path $packageDirectory 'microsoft.netframework.referenceassemblies.net48\1.0.3\build\.NETFramework\v4.8'
     $referenceNames = @('mscorlib', 'System', 'System.Core', 'System.Xml', 'System.Xml.Linq', 'System.Drawing', 'System.Windows.Forms', 'System.Web.Extensions')
@@ -33,6 +37,6 @@ foreach ($testName in @('CoreTests', 'IdentityTests', 'NativeConstraintStoreTest
     & (Join-Path $outputDirectory "$testName.exe")
     if ($LASTEXITCODE -ne 0) { throw "$testName failed with exit code $LASTEXITCODE." }
 }
-& (Join-Path $PSScriptRoot 'BuildPaneHost.ps1')
+& (Join-Path $PSScriptRoot 'BuildPaneHost.ps1') -OutputDirectory $outputDirectory
 if ($LASTEXITCODE -ne 0) { throw 'Native task pane host build failed.' }
 Write-Output "Built $outputDirectory\PptGcs.AddIn.dll"

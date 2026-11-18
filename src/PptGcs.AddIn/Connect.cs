@@ -19,6 +19,8 @@ namespace PptGcs.AddIn
         private dynamic app;
         private Timer timer;
         private ConstrainedDragController controller;
+        private KeyboardNudgeController keyboard;
+        private NativeFieldController nativeFields;
         private ShapeIdentityManager identities;
         private ConstraintCommands commands;
         private RadialMenuController radial;
@@ -44,6 +46,17 @@ namespace PptGcs.AddIn
 
         public void OnConnection(object application, ext_ConnectMode mode, object addIn, ref Array custom)
         {
+            try { Initialize(application,addIn); }
+            catch
+            {
+                try { Stop(); }
+                catch(Exception cleanupError) { Log("connection-cleanup-error",json.Serialize(new {error=cleanupError.ToString()})); }
+                throw;
+            }
+        }
+
+        private void Initialize(object application,object addIn)
+        {
             Application.EnableVisualStyles();
             stopping=false;
             app = application;
@@ -51,15 +64,19 @@ namespace PptGcs.AddIn
             identities = new ShapeIdentityManager();
             officeIcons = new OfficeIconProvider(application, (id,error)=>Log("office-icon-error",json.Serialize(new { imageMso=id,error })));
             commands = new ConstraintCommands(application, NormalizeIdentities, Log);
+            nativeFields = new NativeFieldController(application, Log, NormalizeActiveIdentities);
+            keyboard = new KeyboardNudgeController(application, Log, NormalizeActiveIdentities);
+            keyboard.Finished += OnKeyboardFinished;
             controller = new ConstrainedDragController(application, Log, NormalizeActiveIdentities);
             radial = new RadialMenuController(commands.BuildModel,commands.Preview,
                 kind=>ExecuteShared(()=>commands.Add(kind,null,null)),
                 more=> {var pane=EnsurePane();pane.Pane.Visible=true;if(more)pane.Control.ShowEditor();},
                 ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
             canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log);
-            controller.AlternateMouseInput=radial.HandleMouse;
-            controller.AlternateKeyboardInput=radial.HandleKeyboard;
-            controller.AlternateInputActive=()=>radial!=null && radial.IsOpen;
+            controller.AlternateMouseInput=(kind,x,y,hwnd)=>keyboard.HandleMouseInput(kind) || radial.HandleMouse(kind,x,y,hwnd);
+            controller.AlternateKeyboardInput=(key,down)=>nativeFields.IsApplying ||
+                (radial.IsOpen ? radial.HandleKeyboard(key,down) : nativeFields.HandleKeyboard(key,down) || keyboard.HandleKeyboard(key,down));
+            controller.AlternateInputActive=()=>radial.IsOpen || keyboard.IsActive || nativeFields.IsApplying;
             selectionChanged = selection => OnIdentityEvent(null);
             presentationOpened = presentation => OnIdentityEvent(presentation);
             presentationClosed = OnPresentationClosed;
@@ -70,7 +87,7 @@ namespace PptGcs.AddIn
             timer = new Timer { Interval = 25 };
             timer.Tick += Tick;
             timer.Start();
-            Log("connected", json.Serialize(new { version = "0.6.2", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
+            Log("connected", json.Serialize(new { version = "0.7.0", powerpoint = (string)app.Version, processId = Process.GetCurrentProcess().Id }));
         }
         public void OnDisconnection(ext_DisconnectMode mode, ref Array custom) { Stop(); }
         public void OnStartupComplete(ref Array custom) { }
@@ -78,29 +95,46 @@ namespace PptGcs.AddIn
         public void OnBeginShutdown(ref Array custom) { Stop(); }
         private void Stop()
         {
-            if (timer == null && controller == null) return;
             if(stopping)return;
             stopping=true;
-            if (timer != null) { timer.Stop(); timer.Dispose(); timer = null; }
+            if (timer != null)
+            {
+                Cleanup("timer-stop",()=>timer.Stop());
+                Cleanup("timer-dispose",()=>timer.Dispose());
+                timer=null;
+            }
             if(controller!=null)
             {
                 controller.AlternateMouseInput=null;controller.AlternateKeyboardInput=null;controller.AlternateInputActive=null;
-                controller.Dispose();controller=null;
+                Cleanup("pointer",()=>controller.Dispose());controller=null;
             }
-            if(radial!=null){radial.Dispose();radial=null;}
-            if(canvasOverlay!=null){canvasOverlay.Dispose();canvasOverlay=null;}
+            if(keyboard!=null){keyboard.Finished-=OnKeyboardFinished;Cleanup("keyboard",()=>keyboard.Dispose());keyboard=null;}
+            if(nativeFields!=null){Cleanup("native-fields",()=>nativeFields.Dispose());nativeFields=null;}
+            if(radial!=null){Cleanup("radial",()=>radial.Dispose());radial=null;}
+            if(canvasOverlay!=null){Cleanup("canvas",()=>canvasOverlay.Dispose());canvasOverlay=null;}
             ribbonUi=null;
-            foreach(var pane in panes.Values) pane.Dispose();
+            foreach(var pane in panes.Values.ToArray()) Cleanup("pane",()=>pane.Dispose());
             panes.Clear(); paneFactory = null;
-            if(officeIcons!=null){officeIcons.Dispose();officeIcons=null;}
+            if(officeIcons!=null){Cleanup("icons",()=>officeIcons.Dispose());officeIcons=null;}
             if (app != null)
             {
-                if (selectionChanged != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2001, selectionChanged);
-                if (presentationOpened != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2021, presentationOpened);
-                if (presentationClosed != null) ComEventsHelper.Remove((object)app, ApplicationEvents, 2004, presentationClosed);
+                if (selectionChanged != null) Cleanup("selection-event",()=>ComEventsHelper.Remove((object)app, ApplicationEvents, 2001, selectionChanged));
+                if (presentationOpened != null) Cleanup("open-event",()=>ComEventsHelper.Remove((object)app, ApplicationEvents, 2021, presentationOpened));
+                if (presentationClosed != null) Cleanup("close-event",()=>ComEventsHelper.Remove((object)app, ApplicationEvents, 2004, presentationClosed));
             }
             selectionChanged = null; presentationOpened = null;presentationClosed=null;
-            Log("disconnected", "{}");commands=null;identities=null;app = null;
+            Cleanup("disconnect-log",()=>Log("disconnected", "{}"));commands=null;identities=null;app = null;
+        }
+
+        private void Cleanup(string resource,Action release)
+        {
+            try {release();}
+            catch(Exception error)
+            {
+                // A failed resource must not prevent later native hooks and
+                // event subscriptions from being released.
+                try {Log("cleanup-error",json.Serialize(new {resource,error=error.ToString()}));} catch { }
+            }
         }
 
         public string GetCustomUI(string ribbonId) { return RibbonDefinition.CreateXml(); }
@@ -245,13 +279,14 @@ namespace PptGcs.AddIn
             return json.Serialize(new { presentation=(string)presentation.FullName, storage="presentation-tags", constraintXml=document.ToXml(), slides });
         }
         public void ShowStatus(object control) { MessageBox.Show(GetStatus(),"PPT GCS"); }
-        public string GetStatus() { return "几何约束 v0.6.2\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
+        public string GetStatus() { return "几何约束 v0.7.0\r\n已载入约束：" + constraintCount + "\r\n状态：" + (lastError ?? "运行中") + "\r\n日志：" + logPath; }
         public string GetDiagnostics() { return controller.InspectTargets(); }
         public void Reload() { activeKey = null; }
 
         public string GetConstraintXml() { return PowerPointLayout.ReadDocument((object)app.ActivePresentation).ToXml(); }
         public string GetPaneState() { return json.Serialize(commands.BuildModel()); }
         public string GetRadialState() { return radial.GetState(); }
+        public string GetNativeFieldState() { return nativeFields.GetState(); }
         public string GetOfficeIconDiagnostics() { return json.Serialize(officeIcons.Diagnostics()); }
         public string AddConstraintCommand(string kind,string parameters)
         {
@@ -330,7 +365,7 @@ namespace PptGcs.AddIn
 
         private void ExecuteShared(Action command)
         {
-            if(busy || (controller!=null && controller.IsDragging) || (radial!=null && radial.IsOpen)) throw new InvalidOperationException("请先结束当前操作。");
+            if(busy || (nativeFields!=null && nativeFields.IsApplying) || (controller!=null && controller.IsDragging) || (keyboard!=null && keyboard.IsActive) || (radial!=null && radial.IsOpen)) throw new InvalidOperationException("请先结束当前操作。");
             busy=true;
             try {command();activeKey=null;lastError=null;}
             finally {busy=false;if(canvasOverlay!=null)canvasOverlay.Invalidate();RefreshPane();}
@@ -409,7 +444,7 @@ namespace PptGcs.AddIn
 
         private void OnIdentityEvent(object presentation)
         {
-            if (stopping || busy || repairingIdentities || app == null || (controller != null && controller.IsDragging)) return;
+            if (stopping || busy || repairingIdentities || app == null || (nativeFields != null && nativeFields.IsApplying) || (controller != null && controller.IsDragging) || (keyboard != null && keyboard.IsActive)) return;
             try
             {
                 if (presentation == null) NormalizeActiveIdentities();
@@ -427,32 +462,51 @@ namespace PptGcs.AddIn
         // Integration harness only: this is programmatic geometry replay, never
         // evidence of real mouse input. Require the explicit test document marker.
         public string ReplayGestureForTest(string driverId, string mode, string offsetsJson)
+        {return ReplayForTest(()=>controller.ReplayGestureForTest(driverId,mode,json.Deserialize<double[][]>(offsetsJson)));}
+
+        public string ReplaySelectionMoveForTest(string shapeNamesJson, string offsetsJson)
+        {return ReplayForTest(()=>controller.ReplaySelectionMoveForTest(json.Deserialize<string[]>(shapeNamesJson),json.Deserialize<double[][]>(offsetsJson)));}
+
+        public string ReplayKeyboardNudgeForTest(int key, int repeats, bool control)
+        {return ReplayForTest(()=>keyboard.ReplayForTest(key,repeats,control));}
+
+        public string ReplayGroupChildGestureForTest(string shapePathJson, string mode, string offsetsJson)
+        {return ReplayForTest(()=>controller.ReplayGroupChildGestureForTest(json.Deserialize<string[]>(shapePathJson),mode,json.Deserialize<double[][]>(offsetsJson)));}
+
+        public string ReplayGroupChildrenMoveForTest(string shapePathsJson, string offsetsJson)
+        {return ReplayForTest(()=>controller.ReplayGroupChildrenMoveForTest(json.Deserialize<string[][]>(shapePathsJson),json.Deserialize<double[][]>(offsetsJson)));}
+
+        private string ReplayForTest(Action replay)
         {
-            if (busy || controller.IsDragging || radial.IsOpen) throw new InvalidOperationException("The add-in is busy.");
-            dynamic presentation = app.ActivePresentation;
-            if ((string)presentation.Tags["PPTGCS_TEST"] != "V3")
+            if (stopping || app==null || busy || controller.IsDragging || keyboard.IsActive || nativeFields.IsApplying || radial.IsOpen)
+                throw new InvalidOperationException("The add-in is busy.");
+            if ((int)app.Presentations.Count==0 || (string)app.ActivePresentation.Tags["PPTGCS_TEST"] != "V3")
                 throw new InvalidOperationException("Replay requires an explicitly marked V3 test fixture.");
-            double[][] offsets = json.Deserialize<double[][]>(offsetsJson);
-            busy = true;
-            try
-            {
-                controller.ReplayGestureForTest(driverId, mode, offsets);
-                return GetSnapshot();
-            }
-            finally { busy = false; }
+            busy=true;
+            try {replay();return GetSnapshot();}
+            finally { busy=false; }
+        }
+
+        private void OnKeyboardFinished()
+        {
+            activeKey=null;
+            if(canvasOverlay!=null)canvasOverlay.Invalidate();
         }
 
         private void Tick(object sender, EventArgs args)
         {
             if(canvasOverlay!=null)canvasOverlay.CheckVisibility();
-            if (busy || refreshing || app == null || stopping) return;
+            if (busy || refreshing || app == null || stopping || nativeFields.IsApplying) return;
             refreshing = true;
             try
             {
+                nativeFields.Tick();
+                keyboard.Tick();
                 controller.Tick();
                 radial.Tick();
-                canvasOverlay.Tick(controller.ActiveGeometry,controller.ActiveDriverId,radial.IsOpen);
-                if (controller.IsDragging || radial.IsOpen || (activeKey != null && DateTime.UtcNow < nextRefresh)) return;
+                canvasOverlay.Tick(controller.ActiveGeometry ?? keyboard.ActiveGeometry,
+                    controller.ActiveDriverId ?? keyboard.ActiveDriverId,radial.IsOpen);
+                if (controller.IsDragging || keyboard.IsActive || radial.IsOpen || (activeKey != null && DateTime.UtcNow < nextRefresh)) return;
                 nextRefresh = DateTime.UtcNow.AddMilliseconds(200);
                 PrunePanes();
                 if ((int)app.Presentations.Count == 0) { activeKey=null;constraintCount=0;return; }
@@ -480,7 +534,7 @@ namespace PptGcs.AddIn
         }
         private void RunCommand(Action action)
         {
-            if (busy || (controller != null && controller.IsDragging) || (radial!=null && radial.IsOpen)) return;
+            if (busy || (nativeFields!=null && nativeFields.IsApplying) || (controller != null && controller.IsDragging) || (keyboard!=null && keyboard.IsActive) || (radial!=null && radial.IsOpen)) return;
             busy=true;
             try { action(); }
             catch (Exception ex) { Log("command-error",json.Serialize(new { error=ex.ToString() }));MessageBox.Show(ex.Message,"PPT GCS"); }

@@ -10,7 +10,7 @@ namespace PptGcs.Core
         public ConstraintConflictException(string message) : base(message) { }
     }
 
-    public enum GeometryEditMode { Exact, Move, ResizeNW, ResizeN, ResizeNE, ResizeE, ResizeSE, ResizeS, ResizeSW, ResizeW }
+    public enum GeometryEditMode { Exact, Move, ResizeNW, ResizeN, ResizeNE, ResizeE, ResizeSE, ResizeS, ResizeSW, ResizeW, NativeWidth, NativeHeight }
 
     // Dimensions are proportional equality components (same-size, ratio, fixed
     // values). Positions then form linear equations, solved by least movement.
@@ -24,7 +24,7 @@ namespace PptGcs.Core
         public static IReadOnlyList<ShapeGeometry> Normalize(IEnumerable<ShapeGeometry> initial,
             IEnumerable<LayoutConstraint> constraints)
         {
-            return SolveCore(initial, constraints, null, null, GeometryEditMode.Exact);
+            return SolveCore(initial, constraints, new GeometryEdit[0]);
         }
 
         public static IReadOnlyList<ShapeGeometry> Solve(IEnumerable<ShapeGeometry> initial,
@@ -32,14 +32,43 @@ namespace PptGcs.Core
             GeometryEditMode mode = GeometryEditMode.Exact)
         {
             if (target == null) throw new ArgumentNullException("target");
-            if (!Enum.IsDefined(typeof(GeometryEditMode), mode)) throw new ArgumentOutOfRangeException("mode");
             string driver = ShapeIdentity.Normalize(driverId);
             if (target.Id != driver) throw new ArgumentException("Target and driver identities differ.", "target");
-            return SolveCore(initial, constraints, driver, target, mode);
+            return Solve(initial, constraints, new[] { new GeometryEdit(target, mode) });
+        }
+
+        public static IReadOnlyList<ShapeGeometry> Solve(IEnumerable<ShapeGeometry> initial,
+            IEnumerable<LayoutConstraint> constraints, IEnumerable<GeometryEdit> edits)
+        {
+            if (edits == null) throw new ArgumentNullException("edits");
+            var requested = edits.ToList();
+            if (requested.Count == 0) throw new ArgumentException("An edit must contain at least one driver.", "edits");
+            if (requested.Any(edit => edit == null)) throw new ArgumentException("An edit cannot be null.", "edits");
+            if (requested.Select(edit => edit.Id).Distinct(StringComparer.Ordinal).Count() != requested.Count)
+                throw new ArgumentException("A shape cannot drive the same edit more than once.", "edits");
+            return SolveCore(initial, constraints, requested);
+        }
+
+        public static IReadOnlyList<LayoutConstraint> ConnectedConstraints(IEnumerable<LayoutConstraint> constraints,
+            IEnumerable<string> driverIds)
+        {
+            if(constraints==null)throw new ArgumentNullException("constraints");
+            if(driverIds==null)throw new ArgumentNullException("driverIds");
+            var relations=Active(constraints);
+            var connected=new HashSet<string>(driverIds.Select(ShapeIdentity.Normalize),StringComparer.Ordinal);
+            bool expanded;
+            do
+            {
+                expanded=false;
+                foreach(var relation in relations)
+                    if(relation.ShapeIds.Any(connected.Contains))
+                        foreach(string id in relation.ShapeIds)expanded|=connected.Add(id);
+            }while(expanded);
+            return relations.Where(relation=>relation.ShapeIds.Any(connected.Contains)).ToList().AsReadOnly();
         }
 
         private static IReadOnlyList<ShapeGeometry> SolveCore(IEnumerable<ShapeGeometry> initial,
-            IEnumerable<LayoutConstraint> constraints, string driver, ShapeGeometry target, GeometryEditMode mode)
+            IEnumerable<LayoutConstraint> constraints, IList<GeometryEdit> edits)
         {
             if (initial == null) throw new ArgumentNullException("initial");
             if (constraints == null) throw new ArgumentNullException("constraints");
@@ -47,34 +76,28 @@ namespace PptGcs.Core
             var byId = Index(baseline);
             var relations = Active(constraints);
             ValidateReferences(relations, byId);
-            if (driver != null && !byId.ContainsKey(driver))
-                throw new ArgumentException("The driver is not in the geometry snapshot.", "driverId");
-            var connected = driver == null ? new HashSet<string>(byId.Keys, StringComparer.Ordinal) :
-                new HashSet<string>(StringComparer.Ordinal) { driver };
-            bool expanded;
-            do
-            {
-                expanded = false;
-                foreach (var relation in relations)
-                    if (relation.ShapeIds.Any(connected.Contains))
-                        foreach (var id in relation.ShapeIds) expanded |= connected.Add(id);
-            } while (expanded);
+            if (edits.Any(edit => !byId.ContainsKey(edit.Id)))
+                throw new ArgumentException("A driver is not in the geometry snapshot.", "edits");
+            var seeds=edits.Count==0 ? byId.Keys : edits.Select(edit=>edit.Id);
+            var active=ConnectedConstraints(relations,seeds).ToList();
+            var connected=new HashSet<string>(seeds,StringComparer.Ordinal);
+            foreach(var relation in active)foreach(string id in relation.ShapeIds)connected.Add(id);
             var component = baseline.Where(shape => connected.Contains(shape.Id)).ToList();
-            var active = relations.Where(relation => connected.Contains(relation.ShapeIds[0])).ToList();
             var indices = component.Select((shape, index) => new { shape.Id, Index = index })
                 .ToDictionary(item => item.Id, item => item.Index, StringComparer.Ordinal);
-            double[] dimensions = ResolveDimensions(component, active, indices, driver, target, mode);
+            double[] dimensions = ResolveDimensions(component, active, indices, edits);
             double[] widths = Enumerable.Range(0, component.Count).Select(i => dimensions[2 * i]).ToArray();
             double[] heights = Enumerable.Range(0, component.Count).Select(i => dimensions[2 * i + 1]).ToArray();
-            double? x = null, y = null;
-            if (driver != null)
+            var xsRequested = new Dictionary<string, double>(StringComparer.Ordinal);
+            var ysRequested = new Dictionary<string, double>(StringComparer.Ordinal);
+            foreach (var edit in edits)
             {
-                int index = indices[driver];
-                var anchor = DrivenPosition(component[index], target, widths[index], heights[index], mode);
-                x = anchor[0]; y = anchor[1];
+                int index = indices[edit.Id];
+                var anchor = DrivenPosition(component[index], edit.Target, widths[index], heights[index], edit.Mode);
+                xsRequested.Add(edit.Id, anchor[0]); ysRequested.Add(edit.Id, anchor[1]);
             }
-            var xs = ResolvePositions(component, active, indices, widths, driver, x, true);
-            var ys = ResolvePositions(component, active, indices, heights, driver, y, false);
+            var xs = ResolvePositions(component, active, indices, widths, xsRequested, true);
+            var ys = ResolvePositions(component, active, indices, heights, ysRequested, false);
             var solved = new Dictionary<string, ShapeGeometry>(StringComparer.Ordinal);
             for (int i = 0; i < component.Count; i++)
                 solved.Add(component[i].Id, new ShapeGeometry(component[i].Id, xs[i], ys[i], widths[i], heights[i]));
@@ -180,7 +203,7 @@ namespace PptGcs.Core
         }
 
         private static double[] ResolveDimensions(IList<ShapeGeometry> shapes, IList<LayoutConstraint> relations,
-            IDictionary<string, int> indices, string driver, ShapeGeometry target, GeometryEditMode mode)
+            IDictionary<string, int> indices, IList<GeometryEdit> edits)
         {
             int count = shapes.Count * 2;
             var edges = Enumerable.Range(0, count).Select(i => (IList<SizeEdge>)new List<SizeEdge>()).ToArray();
@@ -201,18 +224,20 @@ namespace PptGcs.Core
                 else if (relation.Kind == ConstraintKind.FixedWidth) fixedValues.Add(new SizeValue(first, relation.Value.Value));
                 else if (relation.Kind == ConstraintKind.FixedHeight) fixedValues.Add(new SizeValue(first + 1, relation.Value.Value));
             }
-            if (driver != null)
+            foreach (var edit in edits)
             {
-                int at = indices[driver] * 2;
+                int at = indices[edit.Id] * 2;
+                GeometryEditMode mode = edit.Mode;
+                ShapeGeometry target = edit.Target;
                 if (mode == GeometryEditMode.Exact || mode == GeometryEditMode.Move)
                 {
-                    ShapeGeometry requested = mode == GeometryEditMode.Move ? shapes[indices[driver]] : target;
+                    ShapeGeometry requested = mode == GeometryEditMode.Move ? shapes[indices[edit.Id]] : target;
                     fixedValues.Add(new SizeValue(at, requested.Width));
                     fixedValues.Add(new SizeValue(at + 1, requested.Height));
                 }
-                else if (mode == GeometryEditMode.ResizeE || mode == GeometryEditMode.ResizeW)
+                else if (mode == GeometryEditMode.ResizeE || mode == GeometryEditMode.ResizeW || mode == GeometryEditMode.NativeWidth)
                     fixedValues.Add(new SizeValue(at, target.Width));
-                else if (mode == GeometryEditMode.ResizeN || mode == GeometryEditMode.ResizeS)
+                else if (mode == GeometryEditMode.ResizeN || mode == GeometryEditMode.ResizeS || mode == GeometryEditMode.NativeHeight)
                     fixedValues.Add(new SizeValue(at + 1, target.Height));
                 else
                 {
@@ -281,7 +306,8 @@ namespace PptGcs.Core
 
         private static double[] DrivenPosition(ShapeGeometry start, ShapeGeometry target, double width, double height, GeometryEditMode mode)
         {
-            if (mode == GeometryEditMode.Exact || mode == GeometryEditMode.Move) return new[] { target.Left, target.Top };
+            if (mode == GeometryEditMode.Exact || mode == GeometryEditMode.Move ||
+                mode == GeometryEditMode.NativeWidth || mode == GeometryEditMode.NativeHeight) return new[] { target.Left, target.Top };
             bool west = mode == GeometryEditMode.ResizeW || mode == GeometryEditMode.ResizeNW || mode == GeometryEditMode.ResizeSW;
             bool north = mode == GeometryEditMode.ResizeN || mode == GeometryEditMode.ResizeNW || mode == GeometryEditMode.ResizeNE;
             bool verticalOnly = mode == GeometryEditMode.ResizeN || mode == GeometryEditMode.ResizeS;
@@ -293,7 +319,7 @@ namespace PptGcs.Core
         }
 
         private static double[] ResolvePositions(IList<ShapeGeometry> component, IList<LayoutConstraint> relations,
-            IDictionary<string, int> indices, double[] sizes, string driver, double? requestedPosition, bool horizontal)
+            IDictionary<string, int> indices, double[] sizes, IDictionary<string, double> requestedPositions, bool horizontal)
         {
             int count = component.Count;
             var rows = new List<double[]>();
@@ -348,13 +374,13 @@ namespace PptGcs.Core
                     }
                 }
             }
-            int driverIndex = driver == null ? -1 : indices[driver];
+            var driven = requestedPositions.ToDictionary(pair => indices[pair.Key], pair => pair.Value);
             var baseline = component.Select(shape => horizontal ? shape.Left : shape.Top).ToArray();
-            if (driverIndex >= 0) baseline[driverIndex] = requestedPosition.Value;
+            foreach (var position in driven) baseline[position.Key] = position.Value;
             if (rows.Count == 0) return baseline;
-            var free = Enumerable.Range(0, count).Where(index => index != driverIndex).ToArray();
+            var free = Enumerable.Range(0, count).Where(index => !driven.ContainsKey(index)).ToArray();
             var rhs = Vector<double>.Build.Dense(rows.Count, row => values[row] -
-                (driverIndex < 0 ? 0 : rows[row][driverIndex] * requestedPosition.Value));
+                driven.Sum(position => rows[row][position.Key] * position.Value));
             if (free.Length == 0)
             {
                 if (rhs.AbsoluteMaximum() > ResidualTolerance) throw PositionConflict(horizontal);

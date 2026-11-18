@@ -145,6 +145,84 @@ namespace PptGcs.AddIn
                 HandlePoint(Handles(driver,map).Single(h => h.Mode == parsedMode));
             ((dynamic)context.Shapes[driverId]).Select();
             StartGesture(context, driver, parsedMode, map, start, IntPtr.Zero, IntPtr.Zero, 96, 8, true);
+            ReplayOffsetsForTest(offsets);
+        }
+
+        public void ReplaySelectionMoveForTest(string[] nativeShapeNames,double[][] offsets)
+        {
+            RequireUiThread();
+            if(disposed || gesture!=null || gestureLoopRunning || (AlternateInputActive!=null && AlternateInputActive()))
+                throw new InvalidOperationException("A gesture is already active or the controller is disposed.");
+            if(nativeShapeNames==null || nativeShapeNames.Length<2 || nativeShapeNames.Any(String.IsNullOrWhiteSpace) ||
+                nativeShapeNames.Distinct(StringComparer.Ordinal).Count()!=nativeShapeNames.Length)
+                throw new ArgumentException("Supply distinct native names for at least two selected shapes.","nativeShapeNames");
+            if(offsets==null || offsets.Length<2 || offsets.Any(p=>p==null || p.Length!=2 || p.Any(v=>Double.IsNaN(v)||Double.IsInfinity(v))))
+                throw new ArgumentException("Supply motion offsets followed by a release offset.","offsets");
+            normalizeIdentities();
+            LayoutContext context=PowerPointLayout.Read((object)application);
+            dynamic window=context.Window;
+            ActivateSlidePane(window);
+            var shapes=nativeShapeNames.Select(name=>(object)((dynamic)context.Slide).Shapes.Item(name)).ToArray();
+            SelectNativeShapes(shapes);
+            var selection=CaptureSelectionMove(context,shapes);
+            if(selection==null)throw new InvalidOperationException("The selection has no constrained member.");
+            ScreenMap map=ScreenMap.From(context.Window);
+            dynamic range=window.Selection.ShapeRange;
+            Point start=map.Point((double)range.Left+(double)range.Width/2,(double)range.Top+(double)range.Height/2);
+            ShapeGeometry driver=context.Geometry.Single(shape=>shape.Id==selection.Plan.DriverIds[0]);
+            StartGesture(context,driver,GestureMode.Move,map,start,IntPtr.Zero,IntPtr.Zero,96,8,true,selection);
+            ReplayOffsetsForTest(offsets);
+        }
+
+        public void ReplayGroupChildGestureForTest(string[] nativeShapePath,string mode,double[][] offsets)
+        {
+            ReplayGroupChildrenForTest(new[]{nativeShapePath},mode,offsets);
+        }
+
+        public void ReplayGroupChildrenMoveForTest(string[][] nativeShapePaths,double[][] offsets)
+        {
+            ReplayGroupChildrenForTest(nativeShapePaths,"Move",offsets);
+        }
+
+        private void ReplayGroupChildrenForTest(string[][] nativeShapePaths,string mode,double[][] offsets)
+        {
+            RequireUiThread();
+            if(disposed || gesture!=null || gestureLoopRunning || (AlternateInputActive!=null && AlternateInputActive()))
+                throw new InvalidOperationException("A gesture is already active or the controller is disposed.");
+            if(nativeShapePaths==null || nativeShapePaths.Length==0 || nativeShapePaths.Any(path=>
+                path==null || path.Length<2 || path.Any(String.IsNullOrWhiteSpace)))
+                throw new ArgumentException("Supply the top-level group and each exact native child path.","nativeShapePaths");
+            GestureMode parsedMode;
+            if(!Enum.TryParse(mode,false,out parsedMode)||!Enum.IsDefined(typeof(GestureMode),parsedMode))
+                throw new ArgumentException("Unknown gesture mode.","mode");
+            if(offsets==null || offsets.Length<2 || offsets.Any(p=>p==null || p.Length!=2 || p.Any(v=>Double.IsNaN(v)||Double.IsInfinity(v))))
+                throw new ArgumentException("Supply motion offsets followed by a release offset.","offsets");
+            normalizeIdentities();
+            LayoutContext context=PowerPointLayout.Read((object)application);
+            dynamic window=context.Window;
+            ActivateSlidePane(window);
+            object[] children=nativeShapePaths.Select(path=>{
+                dynamic child=((dynamic)context.Slide).Shapes.Item(path[0]);
+                foreach(string name in path.Skip(1))child=child.GroupItems.Item(name);
+                return (object)child;
+            }).ToArray();
+            var capture=CaptureGroupChildren(context,children,parsedMode);
+            if(capture==null)throw new InvalidOperationException("The native child does not belong to a constrained top-level group.");
+            if(parsedMode!=GestureMode.Move && (children.Length!=1 || !ShapeCapabilities.IsSupported(children[0])))
+                throw new InvalidOperationException("This native member's resize handles are not supported by the controlled child path.");
+            capture.Edit.SelectExact();
+            ScreenMap map=ScreenMap.From(context.Window);
+            var bounds=ReadNativePosition(children[0]);
+            Point start=parsedMode==GestureMode.Move ? map.Point(bounds.Left+bounds.Width/2,bounds.Top+bounds.Height/2) :
+                HandlePoint(Handles(new ShapeGeometry(capture.Edit.Plan.GroupIds[0],bounds.Left,bounds.Top,bounds.Width,bounds.Height),map).Single(handle=>handle.Mode==parsedMode));
+            ShapeGeometry driver=context.Geometry.Single(shape=>shape.Id==capture.Edit.Plan.GroupIds[0]);
+            StartGesture(context,driver,parsedMode,map,start,IntPtr.Zero,IntPtr.Zero,96,8,true,child:capture);
+            ReplayOffsetsForTest(offsets);
+        }
+
+        private void ReplayOffsetsForTest(double[][] offsets)
+        {
+            Point start=gesture.StartMouse;
             gestureLoopRunning = true;
             try
             {
@@ -275,7 +353,7 @@ namespace PptGcs.AddIn
                 // Commit it before DoEvents can dispatch the next double-click
                 // into this old gesture. An UP that crosses the threshold still
                 // follows the regular drag release path, even without a MOVE.
-                if(gesture.DeferSelection && !gesture.DragThresholdPassed && !updating && !finishing &&
+                if((gesture.DeferSelection || gesture.SelectionMove!=null || gesture.GroupChild!=null) && !gesture.DragThresholdPassed && !updating && !finishing &&
                     !GroupPointerPolicy.HasDragDistance(point.X-gesture.StartMouse.X,point.Y-gesture.StartMouse.Y,gesture.DragThreshold))
                     DrainQueuedPointer();
                 return true;
@@ -376,7 +454,7 @@ namespace PptGcs.AddIn
             if ((int)application.Presentations.Count == 0) return false;
             dynamic window = application.ActiveWindow;
             if (window == null || (int)window.ViewType != 9) return false;
-            if ((bool)window.Selection.HasChildShapeRange) return false;
+            bool childSelection=(bool)window.Selection.HasChildShapeRange;
             IntPtr root = GetAncestor(mouse.Window, GaRoot);
             uint process;
             if (root == IntPtr.Zero || root != GetAncestor(GetForegroundWindow(), GaRoot) ||
@@ -405,15 +483,27 @@ namespace PptGcs.AddIn
             uint dpi = GetDpiForWindow(mouse.Window);
             if (dpi == 0) throw new InvalidOperationException("PowerPoint canvas DPI is unavailable.");
             double handleRadius = HandleRadius * dpi / 96.0;
+            if(childSelection)
+            {
+                bool? childRoute=TryBeginGroupChild(context,map,mouse,messageKind,root,dpi,handleRadius,previousPane);
+                if(childRoute.HasValue)return childRoute.Value;
+            }
             var constrained = new HashSet<string>(context.Constraints.SelectMany(c => c.ShapeIds), StringComparer.Ordinal);
             var byId = context.Geometry.ToDictionary(item => item.Id, StringComparer.Ordinal);
+            // A real unselected-object hit starts its own normal gesture;
+            // selected-member hits must never collapse the current selection.
+            if(SelectedShapeCount(window)>1)
+            {
+                bool? selectionRoute=TryBeginSelectionMove(context,map,mouse,messageKind,root,dpi,handleRadius,previousPane);
+                if(selectionRoute.HasValue)return selectionRoute.Value;
+            }
             ShapeGeometry driver = null;
             GestureMode mode = GestureMode.Move;
             object closest = null;
             object rawHit = null;
             ShapeGeometry selectedBorder = null;
 
-            int selectedId = SelectedShapeId(window);
+            int selectedId = childSelection ? -1 : SelectedShapeId(window);
             if (selectedId >= 0)
             {
                 foreach (var item in context.Shapes)
@@ -489,8 +579,300 @@ namespace PptGcs.AddIn
             return true;
         }
 
+        // null means a hit outside the currently edited group; the regular
+        // top-level route may handle it. false is an intentional native route.
+        private bool? TryBeginGroupChild(LayoutContext context,ScreenMap map,MouseHookData mouse,int messageKind,
+            IntPtr root,uint dpi,double handleRadius,int previousPane)
+        {
+            dynamic window=context.Window;
+            dynamic selection=window.Selection;
+            dynamic range=selection.ChildShapeRange;
+            if((int)range.Count>1)
+                return TryBeginGroupChildrenMove(context,map,mouse,messageKind,root,dpi,handleRadius,previousPane,(object)range);
+            if((int)range.Count!=1)return false;
+            dynamic selectedChild=range[1];
+            dynamic selectedGroup=ShapeCapabilities.TopLevel((object)selectedChild);
+            var point=new System.Drawing.PointF(mouse.Position.X,mouse.Position.Y);
+            var selectedBounds=ScreenBounds(ReadNativePosition((object)selectedChild),map);
+            object child=null;
+            GestureMode mode=GestureMode.Move;
+            if(MultiSelectionPointerPolicy.HitHandle(selectedBounds,point,handleRadius))
+            {
+                if(!ShapeCapabilities.IsSupported((object)selectedChild))
+                {LogRoute(mouse,messageKind,"native-child-endpoint-handle",ReadSelection(window));return false;}
+                var box=ReadNativePosition((object)selectedChild);
+                string groupId=FindGroupId(context,(object)selectedGroup);
+                if(groupId==null)return false;
+                GestureMode? handle=HitHandle(new ShapeGeometry(groupId,box.Left,box.Top,box.Width,box.Height),map,mouse.Position,handleRadius);
+                if(!handle.HasValue)return false;
+                child=(object)selectedChild;mode=handle.Value;
+            }
+            else
+            {
+                dynamic hit=window.RangeFromPoint(mouse.Position.X,mouse.Position.Y);
+                if(hit==null)
+                {
+                    if(!MultiSelectionPointerPolicy.CanMove(selectedBounds,point,handleRadius,6*dpi/96f,null))return null;
+                    child=(object)selectedChild;
+                }
+                else if((int)hit.Child!=0)
+                {
+                    dynamic hitGroup=ShapeCapabilities.TopLevel((object)hit);
+                    if((int)hitGroup.Id!=(int)selectedGroup.Id)return null;
+                    var bounds=ScreenBounds(ReadNativePosition((object)hit),map);
+                    bool editingText=(int)hit.Id==(int)selectedChild.Id && (int)selection.Type==3;
+                    if(TextPointerPolicy.UseNativeTextInput((int)hit.Type,editingText,bounds,point,6*dpi/96f))
+                    {LogRoute(mouse,messageKind,"native-child-text-interior",ReadSelection(window));return false;}
+                    child=(object)hit;
+                }
+                else if((int)hit.Id==(int)selectedGroup.Id)
+                {LogRoute(mouse,messageKind,"native-parent-in-child-edit",ReadSelection(window));return false;}
+                else return null;
+            }
+            return BeginGroupChildren(context,map,mouse,messageKind,root,dpi,handleRadius,previousPane,new[]{child},mode,true);
+        }
+
+        private bool? TryBeginGroupChildrenMove(LayoutContext context,ScreenMap map,MouseHookData mouse,int messageKind,
+            IntPtr root,uint dpi,double handleRadius,int previousPane,object rangeObject)
+        {
+            dynamic range=rangeObject;dynamic window=context.Window;
+            object[] selected=Enumerable.Range(1,(int)range.Count).Select(index=>(object)range[index]).ToArray();
+            var bounds=new System.Drawing.RectangleF((float)(map.OriginX+(double)range.Left*map.ScaleX),
+                (float)(map.OriginY+(double)range.Top*map.ScaleY),(float)((double)range.Width*map.ScaleX),(float)((double)range.Height*map.ScaleY));
+            var point=new System.Drawing.PointF(mouse.Position.X,mouse.Position.Y);
+            if(MultiSelectionPointerPolicy.HitHandle(bounds,point,handleRadius))
+            {LogRoute(mouse,messageKind,"native-multi-child-resize-unsupported",ReadSelection(window));return false;}
+            dynamic hit=window.RangeFromPoint(mouse.Position.X,mouse.Position.Y);
+            var selectedIds=new HashSet<int>(selected.Select(shape=>(int)((dynamic)shape).Id));
+            bool? selectedHit=hit==null ? (bool?)null : selectedIds.Contains((int)hit.Id);
+            bool? route=MultiSelectionPointerPolicy.RouteMove(bounds,point,handleRadius,6*dpi/96f,selectedHit);
+            if(!route.HasValue)
+            {
+                if((int)hit.Child==0)
+                {
+                    var roots=new HashSet<int>(selected.Select(shape=>(int)((dynamic)ShapeCapabilities.TopLevel(shape)).Id));
+                    if(roots.Contains((int)hit.Id))
+                    {LogRoute(mouse,messageKind,"native-parent-in-child-edit",ReadSelection(window));return false;}
+                    return null;
+                }
+                int hitRoot=(int)((dynamic)ShapeCapabilities.TopLevel((object)hit)).Id;
+                if(!selected.Any(shape=>(int)((dynamic)ShapeCapabilities.TopLevel(shape)).Id==hitRoot))return null;
+                var hitBounds=ScreenBounds(ReadNativePosition((object)hit),map);
+                if(TextPointerPolicy.UseNativeTextInput((int)hit.Type,false,hitBounds,point,6*dpi/96f))
+                {LogRoute(mouse,messageKind,"native-child-text-interior",ReadSelection(window));return false;}
+                return BeginGroupChildren(context,map,mouse,messageKind,root,dpi,handleRadius,previousPane,new[]{(object)hit},GestureMode.Move,true);
+            }
+            if(!route.Value)
+            {LogRoute(mouse,messageKind,"native-multi-child-selection-miss",ReadSelection(window));return false;}
+            return BeginGroupChildren(context,map,mouse,messageKind,root,dpi,handleRadius,previousPane,selected,GestureMode.Move,false);
+        }
+
+        private bool BeginGroupChildren(LayoutContext context,ScreenMap map,MouseHookData mouse,int messageKind,
+            IntPtr root,uint dpi,double handleRadius,int previousPane,object[] children,GestureMode mode,bool pendingSelection)
+        {
+            dynamic window=context.Window;
+            GroupChildCapture capture;
+            try{capture=CaptureGroupChildren(context,children,mode);}
+            catch(GroupChildCaptureException error)
+            {
+                // This entry point is reached only after the hit policy chose
+                // a real related child or the selected members' move outline.
+                // A failed capture must not leak that DOWN into a native move.
+                SafeLog("gesture-child-capture-rejected",new {message=error.Message,
+                    reason=error.InnerException==null ? null : error.InnerException.Message});
+                pendingLeftUp=true;
+                return true;
+            }
+            if(capture==null)
+            {LogRoute(mouse,messageKind,"native-unconstrained-child",ReadSelection(window));return false;}
+            capture.PendingSelection=pendingSelection;
+            ShapeGeometry driver=context.Geometry.Single(shape=>shape.Id==capture.Edit.Plan.GroupIds[0]);
+            LogRoute(mouse,messageKind,"owned-child-"+mode,ReadSelection(window),handleRadius,null,context.Geometry,previousPane);
+            SetFocus(mouse.Window);SetCapture(mouse.Window);
+            if(GetCapture()!=mouse.Window)
+            {
+                LogRoute(mouse,messageKind,"child-capture-failed",ReadSelection(window));
+                pendingLeftUp=true;
+                return true;
+            }
+            StartGesture(context,driver,mode,map,mouse.Position,root,mouse.Window,dpi,handleRadius,false,child:capture);
+            return true;
+        }
+
+        private static string FindGroupId(LayoutContext context,object groupObject)
+        {
+            int nativeId=(int)((dynamic)groupObject).Id;
+            return context.Shapes.Where(pair=>(int)((dynamic)pair.Value).Id==nativeId).Select(pair=>pair.Key).FirstOrDefault();
+        }
+
+        private static GroupChildCapture CaptureGroupChildren(LayoutContext context,object[] children,GestureMode mode)
+        {
+            var edit=GroupChildNativeEdit.Capture(context,children,EditMode(mode),
+                mode!=GestureMode.Move&&children.Length==1&&(int)((dynamic)children[0]).LockAspectRatio!=0);
+            return edit==null ? null : new GroupChildCapture {Edit=edit,PendingSelection=true};
+        }
+
+        private void UpdateGroupChild(Gesture state,Point point,bool mouseDown,string pointerMessage)
+        {
+            var child=state.GroupChild;
+            double dx=(point.X-state.StartMouse.X)/state.Map.ScaleX,dy=(point.Y-state.StartMouse.Y)/state.Map.ScaleY;
+            IReadOnlyList<SelectionMovePosition> requested;
+            try
+            {
+                requested=child.Edit.Plan.Target(dx,dy);
+                child.Edit.ThrowIfProvablyImpossible(requested);
+            }
+            catch(ConstraintConflictException error)
+            {
+                if(state.LastRejection!=error.Message)SafeGestureLog(state,"constraint-rejected",new {gestureId=state.Id,driverId=state.Driver.Id,
+                    mode=state.Mode.ToString(),groupChild=true,childNativeIds=child.Edit.ChildRoots.Keys,message=error.Message});
+                state.LastRejection=error.Message;return;
+            }
+            if(GroupChildEditPlan.SameChildren(requested,child.Edit.LastFrame.Extras)){state.LastRejection=null;return;}
+            if(child.PendingSelection){child.Edit.SelectExact();child.PendingSelection=false;}
+            if(!state.UndoStarted){application.StartNewUndoEntry();state.UndoStarted=true;}
+            SelectionMoveFrame actual;
+            try
+            {
+                actual=child.Edit.Apply(requested);
+            }
+            catch(GroupChildEditRejectedException error)
+            {
+                string rejection=error.InnerException==null ? error.Message : error.InnerException.Message;
+                if(state.LastRejection!=rejection)SafeGestureLog(state,error.InnerException is ConstraintConflictException ? "constraint-rejected" : "gesture-write-rejected",
+                    new {gestureId=state.Id,driverId=state.Driver.Id,mode=state.Mode.ToString(),groupChild=true,childNativeIds=child.Edit.ChildRoots.Keys,
+                        message=rejection,geometry=child.Edit.LastFrame.Geometry,childGeometry=child.Edit.LastFrame.Extras});
+                state.LastRejection=rejection;
+                return;
+            }
+            state.LastRejection=null;state.LastGeometry=actual.Geometry.ToList();state.Frames++;
+            SafeGestureLog(state,"gesture-frame",new {gestureId=state.Id,driverId=state.Driver.Id,mode=state.Mode.ToString(),groupChild=true,
+                childNativeIds=child.Edit.ChildRoots.Keys,childGeometry=actual.Extras,frame=state.Frames,mouseDown,input="owned-gesture-loop",pointerMessage,
+                residualPt=LayoutSolver.MaxResidual(actual.Geometry,state.Constraints),cursor=new {x=point.X,y=point.Y},geometry=actual.Geometry});
+        }
+
+        private bool? TryBeginSelectionMove(LayoutContext context,ScreenMap map,MouseHookData mouse,int messageKind,
+            IntPtr root,uint dpi,double handleRadius,int previousPane)
+        {
+            dynamic window=context.Window;
+            if((int)window.Selection.Type!=2)return false;
+            dynamic range=window.Selection.ShapeRange;
+            var selected=Enumerable.Range(1,(int)range.Count).Select(index=>(object)range[index]).ToArray();
+            if(selected.Any(shape=>(int)((dynamic)shape).Child!=0))
+            {LogRoute(mouse,messageKind,"native-child-selection",ReadSelection(window));return false;}
+            var point=new System.Drawing.PointF(mouse.Position.X,mouse.Position.Y);
+            var selectionBounds=new System.Drawing.RectangleF((float)(map.OriginX+(double)range.Left*map.ScaleX),
+                (float)(map.OriginY+(double)range.Top*map.ScaleY),(float)((double)range.Width*map.ScaleX),(float)((double)range.Height*map.ScaleY));
+            if(MultiSelectionPointerPolicy.HitHandle(selectionBounds,point,handleRadius) ||
+                selected.Any(shape=>MultiSelectionPointerPolicy.HitHandle(ScreenBounds(ReadNativePosition(shape),map),point,handleRadius)))
+            {LogRoute(mouse,messageKind,"native-selection-handle",ReadSelection(window));return false;}
+            dynamic hit=window.RangeFromPoint(mouse.Position.X,mouse.Position.Y);
+            if(hit!=null)hit=ShapeCapabilities.TopLevel((object)hit);
+            var selectedIds=selected.Select(shape=>(int)((dynamic)shape).Id).ToArray();
+            bool? selectedHit=hit==null ? (bool?)null : selectedIds.Contains((int)hit.Id);
+            bool? route=MultiSelectionPointerPolicy.RouteMove(selectionBounds,point,handleRadius,6*dpi/96f,selectedHit);
+            if(!route.HasValue)return null;
+            if(!route.Value)
+            {LogRoute(mouse,messageKind,"native-selection-miss",ReadSelection(window));return false;}
+            var capture=CaptureSelectionMove(context,selected);
+            if(capture==null)
+            {LogRoute(mouse,messageKind,"native-unconstrained-selection",ReadSelection(window));return false;}
+            ShapeGeometry driver=context.Geometry.Single(shape=>shape.Id==capture.Plan.DriverIds[0]);
+            LogRoute(mouse,messageKind,"owned-selection-Move",ReadSelection(window),handleRadius,null,context.Geometry,previousPane);
+            SetFocus(mouse.Window);SetCapture(mouse.Window);
+            if(GetCapture()!=mouse.Window)
+            {LogRoute(mouse,messageKind,"capture-failed",ReadSelection(window));return false;}
+            StartGesture(context,driver,GestureMode.Move,map,mouse.Position,root,mouse.Window,dpi,handleRadius,false,capture);
+            return true;
+        }
+
+        private static SelectionMoveCapture CaptureSelectionMove(LayoutContext context,object[] selected)
+        {
+            var byNative=context.Shapes.ToDictionary(pair=>(int)((dynamic)pair.Value).Id,pair=>pair.Key);
+            var driverIds=new List<string>();
+            var extraShapes=new Dictionary<int,object>();
+            var positions=new List<SelectionMovePosition>();
+            var ids=new List<int>();
+            foreach(object item in selected)
+            {
+                dynamic shape=item;
+                int nativeId=(int)shape.Id;
+                if(ids.Contains(nativeId))throw new InvalidOperationException("The selection contains a repeated native shape.");
+                ids.Add(nativeId);
+                string constrainedId;
+                if(byNative.TryGetValue(nativeId,out constrainedId))driverIds.Add(constrainedId);
+                else {extraShapes.Add(nativeId,item);positions.Add(ReadNativePosition(item));}
+            }
+            if(driverIds.Count==0)return null;
+            var plan=new SelectionMovePlan(context.Geometry,context.Constraints,driverIds,positions);
+            return new SelectionMoveCapture {Shapes=selected,NativeIds=ids.ToArray(),ExtraShapes=extraShapes,Plan=plan,LastFrame=plan.Initial};
+        }
+
+        private static SelectionMovePosition ReadNativePosition(object shapeObject)
+        {
+            dynamic shape=shapeObject;
+            return new SelectionMovePosition((int)shape.Id,(double)shape.Left,(double)shape.Top,(double)shape.Width,(double)shape.Height);
+        }
+
+        private static void SelectNativeShapes(object[] shapes)
+        {
+            for(int index=0;index<shapes.Length;index++)((dynamic)shapes[index]).Select(index==0 ? -1 : 0);
+        }
+
+        private static SelectionMoveFrame ReadSelectionFrame(Gesture state)
+        {
+            return new SelectionMoveFrame(PowerPointLayout.Snapshot(state.Context),
+                state.SelectionMove.ExtraShapes.Values.Select(ReadNativePosition));
+        }
+
+        private static void WriteSelectionFrame(Gesture state,SelectionMoveFrame frame)
+        {
+            PowerPointLayout.Apply(state.Context,frame.Geometry);
+            foreach(var position in frame.Extras)
+            {
+                dynamic shape=state.SelectionMove.ExtraShapes[position.NativeId];
+                if(Math.Abs((double)shape.Left-position.Left)>0.0001)shape.Left=(float)position.Left;
+                if(Math.Abs((double)shape.Top-position.Top)>0.0001)shape.Top=(float)position.Top;
+            }
+        }
+
+        private void UpdateSelectionMove(Gesture state,Point point,bool mouseDown,string pointerMessage)
+        {
+            var selection=state.SelectionMove;
+            double dx=(point.X-state.StartMouse.X)/state.Map.ScaleX,dy=(point.Y-state.StartMouse.Y)/state.Map.ScaleY;
+            SelectionMoveFrame requested;
+            try {requested=selection.Plan.Solve(dx,dy);}
+            catch(ConstraintConflictException error)
+            {
+                if(state.LastRejection!=error.Message)SafeGestureLog(state,"constraint-rejected",new {
+                    gestureId=state.Id,driverId=state.Driver.Id,mode=state.Mode.ToString(),selectionMove=true,message=error.Message,dx,dy,selectedDriverIds=selection.Plan.DriverIds});
+                state.LastRejection=error.Message;
+                return;
+            }
+            state.LastRejection=null;
+            if(selection.LastFrame.Matches(requested))return;
+            if(!state.UndoStarted){application.StartNewUndoEntry();state.UndoStarted=true;}
+            SelectionMoveFrame actual;
+            try {actual=selection.Plan.ApplyAtomic(selection.LastFrame,requested,
+                frame=>WriteSelectionFrame(state,frame),()=>ReadSelectionFrame(state));}
+            catch(SelectionMoveRejectedException error)
+            {
+                state.LastRejection=error.InnerException==null ? error.Message : error.InnerException.Message;
+                SafeGestureLog(state,"gesture-write-rejected",new {gestureId=state.Id,mode=state.Mode.ToString(),selectionMove=true,message=state.LastRejection,
+                    geometry=selection.LastFrame.Geometry,extras=selection.LastFrame.Extras});
+                return;
+            }
+            selection.LastFrame=actual;
+            state.LastGeometry=actual.Geometry.ToList();state.Frames++;
+            SafeGestureLog(state,"gesture-frame",new {gestureId=state.Id,driverId=state.Driver.Id,mode=state.Mode.ToString(),selectionMove=true,
+                frame=state.Frames,mouseDown,input="owned-gesture-loop",pointerMessage,
+                residualPt=LayoutSolver.MaxResidual(actual.Geometry,state.Constraints),cursor=new {x=point.X,y=point.Y},
+                geometry=actual.Geometry,extras=actual.Extras,selectedNativeIds=selection.NativeIds});
+        }
+
         private void StartGesture(LayoutContext context, ShapeGeometry driver, GestureMode mode, ScreenMap map,
-            Point start, IntPtr root, IntPtr captureWindow, uint dpi, double handleRadius, bool test)
+            Point start, IntPtr root, IntPtr captureWindow, uint dpi, double handleRadius, bool test,
+            SelectionMoveCapture selection=null,GroupChildCapture child=null)
         {
             queuedMotion = null;
             queuedRelease = null;
@@ -500,7 +882,10 @@ namespace PptGcs.AddIn
                 Mode = mode, StartMouse = start, LastMouse = start,
                 Map = map, Before = context.Geometry.ToList(), LastGeometry = context.Geometry.ToList(),
                 RootWindow = root, CaptureWindow = captureWindow, IsTest = test,
-                DragThreshold = 4.0 * dpi / 96.0, DragThresholdPassed = mode != GestureMode.Move
+                DragThreshold = 4.0 * dpi / 96.0, DragThresholdPassed = mode != GestureMode.Move,
+                SelectionMove=selection,GroupChild=child,
+                Constraints=LayoutSolver.ConnectedConstraints(context.Constraints,
+                    selection!=null ? (IEnumerable<string>)selection.Plan.DriverIds : child!=null ? (IEnumerable<string>)child.Edit.Plan.GroupIds : new[]{driver.Id})
             };
             pendingLeftUp = !test;
             SafeGestureLog(gesture, "gesture-start", new
@@ -509,7 +894,12 @@ namespace PptGcs.AddIn
                 cursor = new { x = start.X, y = start.Y },
                 scale = new { x = map.ScaleX, y = map.ScaleY }, dpi, handleRadius, before = gesture.Before,
                 dragThreshold = gesture.DragThreshold, test,
-                constraints = ConstraintData(context.Constraints)
+                selectedNativeIds=selection==null ? null : selection.NativeIds,
+                selectedDriverIds=selection==null ? null : selection.Plan.DriverIds,
+                extras=selection==null ? null : selection.LastFrame.Extras,
+                childNativeIds=child==null ? null : child.Edit.ChildRoots.Keys.ToArray(),
+                childBefore=child==null ? null : child.Edit.LastFrame.Extras,
+                constraints = ConstraintData(gesture.Constraints)
             });
         }
 
@@ -527,6 +917,16 @@ namespace PptGcs.AddIn
             updating = true;
             try
             {
+                if(state.GroupChild!=null)
+                {
+                    UpdateGroupChild(state,point,mouseDown,pointerMessage);
+                    return;
+                }
+                if(state.SelectionMove!=null)
+                {
+                    UpdateSelectionMove(state,point,mouseDown,pointerMessage);
+                    return;
+                }
                 if(state.DeferSelection)
                 {
                     ((dynamic)state.Context.Shapes[state.Driver.Id]).Select();
@@ -536,7 +936,7 @@ namespace PptGcs.AddIn
                 double dy = (point.Y - state.StartMouse.Y) / state.Map.ScaleY;
                 ShapeGeometry target = ComputeTarget(state.Driver, state.Mode, dx, dy);
                 IReadOnlyList<ShapeGeometry> result;
-                try { result = LayoutSolver.Solve(state.Before, state.Context.Constraints, state.Driver.Id, target, EditMode(state.Mode)); }
+                try { result = LayoutSolver.Solve(state.Before, state.Constraints, state.Driver.Id, target, EditMode(state.Mode)); }
                 catch (ConstraintConflictException exception)
                 {
                     if (state.LastRejection != exception.Message)
@@ -559,7 +959,7 @@ namespace PptGcs.AddIn
                 List<ShapeGeometry> actual = PowerPointLayout.Snapshot(state.Context);
                 if (!SameGeometry(actual, result))
                     throw new InvalidOperationException("PowerPoint geometry readback differs from the solved layout.");
-                double residual = LayoutSolver.MaxResidual(actual, state.Context.Constraints);
+                double residual = LayoutSolver.MaxResidual(actual, state.Constraints);
                 if (residual > LayoutSolver.PositionTolerance)
                     throw new InvalidOperationException("PowerPoint geometry violates a constraint after writeback.");
                 state.LastGeometry = actual;
@@ -578,6 +978,13 @@ namespace PptGcs.AddIn
         {
             Gesture state = gesture;
             if (state == null) return;
+            if((state.SelectionMove!=null || state.GroupChild!=null) && state.LastRejection!=null)
+            {
+                SafeGestureLog(state,"gesture-release-rejected",new {gestureId=state.Id,driverId=state.Driver.Id,
+                    mode=state.Mode.ToString(),reason=state.LastRejection,frames=state.Frames,geometry=state.LastGeometry,
+                    extras=state.SelectionMove!=null ? state.SelectionMove.LastFrame.Extras : state.GroupChild.Edit.LastFrame.Extras});
+                return;
+            }
             // The originating DOWN loop has flushed the exact release point.
             // Verify it from the actual readback, including clamps and axes that
             // are irrelevant to an edge handle, before closing the gesture.
@@ -587,7 +994,21 @@ namespace PptGcs.AddIn
             {
                 // A click is selection-only, even if the document was already
                 // out of constraint before DOWN. It must not solve or add Undo.
-                if(!state.DragThresholdPassed)
+                if(state.GroupChild!=null)
+                {
+                    double dx=(point.X-state.StartMouse.X)/state.Map.ScaleX;
+                    double dy=(point.Y-state.StartMouse.Y)/state.Map.ScaleY;
+                    geometryMatched=GroupChildEditPlan.SameChildren(state.GroupChild.Edit.LastFrame.Extras,
+                        state.DragThresholdPassed ? state.GroupChild.Edit.Plan.Target(dx,dy) : state.GroupChild.Edit.Plan.Initial.Extras);
+                }
+                else if(state.SelectionMove!=null)
+                {
+                    double dx=(point.X-state.StartMouse.X)/state.Map.ScaleX;
+                    double dy=(point.Y-state.StartMouse.Y)/state.Map.ScaleY;
+                    var expected=state.DragThresholdPassed ? state.SelectionMove.Plan.Solve(dx,dy) : state.SelectionMove.Plan.Initial;
+                    geometryMatched=state.SelectionMove.LastFrame.Matches(expected);
+                }
+                else if(!state.DragThresholdPassed)
                 {
                     geometryMatched=SameGeometry(state.LastGeometry,state.Before);
                 }
@@ -596,7 +1017,7 @@ namespace PptGcs.AddIn
                     double dx = (point.X - state.StartMouse.X) / state.Map.ScaleX;
                     double dy = (point.Y - state.StartMouse.Y) / state.Map.ScaleY;
                     ShapeGeometry target = ComputeTarget(state.Driver, state.Mode, dx, dy);
-                    var expected = LayoutSolver.Solve(state.Before, state.Context.Constraints, state.Driver.Id, target, EditMode(state.Mode));
+                    var expected = LayoutSolver.Solve(state.Before, state.Constraints, state.Driver.Id, target, EditMode(state.Mode));
                     geometryMatched = SameGeometry(state.LastGeometry, expected);
                 }
             }
@@ -623,10 +1044,19 @@ namespace PptGcs.AddIn
             finishing = true;
             try
             {
-                if (cancel && state.UndoStarted) PowerPointLayout.Apply(state.Context, state.Before);
+                if (cancel && state.UndoStarted)
+                {
+                    if(state.GroupChild!=null)state.GroupChild.Edit.Restore(state.GroupChild.Edit.Plan.Initial);
+                    else if(state.SelectionMove==null)PowerPointLayout.Apply(state.Context,state.Before);
+                    else WriteSelectionFrame(state,state.SelectionMove.Plan.Initial);
+                }
                 List<ShapeGeometry> after = PowerPointLayout.Snapshot(state.Context);
                 if (cancel && !SameGeometry(after, state.Before))
                     throw new InvalidOperationException("Cancelled gesture did not restore its initial layout.");
+                if(cancel && state.SelectionMove!=null && !ReadSelectionFrame(state).Matches(state.SelectionMove.Plan.Initial))
+                    throw new InvalidOperationException("Cancelled selection move did not restore every selected native object.");
+                if(cancel && state.GroupChild!=null && !state.GroupChild.Edit.ReadFrame().Matches(state.GroupChild.Edit.Plan.Initial))
+                    throw new InvalidOperationException("Cancelled group-child edit did not restore the actual member and group bounds.");
                 // COM size/position updates can leave native selection adorners
                 // based on stale bounds. Recreate the selection only after the
                 // pointer is released, so the next handle drag uses current bounds.
@@ -645,7 +1075,23 @@ namespace PptGcs.AddIn
                         bool normalRelease=reason=="mouse-up" || reason=="button-released";
                         bool selectChild=GroupPointerPolicy.ShouldSelectChild(state.WasSelectedGroup,state.ClickChild!=null,
                             state.Mode==GestureMode.Move,state.DragThresholdPassed,cancel,normalRelease);
-                        if(selectChild && (int)((dynamic)ShapeCapabilities.TopLevel(state.ClickChild)).Id==
+                        if(state.GroupChild!=null)
+                        {
+                            if(!cancel || state.DragThresholdPassed)
+                            {
+                                if(state.DragThresholdPassed)window.Selection.Unselect();
+                                state.GroupChild.Edit.SelectExact();
+                            }
+                        }
+                        else if(state.SelectionMove!=null)
+                        {
+                            if(!cancel || state.DragThresholdPassed)
+                            {
+                                if(state.DragThresholdPassed)window.Selection.Unselect();
+                                SelectNativeShapes(state.SelectionMove.Shapes);
+                            }
+                        }
+                        else if(selectChild && (int)((dynamic)ShapeCapabilities.TopLevel(state.ClickChild)).Id==
                             (int)((dynamic)state.Context.Shapes[state.Driver.Id]).Id)
                         {
                             ((dynamic)state.ClickChild).Select();
@@ -664,7 +1110,13 @@ namespace PptGcs.AddIn
                 {
                     gestureId = state.Id, driverId = state.Driver.Id, mode = state.Mode.ToString(),
                     reason, cancelled = cancel, frames = state.Frames, before = state.Before, after,
-                    selectionBefore, selectionAfter, childSelected, dragThresholdPassed = state.DragThresholdPassed, test = state.IsTest
+                    selectionBefore, selectionAfter, childSelected, dragThresholdPassed = state.DragThresholdPassed, test = state.IsTest,
+                    selectedNativeIds=state.SelectionMove==null ? null : state.SelectionMove.NativeIds,
+                    beforeExtras=state.SelectionMove==null ? null : state.SelectionMove.Plan.Initial.Extras,
+                    afterExtras=state.SelectionMove==null ? null : ReadSelectionFrame(state).Extras,
+                    childNativeIds=state.GroupChild==null ? null : state.GroupChild.Edit.ChildRoots.Keys.ToArray(),
+                    childBefore=state.GroupChild==null ? null : state.GroupChild.Edit.Plan.Initial.Extras,
+                    childAfter=state.GroupChild==null ? null : state.GroupChild.Edit.ReadChildren()
                 });
             }
             catch (Exception exception)
@@ -756,6 +1208,14 @@ namespace PptGcs.AddIn
             catch (COMException) { return -1; }
         }
 
+        private static int SelectedShapeCount(dynamic window)
+        {
+            dynamic selection=window.Selection;
+            int type=(int)selection.Type;
+            if(type!=2 && type!=3)return 0;
+            try{return (int)selection.ShapeRange.Count;}catch(COMException){return 0;}
+        }
+
         private static object ReadSelection(dynamic window)
         {
             try
@@ -766,6 +1226,7 @@ namespace PptGcs.AddIn
                 dynamic range = selection.ShapeRange;
                 bool hasChild=(bool)selection.HasChildShapeRange;
                 return new { type, count = (int)range.Count, nativeId = (int)range.Count == 1 ? (int)range[1].Id : -1,
+                    nativeIds=Enumerable.Range(1,(int)range.Count).Select(index=>(int)range[index].Id).ToArray(),
                     hasChild, childNativeId=hasChild && (int)selection.ChildShapeRange.Count==1 ? (int)selection.ChildShapeRange[1].Id : -1,
                     left = (double)range.Left, top = (double)range.Top, width = (double)range.Width, height = (double)range.Height };
             }
@@ -789,6 +1250,12 @@ namespace PptGcs.AddIn
         {
             return new System.Drawing.RectangleF((float)(map.OriginX + shape.Left * map.ScaleX),
                 (float)(map.OriginY + shape.Top * map.ScaleY), (float)(shape.Width * map.ScaleX), (float)(shape.Height * map.ScaleY));
+        }
+
+        private static System.Drawing.RectangleF ScreenBounds(SelectionMovePosition shape,ScreenMap map)
+        {
+            return new System.Drawing.RectangleF((float)(map.OriginX+shape.Left*map.ScaleX),
+                (float)(map.OriginY+shape.Top*map.ScaleY),(float)(shape.Width*map.ScaleX),(float)(shape.Height*map.ScaleY));
         }
 
         private static GestureMode? HitHandle(ShapeGeometry shape, ScreenMap map, Point point, double radius)
@@ -887,6 +1354,7 @@ namespace PptGcs.AddIn
         {
             public string Id;
             public LayoutContext Context;
+            public IReadOnlyList<LayoutConstraint> Constraints;
             public ShapeGeometry Driver;
             public GestureMode Mode;
             public Point StartMouse, LastMouse;
@@ -897,11 +1365,26 @@ namespace PptGcs.AddIn
             public bool IsTest, DragThresholdPassed;
             public bool DeferSelection, WasSelectedGroup;
             public object ClickChild;
+            public SelectionMoveCapture SelectionMove;
+            public GroupChildCapture GroupChild;
             public bool CancelRequested;
             public DateTime? PhysicalReleaseSince;
             public double DragThreshold;
             public int Frames;
             public string LastRejection;
+        }
+        private sealed class SelectionMoveCapture
+        {
+            public object[] Shapes;
+            public int[] NativeIds;
+            public Dictionary<int,object> ExtraShapes;
+            public SelectionMovePlan Plan;
+            public SelectionMoveFrame LastFrame;
+        }
+        private sealed class GroupChildCapture
+        {
+            public GroupChildNativeEdit Edit;
+            public bool PendingSelection;
         }
         private sealed class ScreenMap
         {
