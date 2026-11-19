@@ -226,7 +226,7 @@ namespace PptGcs.AddIn
         public void CreateConstraint(IRibbonControl control)
         { RunCommand(()=>BeginConstraintCore(control.Tag)); }
 
-        private bool RouteCanvasMouse(int kind,int x,int y,IntPtr target)
+        private bool RouteCanvasMouse(int kind,int x,int y,IntPtr target,int wheelDelta)
         {
             if(!busy)selectionPaneOrder.ObserveMouse(kind,target);
             marqueeLocks.ObserveMouse(kind,x,y);
@@ -235,7 +235,7 @@ namespace PptGcs.AddIn
             if(busy || nativeFields.IsApplying)return false;
             if(canvasOverlay.HandleMouse(kind,x,y,target))return true;
             canvasOverlay.ObserveEditPointer(kind,target);
-            return false;
+            return wheelDelta != 0 && controller.ScrollCanvasHorizontally(x,y,wheelDelta);
         }
 
         private bool RouteCanvasKeyboard(int key,bool down)

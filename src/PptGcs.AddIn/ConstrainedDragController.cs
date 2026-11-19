@@ -14,6 +14,7 @@ namespace PptGcs.AddIn
     {
         private const int WhMouse = 7, WhKeyboard = 2, HcAction = 0;
         private const int WmMouseMove = 0x0200, WmLeftDown = 0x0201, WmLeftUp = 0x0202, WmLeftDoubleClick = 0x0203;
+        private const int WmMouseWheel = 0x020A, WheelDelta = 120;
         private const uint GaRoot = 2;
         private const double HandleRadius = 8.0;
         private readonly dynamic application;
@@ -24,6 +25,8 @@ namespace PptGcs.AddIn
         private readonly KeyboardHook keyboardDelegate;
         private readonly JavaScriptSerializer serializer = new JavaScriptSerializer { MaxJsonLength = 4 * 1024 * 1024 };
         private IntPtr hook, keyboardHook;
+        private IntPtr horizontalWheelWindow;
+        private int horizontalWheelRemainder;
         private Gesture gesture;
         private bool disposed, inCallback, updating, finishing, pendingLeftUp, gestureLoopRunning;
         private Point? queuedMotion, queuedRelease;
@@ -32,7 +35,7 @@ namespace PptGcs.AddIn
         internal IReadOnlyList<ShapeGeometry> ActiveGeometry { get { return gesture==null?null:gesture.LastGeometry; } }
         internal string ActiveDriverId { get { return gesture==null?null:gesture.Driver.Id; } }
         internal IReadOnlyList<LayoutConstraint> ActiveRestrictions { get { return gesture?.Restrictions; } }
-        public Func<int,int,int,IntPtr,bool> AlternateMouseInput { get; set; }
+        internal Func<int,int,int,IntPtr,int,bool> AlternateMouseInput { get; set; }
         public Action<int,int,IntPtr> ObserveNativeCanvasDown { get; set; }
         public Func<int,bool,bool> AlternateKeyboardInput { get; set; }
         public Func<bool> AlternateInputActive { get; set; }
@@ -289,7 +292,7 @@ namespace PptGcs.AddIn
                 else if(AlternateInputActive!=null && AlternateInputActive() && AlternateMouseInput!=null)
                 {
                     var nested=(MouseHookData)Marshal.PtrToStructure(data,typeof(MouseHookData));
-                    if(AlternateMouseInput(kind,nested.Position.X,nested.Position.Y,nested.Window))return new IntPtr(1);
+                    if (RouteAlternateMouseInput(kind, nested, data)) return new IntPtr(1);
                 }
                 return CallNextHookEx(hook, code, message, data);
             }
@@ -302,7 +305,7 @@ namespace PptGcs.AddIn
                 {
                     if (QueueOwnedPointer(kind, mouse.Position)) return new IntPtr(1);
                 }
-                else if (AlternateMouseInput != null && AlternateMouseInput(kind,mouse.Position.X,mouse.Position.Y,mouse.Window))
+                else if (RouteAlternateMouseInput(kind, mouse, data))
                 {
                     return new IntPtr(1);
                 }
@@ -335,6 +338,49 @@ namespace PptGcs.AddIn
             }
             finally { inCallback = false; }
             return CallNextHookEx(hook, code, message, data);
+        }
+
+        private bool RouteAlternateMouseInput(int kind, MouseHookData mouse, IntPtr data)
+        {
+            return AlternateMouseInput?.Invoke(kind, mouse.Position.X, mouse.Position.Y, mouse.Window,
+                kind == WmMouseWheel ? (short)(Marshal.PtrToStructure<MouseWheelHookData>(data).MouseData >> 16) : 0) == true;
+        }
+
+        internal bool ScrollCanvasHorizontally(int x, int y, int delta)
+        {
+            if (System.Windows.Forms.Control.ModifierKeys != System.Windows.Forms.Keys.Shift || GetCapture() != IntPtr.Zero)
+                return false;
+
+            // Wheel messages can target the focused control. Use the pointer position
+            // so the shortcut follows the slide pane even when thumbnails have focus.
+            IntPtr canvas = WindowFromPoint(new Point { X = x, Y = y });
+            if (canvas == IntPtr.Zero || GetWindowThreadProcessId(canvas, out _) != uiThreadId ||
+                GetAncestor(canvas, GaRoot) != GetForegroundWindow() || !IsCanvasWindow(canvas)) return false;
+
+            dynamic window = application.ActiveWindow;
+            if (window == null || (int)window.ViewType != 9) return false;
+
+            // The thumbnail, slide, and notes panes share the same native window.
+            if (!GetWindowRect(GetParent(canvas), out Rect workspace)) return false;
+            int slideLeft = workspace.Left + (workspace.Right - workspace.Left) * (int)window.SplitHorizontal / 100;
+            int slideBottom = workspace.Top + (workspace.Bottom - workspace.Top) * (int)window.SplitVertical / 100;
+            if (x < slideLeft || y >= slideBottom) return false;
+
+            if (horizontalWheelWindow != canvas)
+            {
+                horizontalWheelWindow = canvas;
+                horizontalWheelRemainder = 0;
+            }
+            int total = horizontalWheelRemainder + delta;
+            int steps = total / WheelDelta;
+            horizontalWheelRemainder = total % WheelDelta;
+            if (steps != 0)
+            {
+                // PowerPoint ignores horizontal wheel messages while Shift is held.
+                ActivateSlidePane(window);
+                window.SmallScroll(0, 0, Math.Max(-steps, 0), Math.Max(steps, 0));
+            }
+            return true;
         }
 
         private bool QueueOwnedPointer(int kind, Point point)
@@ -1435,6 +1481,7 @@ namespace PptGcs.AddIn
             }
         }
         [StructLayout(LayoutKind.Sequential)] private struct Point { public int X, Y; }
+        [StructLayout(LayoutKind.Sequential)] private struct Rect { public int Left, Top, Right, Bottom; }
         [StructLayout(LayoutKind.Sequential)] private struct MouseHookData
         {
             public Point Position;
@@ -1442,12 +1489,18 @@ namespace PptGcs.AddIn
             public uint HitTestCode;
             public UIntPtr ExtraInfo;
         }
+        [StructLayout(LayoutKind.Sequential)] private struct MouseWheelHookData
+        {
+            public MouseHookData Mouse;
+            public uint MouseData;
+        }
         [UnmanagedFunctionPointer(CallingConvention.Winapi)] private delegate IntPtr MouseHook(int code, IntPtr message, IntPtr data);
         [UnmanagedFunctionPointer(CallingConvention.Winapi)] private delegate IntPtr KeyboardHook(int code, IntPtr key, IntPtr flags);
         [DllImport("user32.dll", SetLastError=true)] private static extern IntPtr SetWindowsHookEx(int hookType, MouseHook callback, IntPtr module, uint threadId);
         [DllImport("user32.dll", EntryPoint="SetWindowsHookExW", SetLastError=true)] private static extern IntPtr SetKeyboardHookEx(int hookType, KeyboardHook callback, IntPtr module, uint threadId);
         [DllImport("user32.dll")] private static extern bool UnhookWindowsHookEx(IntPtr hook);
         [DllImport("user32.dll")] private static extern IntPtr CallNextHookEx(IntPtr hook, int code, IntPtr message, IntPtr data);
+        [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr window, out Rect bounds);
         [DllImport("user32.dll")] private static extern IntPtr SetCapture(IntPtr window);
         [DllImport("user32.dll")] private static extern bool ReleaseCapture();
         [DllImport("user32.dll")] private static extern IntPtr GetCapture();
