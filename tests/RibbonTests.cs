@@ -60,10 +60,18 @@ internal static class RibbonTests
         Check(buttons.Any(button => (string)button.Attribute("id") == "LayersPane" &&
             (string)button.Attribute("label") == "图层窗格" && (string)button.Attribute("onAction") == "ShowLayerPane"),
             "the layer tab can be opened from the Ribbon");
-        var displayButtons=tab.Descendants(ns+"toggleButton").ToList();
+        var toggles=tab.Descendants(ns+"toggleButton").ToList();
+        var displayButtons=toggles.Where(button=>button.Attribute("tag")!=null).ToList();
         Check(displayButtons.Select(button=>(string)button.Attribute("tag")).SequenceEqual(new[]{"Selection","All","Hidden"}) &&
             displayButtons.All(button=>(string)button.Attribute("getPressed")=="GetCanvasConstraintDisplay" && (string)button.Attribute("onAction")=="ChangeCanvasConstraintDisplay"),
             "canvas display exposes mutually exclusive selection, all and hidden modes");
+        var suggestions=toggles.Single(button=>(string)button.Attribute("id")=="AutoSuggestConstraints");
+        Check((string)suggestions.Parent.Attribute("id")=="CanvasConstraints" &&
+            (string)suggestions.Attribute("label")=="自动提示可建立的约束" &&
+            (string)suggestions.Attribute("imageMso")=="GroupIntelliSense" &&
+            (string)suggestions.Attribute("getPressed")=="GetAutoSuggestConstraints" &&
+            (string)suggestions.Attribute("onAction")=="ChangeAutoSuggestConstraints",
+            "automatic suggestions have an independent Ribbon toggle");
         Check((string)root.Attribute("onLoad")=="OnRibbonLoad","Office supplies the ribbon instance used to refresh display toggle state");
         var paneButton = buttons.Single(button => (string)button.Attribute("id") == "ConstraintsPane");
         Check((string)paneButton.Attribute("label") == "约束窗格" && (string)paneButton.Attribute("onAction") == "ShowConstraintPane",

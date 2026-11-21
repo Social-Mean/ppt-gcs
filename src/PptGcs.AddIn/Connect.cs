@@ -9,6 +9,7 @@ using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Extensibility;
 using Microsoft.Office.Core;
+using Microsoft.Win32;
 using PptGcs.Core;
 
 namespace PptGcs.AddIn
@@ -17,6 +18,8 @@ namespace PptGcs.AddIn
     public sealed class Connect : StandardOleMarshalObject, IDTExtensibility2, IRibbonExtensibility, ICustomTaskPaneConsumer
     {
         private static readonly string AddInVersion = ReadAddInVersion();
+        private const string SettingsKey = @"HKEY_CURRENT_USER\Software\PptGcs";
+        private const string AutoSuggestSetting = "AutoSuggestConstraints";
 
         private static string ReadAddInVersion()
         {
@@ -88,6 +91,7 @@ namespace PptGcs.AddIn
                 ()=>(int)app.Presentations.Count==0?null:(object)app.ActiveWindow,NormalizeActiveIdentities,Log,officeIcons.Get);
             canvasOverlay=new CanvasConstraintOverlay(application,commands.BuildModel,officeIcons.Get,Log,RunCanvasAction,
                 commands.FindSuggestions,RunSuggestedConstraint);
+            canvasOverlay.SetSuggestionsEnabled(ReadAutoSuggestSetting());
             selectionPaneOrder = new SelectionPaneLayerOrder(application, ActiveSlideLayers, (type, data) => Log(type, json.Serialize(data)));
             marqueeLocks = new NativeMarqueeLockFilter(application, (type, data) => Log(type, json.Serialize(data)));
             controller.AlternateMouseInput=RouteCanvasMouse;
@@ -183,6 +187,29 @@ namespace PptGcs.AddIn
             return value;
         }
         public string GetCanvasConstraintState() { return json.Serialize(canvasOverlay.GetState()); }
+
+        public bool GetAutoSuggestConstraints(IRibbonControl control)
+        { return canvasOverlay?.SuggestionsEnabled ?? true; }
+
+        public void ChangeAutoSuggestConstraints(IRibbonControl control, bool pressed)
+        {
+            RunCommand(() =>
+            {
+                Registry.SetValue(SettingsKey, AutoSuggestSetting, pressed ? 1 : 0, RegistryValueKind.DWord);
+                canvasOverlay.SetSuggestionsEnabled(pressed);
+            });
+            ribbonUi?.InvalidateControl(RibbonDefinition.AutoSuggestConstraintsId);
+        }
+
+        private bool ReadAutoSuggestSetting()
+        {
+            try { return !Equals(Registry.GetValue(SettingsKey, AutoSuggestSetting, 1), 0); }
+            catch (Exception error) when (error is System.Security.SecurityException || error is UnauthorizedAccessException || error is IOException)
+            {
+                Log("suggestion-setting-read-error", json.Serialize(new { error = error.Message }));
+                return true;
+            }
+        }
 
         public string ReplayCanvasBadgeForTest(string relationId,string gesture)
         {

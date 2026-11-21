@@ -10,6 +10,7 @@ namespace PptGcs.AddIn
     public static class RibbonDefinition
     {
         private static readonly XNamespace Ns = "http://schemas.microsoft.com/office/2009/07/customui";
+        internal const string AutoSuggestConstraintsId = "AutoSuggestConstraints";
 
         public static string CreateXml()
         {
@@ -38,7 +39,11 @@ namespace PptGcs.AddIn
                     ManageButton("CopyGcsComponent", "复制对象及内部约束…", "copyComponent", "ShowComponentCopy"),
                     ManageButton("NamedGcsParameters", "命名参数…", "parameters", "ShowNamedParameters")),
                 new XElement(Ns+"group",new XAttribute("id","CanvasConstraints"),new XAttribute("label","画布标记"),
-                    CanvasDisplayButton("Selection","仅所选对象","AutoLinkingStart"),CanvasDisplayButton("All","显示全部","HyperlinksVerify"),CanvasDisplayButton("Hidden","隐藏标记","AutoLinkingStop")));
+                    CanvasDisplayButton("Selection","仅所选对象","AutoLinkingStart"),CanvasDisplayButton("All","显示全部","HyperlinksVerify"),CanvasDisplayButton("Hidden","隐藏标记","AutoLinkingStop"),
+                    new XElement(Ns + "toggleButton", new XAttribute("id", AutoSuggestConstraintsId),
+                        new XAttribute("label", "自动提示可建立的约束"), new XAttribute("imageMso", "GroupIntelliSense"),
+                        new XAttribute("getPressed", "GetAutoSuggestConstraints"), new XAttribute("onAction", "ChangeAutoSuggestConstraints"),
+                        new XAttribute("supertip", "移动、缩放或用方向键微移对象时，在画布上提示可建立的约束。"))));
             return new XElement(Ns + "customUI", new XAttribute("onLoad","OnRibbonLoad"),
                 new XElement(Ns + "commands", SlideLayers.ArrangeCommands.Select(command =>
                     new XElement(Ns + "command", new XAttribute("idMso", command), new XAttribute("onAction", "OnLayerArrange")))),

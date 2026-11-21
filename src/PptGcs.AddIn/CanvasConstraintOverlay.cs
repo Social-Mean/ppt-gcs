@@ -49,6 +49,8 @@ namespace PptGcs.AddIn
         private IReadOnlyList<CanvasConstraintOffer> offers=Array.Empty<CanvasConstraintOffer>();
         private int suggestionRevision;
         public CanvasConstraintDisplay Display { get; private set; } = CanvasConstraintDisplay.Selection;
+        public bool SuggestionsEnabled { get; private set; } = true;
+        private bool CanSuggest { get { return SuggestionsEnabled && Display != CanvasConstraintDisplay.Hidden; } }
         public bool IsMenuOpen { get; private set; }
 
         public CanvasConstraintOverlay(object application, Func<ConstraintPaneModel> readModel,
@@ -71,6 +73,13 @@ namespace PptGcs.AddIn
             if(value==CanvasConstraintDisplay.Hidden)Hide("hidden-by-user");
         }
 
+        public void SetSuggestionsEnabled(bool enabled)
+        {
+            RequireThread();
+            SuggestionsEnabled = enabled;
+            if (!enabled) ClearSuggestions();
+        }
+
         public void Invalidate()
         { RequireThread();nextModelRefresh=DateTime.MinValue;lastSignature=null;interactive=false;CancelPendingClick(); }
 
@@ -86,7 +95,7 @@ namespace PptGcs.AddIn
 
         public void BeginCanvasPointer(int x,int y,IntPtr canvasWindow)
         {
-            if(Display!=CanvasConstraintDisplay.Hidden)BeginSuggestionEdit(new Point(x,y),0,canvasWindow);
+            if(CanSuggest)BeginSuggestionEdit(new Point(x,y),0,canvasWindow);
         }
 
         public void ObserveEditKey(int key,bool down)
@@ -101,7 +110,7 @@ namespace PptGcs.AddIn
                 if(suggestionEdit?.Key==key)CompleteSuggestionEdit(false);
                 return;
             }
-            if(Display==CanvasConstraintDisplay.Hidden || !IsCanvasTarget(GetFocus()) || (Control.ModifierKeys&~Keys.Control)!=Keys.None)return;
+            if(!CanSuggest || !IsCanvasTarget(GetFocus()) || (Control.ModifierKeys&~Keys.Control)!=Keys.None)return;
             if(suggestionEdit?.Key==key){suggestionEdit.ReleaseTime=null;return;}
             ClearSuggestions();
             BeginSuggestionEdit(null,key,GetFocus());
@@ -135,7 +144,7 @@ namespace PptGcs.AddIn
                     dynamic hit=active.RangeFromPoint(pointer.Value.X,pointer.Value.Y);
                     if(hit!=null)AddBaseline(ShapeCapabilities.TopLevel((object)hit),baseline);
                 }
-                if(baseline.Count!=0)suggestionEdit=new SuggestionEdit {Key=key,Pointer=pointer,Baseline=baseline};
+                if(CanSuggest && baseline.Count!=0)suggestionEdit=new SuggestionEdit {Key=key,Pointer=pointer,Baseline=baseline};
             }
             catch(Exception error) {ClearSuggestions();log("suggestion-start-error",error.Message);}
         }
@@ -176,7 +185,9 @@ namespace PptGcs.AddIn
             if(!complete && !live)return;
             if(complete)suggestionEdit=null;
             session.NextSample=now.AddMilliseconds(120);
-            offers=findSuggestions(session.Baseline);
+            var candidates=findSuggestions(session.Baseline);
+            if(!CanSuggest)return;
+            offers=candidates;
             suggestionRevision++;
         }
 
@@ -283,7 +294,7 @@ namespace PptGcs.AddIn
 
         private void AcceptOffer(BadgeClick click)
         {
-            if(disposed || !offers.Contains(click.Offer) || GetAncestor(GetForegroundWindow(),2)!=click.Root || !IsBlankCanvas(click))return;
+            if(disposed || !offers.Contains(click.Offer) || GetAncestor(GetForegroundWindow(),2)!=click.Root || !IsBlankCanvas(click) || !CanSuggest)return;
             ClearSuggestions();
             acceptSuggestion(click.Offer);
         }
@@ -515,7 +526,7 @@ namespace PptGcs.AddIn
                 viewport=new {viewport.X,viewport.Y,viewport.Width,viewport.Height},
                 projection=projection==null?null:new {projection.OriginX,projection.OriginY,projection.ScaleX,projection.ScaleY,projection.DpiScale},
                 highlightedRelationId,menuVisible=IsMenuOpen,
-                editingForSuggestions=suggestionEdit!=null,suggestionCount=offers.Count,
+                suggestionsEnabled=SuggestionsEnabled,editingForSuggestions=suggestionEdit!=null,suggestionCount=offers.Count,
                 badges=layout==null?new object[0]:layout.Badges.Select(item=>(object)new {item.RelationId,item.Kind,item.Label,item.Highlighted,item.Limited,item.Suggested,
                     bounds=new {item.Bounds.X,item.Bounds.Y,item.Bounds.Width,item.Bounds.Height}}).ToArray()};
         }
