@@ -1,5 +1,6 @@
 using System;
 using PptGcs.AddIn;
+using PptGcs.Core;
 
 internal static class ShapeSupportTests
 {
@@ -27,6 +28,11 @@ internal static class ShapeSupportTests
         shape.Child=-1;shape.ParentGroup=nested;
         Check(Object.ReferenceEquals(ShapeCapabilities.TopLevel(shape),group), "nested group hits resolve to the whole top-level group");
         Check(Object.ReferenceEquals(ShapeCapabilities.TopLevel(group),group), "top-level hit retains the original object");
+        var context = new LayoutContext();
+        const string groupId = "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA";
+        context.Shapes.Add(groupId, group);
+        PowerPointLayout.Apply(context, new[] { new ShapeGeometry(groupId, 40, 50, 100, 80) });
+        Check(group.Left == 40 && group.Top == 50, "constraint writeback works without the native Locked member");
         Console.WriteLine("PASS: " + passed + " shape support tests");
     }
     private static void Check(bool condition,string name)
@@ -43,6 +49,7 @@ public sealed class SupportShape
     public double Top {get;set;}=20;
     public double Width {get;set;}=100;
     public double Height {get;set;}=80;
+    public int LockAspectRatio {get;set;}
     public int Child {get;set;}
     public object ParentGroup {get;set;}
 }

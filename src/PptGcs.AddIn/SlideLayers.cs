@@ -148,7 +148,8 @@ namespace PptGcs.AddIn
             {
                 var objects = byLayer[layer.Id].Select(member => ObjectRow(layer.Id, member.Shape)).ToArray();
                 return new LayerPaneRow(SlideId, layer.Id, null, layer.Name,
-                    Summary(objects.Select(row => row.Visible)), Summary(objects.Select(row => row.Locked)), objects);
+                    Summary(objects.Select(row => row.Visible)),
+                    objects.Any(row => row.Locked == LayerRowState.Empty) ? LayerRowState.Empty : Summary(objects.Select(row => row.Locked)), objects);
             }).ToArray();
         }
 
@@ -156,9 +157,11 @@ namespace PptGcs.AddIn
         {
             dynamic shape = shapeObject;
             var children = Children(shapeObject).Select(child => ObjectRow(layerId, child)).ToArray();
+            int? locked = ShapeCapabilities.ReadNativeLock(shapeObject);
+            var lockState = !locked.HasValue || children.Any(child => child.Locked == LayerRowState.Empty)
+                ? LayerRowState.Empty : locked.Value == 0 ? LayerRowState.Off : LayerRowState.On;
             return new LayerPaneRow(SlideId, layerId, (int)shape.Id, (string)shape.Name,
-                ReadState(shapeObject, true) == 0 ? LayerRowState.Off : LayerRowState.On,
-                ReadState(shapeObject, false) == 0 ? LayerRowState.Off : LayerRowState.On, children);
+                (int)shape.Visible == 0 ? LayerRowState.Off : LayerRowState.On, lockState, children);
         }
 
         private static LayerRowState Summary(IEnumerable<LayerRowState> values)
@@ -188,6 +191,7 @@ namespace PptGcs.AddIn
                 : Members().Where(member => member.LayerId == layerId).Select(member => member.Shape).ToArray();
             if (shapes.Length == 0) return;
             var before = shapes.Select(shape => ReadStateTree(shape, visibility).ToArray()).ToArray();
+            if (before.Any(tree => tree.Any(state => !state.Value.HasValue))) return;
             bool turnOn = visibility ? before.All(tree => tree[0].Value == 0) : before.Any(tree => tree[0].Value == 0);
             int value = turnOn ? -1 : 0;
             var attempted = new List<int>();
@@ -210,7 +214,7 @@ namespace PptGcs.AddIn
                         Restore(() =>
                         {
                             if (ReadState(state.Shape, visibility) != state.Value)
-                                WriteState(state.Shape, visibility, state.Value);
+                                WriteState(state.Shape, visibility, state.Value.Value);
                         }, failures);
                 if (failures.Count > 1) throw new AggregateException("图层状态更新失败，且部分对象无法恢复。", failures);
                 throw;
@@ -248,13 +252,12 @@ namespace PptGcs.AddIn
                 .OrderByDescending(child => (int)((dynamic)child).ZOrderPosition);
         }
 
-        private static int ReadState(object shapeObject, bool visibility)
+        private static int? ReadState(object shape, bool visibility)
         {
-            dynamic shape = shapeObject;
-            return visibility ? (int)shape.Visible : (int)shape.Locked;
+            return visibility ? (int)((dynamic)shape).Visible : ShapeCapabilities.ReadNativeLock(shape);
         }
 
-        private static IEnumerable<(object Shape, int Value)> ReadStateTree(object shape, bool visibility)
+        private static IEnumerable<(object Shape, int? Value)> ReadStateTree(object shape, bool visibility)
         {
             yield return (shape, ReadState(shape, visibility));
             foreach (var child in Children(shape))
@@ -266,7 +269,8 @@ namespace PptGcs.AddIn
             dynamic shape = shapeObject;
             if (visibility) shape.Visible = value;
             else shape.Locked = value;
-            if ((ReadState(shapeObject, visibility) != 0) != (value != 0))
+            int? actual = ReadState(shapeObject, visibility);
+            if (!actual.HasValue || (actual.Value != 0) != (value != 0))
                 throw new InvalidOperationException("PowerPoint 未能应用对象的显示或锁定状态。");
         }
 

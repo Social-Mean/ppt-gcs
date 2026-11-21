@@ -24,6 +24,9 @@ namespace PptGcs.AddIn
             Visible = visible; Locked = locked; Children = children;
             Key = shapeId.HasValue ? "shape:" + shapeId.Value : "layer:" + layerId;
         }
+
+        public bool CanToggle(bool visibility)
+        { return (visibility ? Visible : Locked) != LayerRowState.Empty; }
     }
 
     internal sealed class LayerPaneControl : UserControl
@@ -93,7 +96,7 @@ namespace PptGcs.AddIn
                 if (column == 0) return null;
                 var node = NodeAt(point.Y);
                 var row = node?.Tag as LayerPaneRow;
-                if (row == null || row.Visible == LayerRowState.Empty) return null;
+                if (row == null || !row.CanToggle(column == 1)) return null;
                 return () => Perform(() => ToggleState(row, column == 1));
             };
             tree.AfterSelect += (sender, args) =>
@@ -119,7 +122,7 @@ namespace PptGcs.AddIn
                 var node = NodeAt(args.Y);
                 int column = Column(args.X);
                 var row = node?.Tag as LayerPaneRow;
-                string hint = row == null || row.Visible == LayerRowState.Empty || column == 0 ? "" :
+                string hint = row == null || column == 0 || !row.CanToggle(column == 1) ? "" :
                     column == 1 ? (row.Visible == LayerRowState.Off ? "显示" : "隐藏") + "（Ctrl+Shift+S）" :
                     (row.Locked == LayerRowState.On ? "解锁" : "锁定") + "（Ctrl+Shift+L）";
                 if (tips.GetToolTip(tree) != hint) tips.SetToolTip(tree, hint);
@@ -127,7 +130,7 @@ namespace PptGcs.AddIn
             tree.KeyDown += (sender, args) =>
             {
                 var row = tree.SelectedNode?.Tag as LayerPaneRow;
-                if (row == null || row.Visible == LayerRowState.Empty || !args.Control || !args.Shift ||
+                if (row == null || !row.CanToggle(args.KeyCode == Keys.S) || !args.Control || !args.Shift ||
                     (args.KeyCode != Keys.S && args.KeyCode != Keys.L)) return;
                 args.SuppressKeyPress = true;
                 Perform(() => ToggleState(row, args.KeyCode == Keys.S));

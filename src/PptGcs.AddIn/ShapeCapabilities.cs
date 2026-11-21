@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.InteropServices;
+using Microsoft.CSharp.RuntimeBinder;
 using PptGcs.Core;
 
 namespace PptGcs.AddIn
@@ -55,12 +57,24 @@ namespace PptGcs.AddIn
         internal static bool IsLocked(object shapeObject)
         {
             dynamic shape = shapeObject;
-            while ((int)shape.Locked == 0)
+            while (true)
             {
+                if (ReadNativeLock((object)shape).GetValueOrDefault() != 0) return true;
                 if ((int)shape.Child == 0) return false;
                 shape = shape.ParentGroup;
             }
-            return true;
+        }
+
+        internal static int? ReadNativeLock(object shape)
+        {
+            const int memberNotFound = unchecked((int)0x80020003);
+            const int unknownName = unchecked((int)0x80020006);
+            // Some PowerPoint hosts do not expose Locked on the Shape COM interface.
+            object value;
+            try { value = ((dynamic)shape).Locked; }
+            catch (RuntimeBinderException) { return null; }
+            catch (COMException error) when (error.ErrorCode == memberNotFound || error.ErrorCode == unknownName) { return null; }
+            return (int)(dynamic)value;
         }
 
         private static bool Finite(double value)
