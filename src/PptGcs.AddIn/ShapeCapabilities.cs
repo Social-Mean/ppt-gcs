@@ -69,11 +69,13 @@ namespace PptGcs.AddIn
         {
             const int memberNotFound = unchecked((int)0x80020003);
             const int unknownName = unchecked((int)0x80020006);
-            // Some PowerPoint hosts do not expose Locked on the Shape COM interface.
+            const int notImplemented = unchecked((int)0x80004001);
+            // Some PowerPoint builds expose Locked but return E_NOTIMPL from its getter.
             object value;
             try { value = ((dynamic)shape).Locked; }
             catch (RuntimeBinderException) { return null; }
-            catch (COMException error) when (error.ErrorCode == memberNotFound || error.ErrorCode == unknownName) { return null; }
+            catch (NotImplementedException) { return null; }
+            catch (COMException error) when (error.ErrorCode == memberNotFound || error.ErrorCode == unknownName || error.ErrorCode == notImplemented) { return null; }
             return (int)(dynamic)value;
         }
 
